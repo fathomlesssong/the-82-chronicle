@@ -15,34 +15,20 @@
       --ad: #e8dfc8;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
       background:
         radial-gradient(circle at 20% 10%, rgba(255,255,255,.55), transparent 24rem),
-        repeating-linear-gradient(
-          0deg,
-          rgba(70,60,45,.018) 0,
-          rgba(70,60,45,.018) 1px,
-          transparent 1px,
-          transparent 4px
-        ),
+        repeating-linear-gradient(0deg, rgba(70,60,45,.018) 0, rgba(70,60,45,.018) 1px, transparent 1px, transparent 4px),
         var(--paper);
       color: var(--ink);
       font-family: Georgia, "Times New Roman", serif;
     }
 
-    .page {
-      width: min(1180px, calc(100% - 32px));
-      margin: 24px auto 42px;
-    }
+    .page { width: min(1180px, calc(100% - 32px)); margin: 24px auto 42px; }
 
     .top-strip {
       display: grid;
@@ -56,21 +42,10 @@
       letter-spacing: .06em;
       text-transform: uppercase;
     }
+    .top-strip span:nth-child(2) { font-weight: 700; }
+    .top-strip span:last-child { text-align: right; }
 
-    .top-strip span:nth-child(2) {
-      font-weight: 700;
-    }
-
-    .top-strip span:last-child {
-      text-align: right;
-    }
-
-    header {
-      text-align: center;
-      padding: 22px 12px 16px;
-      border-bottom: 5px double var(--line);
-    }
-
+    header { text-align: center; padding: 22px 12px 16px; border-bottom: 5px double var(--line); }
     .masthead {
       margin: 0;
       font-family: "Old English Text MT", "UnifrakturCook", "Lucida Blackletter", Georgia, serif;
@@ -80,38 +55,17 @@
       font-weight: 900;
       text-wrap: balance;
     }
-
-    .masthead::first-letter {
-      font-size: 1.15em;
-    }
-
-    .tagline {
-      margin: 12px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-    }
+    .masthead::first-letter { font-size: 1.15em; }
 
     .content-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 270px;
+      grid-template-columns: minmax(0, 1fr) 300px;
       gap: 28px;
       margin-top: 26px;
     }
-
-    main {
-      min-width: 0;
-    }
-
-    article {
-      position: relative;
-    }
-
-    .main-story {
-      padding-bottom: 26px;
-      border-bottom: 2px solid var(--line);
-    }
+    main { min-width: 0; }
+    article { position: relative; }
+    .main-story { padding-bottom: 26px; border-bottom: 2px solid var(--line); }
 
     .kicker {
       display: inline-block;
@@ -123,80 +77,36 @@
       letter-spacing: .12em;
     }
 
-    h2, h3 {
-      margin: 0;
-      line-height: .98;
-      letter-spacing: -.025em;
-    }
+    h2, h3 { margin: 0; line-height: .98; letter-spacing: -.025em; }
+    .main-story h2 { font-size: clamp(38px, 5.4vw, 66px); max-width: 920px; text-wrap: balance; }
+    .deck { margin: 16px 0 12px; font-size: clamp(18px, 2vw, 23px); line-height: 1.4; color: #39342f; max-width: 860px; }
+    .byline { margin: 0 0 18px; color: var(--muted); font-size: 13px; font-style: italic; }
 
-    .main-story h2 {
-      font-size: clamp(38px, 5.4vw, 66px);
-      max-width: 920px;
-      text-wrap: balance;
-    }
-
-    .deck {
-      margin: 16px 0 12px;
-      font-size: clamp(18px, 2vw, 23px);
-      line-height: 1.4;
-      color: #39342f;
-      max-width: 860px;
-    }
-
-    .byline {
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-size: 13px;
-      font-style: italic;
-    }
-
-    .hero {
-      min-height: 310px;
-      display: grid;
-      place-items: end start;
-      margin-top: 14px;
-      padding: 24px;
-      border: 1px solid #474036;
-      background:
-        linear-gradient(180deg, transparent 20%, rgba(0,0,0,.65) 100%),
-        linear-gradient(135deg, #9b8f73 0 25%, #c6b998 25% 50%, #8b806a 50% 75%, #bbaa89 75%);
-      color: white;
-      overflow: hidden;
-    }
-
-    .hero-caption {
-      width: min(680px, 100%);
-      font-size: 14px;
-      line-height: 1.45;
-      text-shadow: 0 1px 2px #000;
-    }
-
-    /* THE82_MOUSE_STORY */
     .story-photo {
-      margin: 14px 0 20px;
+      width: min(100%, 520px);
+      margin: 18px auto 22px;
     }
-
     .story-photo img {
       display: block;
       width: 100%;
-      max-width: 100%;
-      max-height: 720px;
-      object-fit: cover;
-      object-position: center 48%;
+      height: auto;
       border: 1px solid #474036;
     }
-
     .story-photo figcaption {
       margin-top: 7px;
       color: var(--muted);
       font-size: 12px;
       line-height: 1.4;
       font-style: italic;
+      text-align: left;
     }
+
+    .body-copy { margin-top: 18px; columns: 2 290px; column-gap: 28px; font-size: 16px; line-height: 1.62; text-align: justify; }
+    .body-copy p { margin-top: 0; }
+    .body-copy p:first-child::first-letter { float: left; font-size: 4.1em; line-height: .72; padding: 8px 8px 2px 0; font-weight: 700; }
 
     .story-subhead {
       break-inside: avoid;
-      column-span: all;
       margin: 20px 0 12px;
       padding: 8px 0 6px;
       border-top: 2px solid var(--line);
@@ -205,86 +115,17 @@
       line-height: 1.05;
       letter-spacing: -.015em;
     }
+    .story-shout { break-inside: avoid; font-size: 1.06em; text-align: left; }
 
-    .story-shout {
-      break-inside: avoid;
-      font-size: 1.06em;
-      text-align: left;
-    }
+    .secondary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 24px; }
+    .secondary { padding-right: 10px; }
+    .secondary + .secondary { border-left: 1px solid var(--line); padding-left: 24px; padding-right: 0; }
+    .secondary h3 { font-size: clamp(26px, 3.2vw, 39px); text-wrap: balance; }
+    .secondary p { margin: 12px 0 0; font-size: 16px; line-height: 1.55; color: #322f2b; }
+    .mini-meta { margin-top: 14px; padding-top: 8px; border-top: 1px solid #b7ae9e; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
 
-    .body-copy {
-      margin-top: 18px;
-      columns: 2 290px;
-      column-gap: 28px;
-      font-size: 16px;
-      line-height: 1.62;
-      text-align: justify;
-    }
-
-    .body-copy p {
-      margin-top: 0;
-    }
-
-    .body-copy p:first-child::first-letter {
-      float: left;
-      font-size: 4.1em;
-      line-height: .72;
-      padding: 8px 8px 2px 0;
-      font-weight: 700;
-    }
-
-    .secondary-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      padding-top: 24px;
-    }
-
-    .secondary {
-      padding-right: 10px;
-    }
-
-    .secondary + .secondary {
-      border-left: 1px solid var(--line);
-      padding-left: 24px;
-      padding-right: 0;
-    }
-
-    .secondary h3 {
-      font-size: clamp(26px, 3.2vw, 39px);
-      text-wrap: balance;
-    }
-
-    .secondary p {
-      margin: 12px 0 0;
-      font-size: 16px;
-      line-height: 1.55;
-      color: #322f2b;
-    }
-
-    .mini-meta {
-      margin-top: 14px;
-      padding-top: 8px;
-      border-top: 1px solid #b7ae9e;
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
-
-    aside {
-      border-left: 1px solid var(--line);
-      padding-left: 24px;
-    }
-
-    .aside-label {
-      margin: 0 0 8px;
-      text-align: center;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: .16em;
-      text-transform: uppercase;
-    }
+    aside { border-left: 1px solid var(--line); padding-left: 24px; }
+    .aside-label { margin: 0 0 8px; text-align: center; font-size: 10px; color: var(--muted); letter-spacing: .16em; text-transform: uppercase; }
 
     .ad {
       position: sticky;
@@ -295,198 +136,38 @@
       justify-content: space-between;
       padding: 24px 20px;
       border: 3px double var(--line);
-      background:
-        repeating-linear-gradient(
-          -45deg,
-          rgba(0,0,0,.025) 0,
-          rgba(0,0,0,.025) 2px,
-          transparent 2px,
-          transparent 8px
-        ),
-        var(--ad);
+      background: var(--ad);
       text-align: center;
     }
+    .ad-banner { padding: 10px; min-height: 0; background: var(--paper); }
+    .ad-banner img { display: block; width: 100%; height: auto; border: 1px solid #474036; box-shadow: 0 8px 18px rgba(0,0,0,.08); }
 
-    .ad small {
-      font-size: 10px;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-    }
+    footer { margin-top: 30px; padding-top: 12px; border-top: 5px double var(--line); text-align: center; color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
 
-    .ad-mark {
-      margin: 24px auto;
-      width: 110px;
-      aspect-ratio: 1;
-      display: grid;
-      place-items: center;
-      border: 2px solid var(--line);
-      border-radius: 50%;
-      font-size: 46px;
-      font-weight: 900;
-    }
-
-    .ad h4 {
-      margin: 0;
-      font-size: 31px;
-      line-height: 1;
-    }
-
-    .ad p {
-      font-size: 16px;
-      line-height: 1.4;
-    }
-
-    .ad .cta {
-      display: block;
-      padding: 10px;
-      border-top: 2px solid var(--line);
-      border-bottom: 2px solid var(--line);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-    }
-
-    /* THE82_ARCH_BANNER */
-    .ad-banner {
-      padding: 10px;
-      min-height: 0;
-      background: var(--paper);
-    }
-
-    .ad-banner img {
-      display: block;
-      width: 100%;
-      height: auto;
-      border: 1px solid #474036;
-      box-shadow: 0 8px 18px rgba(0,0,0,.08);
-    }
-
-    footer {
-      margin-top: 30px;
-      padding-top: 12px;
-      border-top: 5px double var(--line);
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
+    .main-story .story-body { columns: initial; column-gap: normal; text-align: left; }
+    .main-story .story-columns { columns: 2 290px; column-gap: 32px; column-rule: 1px solid rgba(44, 41, 37, .18); text-align: justify; hyphens: auto; }
+    .main-story .story-columns p { break-inside: avoid-column; margin: 0 0 17px; }
+    .main-story .story-columns p:first-child::first-letter { float: none; font-size: inherit; line-height: inherit; padding: 0; font-weight: inherit; }
+    .main-story .story-body > .story-columns:first-child p:first-child::first-letter { float: left; font-size: 4.1em; line-height: .72; padding: 8px 8px 2px 0; font-weight: 700; }
+    .main-story .story-section { margin-top: 26px; }
+    .main-story .story-subhead { display: block; width: 100%; margin: 0 0 18px; padding: 10px 2px 8px; border-top: 2px solid var(--line); border-bottom: 1px solid var(--line); font-size: clamp(24px, 3vw, 34px); line-height: 1.08; letter-spacing: -.02em; text-align: left; text-wrap: balance; }
+    .main-story .story-shout { text-align: left; letter-spacing: 0; }
 
     @media (max-width: 850px) {
-      .content-layout {
-        grid-template-columns: 1fr;
-      }
-
-      aside {
-        border-left: 0;
-        border-top: 1px solid var(--line);
-        padding: 22px 0 0;
-      }
-
-      .ad {
-        position: static;
-        min-height: 0;
-      }
+      .content-layout { grid-template-columns: 1fr; }
+      aside { border-left: 0; border-top: 1px solid var(--line); padding: 22px 0 0; }
+      .ad { position: static; min-height: 0; }
     }
+
+    @media (max-width: 700px) { .main-story .story-columns { columns: 1; column-rule: 0; } }
 
     @media (max-width: 620px) {
-      .page {
-        width: min(100% - 20px, 1180px);
-        margin-top: 10px;
-      }
-
-      .top-strip {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .top-strip span:nth-child(2) {
-        display: none;
-      }
-
-      .secondary-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .secondary + .secondary {
-        border-left: 0;
-        border-top: 1px solid var(--line);
-        padding: 22px 0 0;
-      }
-
-      .body-copy {
-        columns: 1;
-      }
-
-      .hero {
-        min-height: 240px;
-      }
-    }
-
-    /* THE82_STORY_LAYOUT_FIX */
-    .main-story .story-body {
-      columns: initial;
-      column-gap: normal;
-      text-align: left;
-    }
-
-    .main-story .story-columns {
-      columns: 2 290px;
-      column-gap: 32px;
-      column-rule: 1px solid rgba(44, 41, 37, .18);
-      text-align: justify;
-      hyphens: auto;
-    }
-
-    .main-story .story-columns p {
-      break-inside: avoid-column;
-      margin: 0 0 17px;
-    }
-
-    .main-story .story-columns p:first-child::first-letter {
-      float: none;
-      font-size: inherit;
-      line-height: inherit;
-      padding: 0;
-      font-weight: inherit;
-    }
-
-    .main-story .story-body > .story-columns:first-child p:first-child::first-letter {
-      float: left;
-      font-size: 4.1em;
-      line-height: .72;
-      padding: 8px 8px 2px 0;
-      font-weight: 700;
-    }
-
-    .main-story .story-section {
-      margin-top: 26px;
-    }
-
-    .main-story .story-subhead {
-      column-span: none;
-      display: block;
-      width: 100%;
-      margin: 0 0 18px;
-      padding: 10px 2px 8px;
-      border-top: 2px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      font-size: clamp(24px, 3vw, 34px);
-      line-height: 1.08;
-      letter-spacing: -.02em;
-      text-align: left;
-      text-wrap: balance;
-    }
-
-    .main-story .story-shout {
-      text-align: left;
-      letter-spacing: 0;
-    }
-
-    @media (max-width: 700px) {
-      .main-story .story-columns {
-        columns: 1;
-        column-rule: 0;
-      }
+      .page { width: min(100% - 20px, 1180px); margin-top: 10px; }
+      .top-strip { grid-template-columns: 1fr 1fr; }
+      .top-strip span:nth-child(2) { display: none; }
+      .secondary-grid { grid-template-columns: 1fr; }
+      .secondary + .secondary { border-left: 0; border-top: 1px solid var(--line); padding: 22px 0 0; }
+      .body-copy { columns: 1; }
     }
   </style>
 </head>
@@ -498,9 +179,7 @@
       <span>Nr 1 • 2026</span>
     </div>
 
-    <header>
-      <h1 class="masthead">The 82 Chronicle</h1>
-    </header>
+    <header><h1 class="masthead">The 82 Chronicle</h1></header>
 
     <div class="content-layout">
       <main>
@@ -508,48 +187,21 @@
           <span class="kicker">Temat dnia</span>
           <h2>HORROR W SŁOTWINIE! MARTWA MYSZ ZAATAKOWAŁA MIESZKANKĘ NUMERU 82!</h2>
 
-          <p class="deck">
-            Chciała tylko skorzystać z kontaktu. Chwilę później stanęła oko w oko z koszmarem,
-            którego nie przewidziałby nawet elektryk po trzech kawach.
-          </p>
-
+          <p class="deck">Chciała tylko skorzystać z kontaktu. Chwilę później stanęła oko w oko z koszmarem, którego nie przewidziałby nawet elektryk po trzech kawach.</p>
           <p class="byline">Tekst: Redakcja The 82 Chronicle</p>
 
           <figure class="story-photo">
-            <img
-              src="assets/martwa-mysz.jpg"
-              alt="Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82"
-            />
-            <figcaption>
-              Makabryczne odkrycie pod numerem 82. Gryzoń został znaleziony za obudową gniazdka elektrycznego.
-            </figcaption>
+            <img src="assets/martwa-mysz.jpg?v=2" alt="Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82" />
+            <figcaption>Makabryczne odkrycie pod numerem 82. Gryzoń został znaleziony za obudową gniazdka elektrycznego.</figcaption>
           </figure>
 
           <div class="body-copy story-body">
             <div class="story-columns">
-              <p>
-                Spokojny dzień w Słotwinie zamienił się w scenę rodem z najtańszego horroru klasy B.
-                <strong>W jednym z lokali pod numerem 82</strong> doszło do makabrycznego odkrycia.
-                Z gniazdka elektrycznego wystawała... <strong>mysz</strong>.
-              </p>
-
+              <p>Spokojny dzień w Słotwinie zamienił się w scenę rodem z najtańszego horroru klasy B. <strong>W jednym z lokali pod numerem 82</strong> doszło do makabrycznego odkrycia. Z gniazdka elektrycznego wystawała... <strong>mysz</strong>.</p>
               <p class="story-shout"><strong>Martwa mysz.</strong></p>
-
-              <p>
-                Dramat rozpoczął się niewinnie. Mieszkanka domu zbliżyła się do kontaktu, nie spodziewając
-                się niczego bardziej niebezpiecznego niż ewentualnie krzywo włożona wtyczka. Wtedy ją zobaczyła.
-                Futrzasty intruz tkwił wewnątrz instalacji elektrycznej, wystawiając pyszczek przez otwór w obudowie.
-              </p>
-
-              <p class="story-shout">
-                <strong>SZOK! NIEDOWIERZANIE! GRYZONIE W INFRASTRUKTURZE KRYTYCZNEJ!</strong>
-              </p>
-
-              <p>
-                Nie wiadomo, jak mysz dostała się do środka. Czy weszła przewodem? Czy mieszkała w ścianie?
-                Czy planowała przejąć kontrolę nad instalacją elektryczną całego domu?
-              </p>
-
+              <p>Dramat rozpoczął się niewinnie. Mieszkanka domu zbliżyła się do kontaktu, nie spodziewając się niczego bardziej niebezpiecznego niż ewentualnie krzywo włożona wtyczka. Wtedy ją zobaczyła. Futrzasty intruz tkwił wewnątrz instalacji elektrycznej, wystawiając pyszczek przez otwór w obudowie.</p>
+              <p class="story-shout"><strong>SZOK! NIEDOWIERZANIE! GRYZONIE W INFRASTRUKTURZE KRYTYCZNEJ!</strong></p>
+              <p>Nie wiadomo, jak mysz dostała się do środka. Czy weszła przewodem? Czy mieszkała w ścianie? Czy planowała przejąć kontrolę nad instalacją elektryczną całego domu?</p>
               <p>Tego prawdopodobnie już nigdy się nie dowiemy.</p>
               <p>Jedno jest pewne. Jej ostatnia wyprawa zakończyła się tragicznie.</p>
             </div>
@@ -557,33 +209,17 @@
             <section class="story-section">
               <h3 class="story-subhead">ATAK ZZA GROBU</h3>
               <div class="story-columns">
-                <p>
-                  Choć zwierzę nie żyło, jego skuteczność w sianiu terroru pozostała imponująca.
-                  Mieszkanka numeru 82 została zaatakowana <strong>psychologicznie</strong>, gdy zupełnie
-                  niespodziewanie zobaczyła gryzonia wystającego z kontaktu.
-                </p>
-                <p>
-                  Na zdjęciu wykonanym na miejscu widać wyraźnie niewielką głowę oraz fragment ciała zwierzęcia
-                  ukryty za plastikową obudową.
-                </p>
-                <p>
-                  To jeden z tych widoków, po których człowiek przez następne pół roku przed podłączeniem
-                  ładowarki świeci latarką do każdego gniazdka.
-                </p>
+                <p>Choć zwierzę nie żyło, jego skuteczność w sianiu terroru pozostała imponująca. Mieszkanka numeru 82 została zaatakowana <strong>psychologicznie</strong>, gdy zupełnie niespodziewanie zobaczyła gryzonia wystającego z kontaktu.</p>
+                <p>Na zdjęciu wykonanym na miejscu widać wyraźnie niewielką głowę oraz fragment ciała zwierzęcia ukryty za plastikową obudową.</p>
+                <p>To jeden z tych widoków, po których człowiek przez następne pół roku przed podłączeniem ładowarki świeci latarką do każdego gniazdka.</p>
               </div>
             </section>
 
             <section class="story-section">
               <h3 class="story-subhead">CZY MIESZKAŃCY SŁOTWINY MOGĄ CZUĆ SIĘ BEZPIECZNIE?</h3>
               <div class="story-columns">
-                <p>
-                  Na razie nic nie wskazuje na to, by w okolicy działała zorganizowana grupa myszy zajmujących
-                  instalacje elektryczne.
-                </p>
-                <p>
-                  Ale jeszcze wczoraj nic nie wskazywało również na to, że
-                  <strong>z kontaktu może patrzeć trup gryzonia</strong>.
-                </p>
+                <p>Na razie nic nie wskazuje na to, by w okolicy działała zorganizowana grupa myszy zajmujących instalacje elektryczne.</p>
+                <p>Ale jeszcze wczoraj nic nie wskazywało również na to, że <strong>z kontaktu może patrzeć trup gryzonia</strong>.</p>
                 <p>Mieszkańcy numeru 82 mogą więc jedynie zachować czujność.</p>
                 <p>Bo w starym domu nigdy nie wiadomo, co kryje się w ścianach.</p>
                 <p class="story-shout"><strong>Kable? Rury? Myszy?</strong></p>
@@ -598,18 +234,13 @@
           <article class="secondary">
             <span class="kicker">Lokalnie</span>
             <h3>Ogrody wracają do łask. Warzywa zamiast kolejnego kawałka trawnika</h3>
-            <p>
-              Mieszkańcy coraz chętniej przeznaczają fragmenty działek na warzywniki, drzewa owocowe i niewielkie szklarnie. Własny pomidor najwyraźniej znów wygrał z idealnie przystrzyżoną pustynią biologiczną.
-            </p>
+            <p>Mieszkańcy coraz chętniej przeznaczają fragmenty działek na warzywniki, drzewa owocowe i niewielkie szklarnie. Własny pomidor najwyraźniej znów wygrał z idealnie przystrzyżoną pustynią biologiczną.</p>
             <div class="mini-meta">Słotwina • 10 sierpnia 2026</div>
           </article>
-
           <article class="secondary">
             <span class="kicker">Infrastruktura</span>
             <h3>Droga dobra, chodnik potrzebny. Codzienność pieszych nadal wymaga refleksu</h3>
-            <p>
-              Ruch samochodowy w okolicy rośnie, a część tras pieszych wciąż bardziej przypomina test orientacji w terenie niż normalną drogę do sklepu czy przystanku.
-            </p>
+            <p>Ruch samochodowy w okolicy rośnie, a część tras pieszych wciąż bardziej przypomina test orientacji w terenie niż normalną drogę do sklepu czy przystanku.</p>
             <div class="mini-meta">Gmina Świdnica • 10 sierpnia 2026</div>
           </article>
         </section>
@@ -618,17 +249,12 @@
       <aside>
         <p class="aside-label">Reklama</p>
         <div class="ad ad-banner">
-          <img
-            src="assets/myslecki-archeologia.jpg"
-            alt="Banner reklamowy Myślecki Archeologia: badania archeologiczne, nadzory, ekspertyzy, dokumentacja"
-          />
+          <img src="assets/myslecki-archeologia.jpg?v=2" alt="Banner reklamowy Myślecki Archeologia: badania archeologiczne, nadzory, ekspertyzy, dokumentacja" />
         </div>
       </aside>
     </div>
 
-    <footer>
-      The 82 Chronicle • Est. 2026
-    </footer>
+    <footer>The 82 Chronicle • Est. 2026</footer>
   </div>
 </body>
 </html>
