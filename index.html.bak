@@ -40,7 +40,7 @@
     }
 
     .page {
-      width: min(1380px, calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       margin: 24px auto 42px;
     }
 
@@ -95,7 +95,7 @@
 
     .content-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 450px;
+      grid-template-columns: minmax(0, 1fr) 270px;
       gap: 28px;
       margin-top: 26px;
     }
@@ -171,49 +171,6 @@
       text-shadow: 0 1px 2px #000;
     }
 
-
-    /* THE82_MOUSE_STORY */
-    .story-photo {
-      margin: 14px 0 20px;
-    }
-
-    .story-photo img {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-width: 100%;
-      border: 1px solid #474036;
-      object-fit: contain;
-      object-position: center center;
-      image-rendering: auto;
-      background: #ebe4d5;
-    }
-
-    .story-photo figcaption {
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.4;
-      font-style: italic;
-    }
-
-    .story-subhead {
-      break-inside: avoid;
-      column-span: all;
-      margin: 20px 0 12px;
-      padding: 8px 0 6px;
-      border-top: 2px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      font-size: clamp(22px, 2.5vw, 31px);
-      line-height: 1.05;
-      letter-spacing: -.015em;
-    }
-
-    .story-shout {
-      break-inside: avoid;
-      font-size: 1.06em;
-      text-align: left;
-    }
     .body-copy {
       margin-top: 18px;
       columns: 2 290px;
@@ -408,29 +365,7 @@
         min-height: 240px;
       }
     }
-  
-    /* Banner Myślecki Archeologia */
-    .ad-banner {
-      position: sticky;
-      top: 20px;
-    }
-
-    .ad-banner-image {
-      display: block;
-      width: 100%;
-      height: auto;
-      border: 1px solid var(--line);
-    }
-
-    @media (max-width: 850px) {
-      .ad-banner {
-        position: static;
-        max-width: 430px;
-        margin: 0 auto;
-      }
-    }
-
-</style>
+  </style>
 </head>
 <body>
   <div class="page">
@@ -449,90 +384,28 @@
       <main>
         <article class="main-story">
           <span class="kicker">Temat dnia</span>
-          <h2>HORROR W SŁOTWINIE! MARTWA MYSZ ZAATAKOWAŁA MIESZKANKĘ NUMERU 82!</h2>
-
+          <h2>Nowe życie starej Słotwiny. Mieszkańcy chcą zmian, ale po swojemu</h2>
           <p class="deck">
-            Chciała tylko skorzystać z kontaktu. Chwilę później stanęła oko w oko z koszmarem,
-            którego nie przewidziałby nawet elektryk po trzech kawach.
+            Coraz więcej osób inwestuje w domy, ogrody i lokalne inicjatywy. Słotwina powoli przestaje być tylko miejscem obok Świdnicy.
           </p>
-
           <p class="byline">Tekst: Redakcja The 82 Chronicle</p>
 
-          <figure class="story-photo">
-            <img
-              src="assets/martwa-mysz.png"
-              alt="Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82"
-            />
-            <figcaption>
-              Makabryczne odkrycie pod numerem 82. Gryzoń został znaleziony za obudową gniazdka elektrycznego.
-            </figcaption>
-          </figure>
+          <div class="hero" aria-label="Ilustracyjne zdjęcie głównego artykułu">
+            <div class="hero-caption">
+              <strong>Słotwina.</strong> Miejscowość zmienia się powoli, lecz wyraźnie. Nowe remonty, ogrody i pomysły mieszkańców coraz mocniej wpływają na jej charakter.
+            </div>
+          </div>
 
           <div class="body-copy">
             <p>
-              Spokojny dzień w Słotwinie zamienił się w scenę rodem z najtańszego horroru klasy B.
-              <strong>W jednym z lokali pod numerem 82</strong> doszło do makabrycznego odkrycia.
-              Z gniazdka elektrycznego wystawała... <strong>mysz</strong>.
+              Jeszcze niedawno większość rozmów o Słotwinie kończyła się na tym, że „jest blisko Świdnicy”. Dziś mieszkańcy coraz częściej chcą, by miejscowość miała własny charakter, własne inicjatywy i własny głos.
             </p>
-
-            <p class="story-shout"><strong>Martwa mysz.</strong></p>
-
             <p>
-              Dramat rozpoczął się niewinnie. Mieszkanka domu zbliżyła się do kontaktu, nie spodziewając
-              się niczego bardziej niebezpiecznego niż ewentualnie krzywo włożona wtyczka. Wtedy ją zobaczyła.
-              Futrzasty intruz tkwił wewnątrz instalacji elektrycznej, wystawiając pyszczek przez otwór w obudowie.
+              Widać to choćby po remontowanych domach, porządkowanych podwórkach i planach związanych z lokalnymi usługami. To nie wielka rewolucja, raczej seria drobnych zmian. Czyli dokładnie ten rodzaj postępu, który nie wymaga przecinania wstęgi przez pięciu urzędników.
             </p>
-
-            <p class="story-shout"><strong>SZOK! NIEDOWIERZANIE! GRYZONIE W INFRASTRUKTURZE KRYTYCZNEJ!</strong></p>
-
             <p>
-              Nie wiadomo, jak mysz dostała się do środka. Czy weszła przewodem? Czy mieszkała w ścianie?
-              Czy planowała przejąć kontrolę nad instalacją elektryczną całego domu?
+              Największym wyzwaniem pozostaje zachowanie tego, co w miejscowości wartościowe. Stare budynki, zieleń i spokojny charakter są częścią jej przewagi. Rozwój nie musi oznaczać zalania wszystkiego kostką brukową i ustawienia tablicy z napisem „rewitalizacja”.
             </p>
-
-            <p>Tego prawdopodobnie już nigdy się nie dowiemy.</p>
-
-            <p>Jedno jest pewne. Jej ostatnia wyprawa zakończyła się tragicznie.</p>
-
-            <h3 class="story-subhead">ATAK ZZA GROBU</h3>
-
-            <p>
-              Choć zwierzę nie żyło, jego skuteczność w sianiu terroru pozostała imponująca.
-              Mieszkanka numeru 82 została zaatakowana <strong>psychologicznie</strong>, gdy zupełnie
-              niespodziewanie zobaczyła gryzonia wystającego z kontaktu.
-            </p>
-
-            <p>
-              Na zdjęciu wykonanym na miejscu widać wyraźnie niewielką głowę oraz fragment ciała zwierzęcia
-              ukryty za plastikową obudową.
-            </p>
-
-            <p>
-              To jeden z tych widoków, po których człowiek przez następne pół roku przed podłączeniem
-              ładowarki świeci latarką do każdego gniazdka.
-            </p>
-
-            <h3 class="story-subhead">CZY MIESZKAŃCY SŁOTWINY MOGĄ CZUĆ SIĘ BEZPIECZNIE?</h3>
-
-            <p>
-              Na razie nic nie wskazuje na to, by w okolicy działała zorganizowana grupa myszy zajmujących
-              instalacje elektryczne.
-            </p>
-
-            <p>
-              Ale jeszcze wczoraj nic nie wskazywało również na to, że
-              <strong>z kontaktu może patrzeć trup gryzonia</strong>.
-            </p>
-
-            <p>Mieszkańcy numeru 82 mogą więc jedynie zachować czujność.</p>
-
-            <p>Bo w starym domu nigdy nie wiadomo, co kryje się w ścianach.</p>
-
-            <p class="story-shout"><strong>Kable? Rury? Myszy?</strong></p>
-
-            <p>A może wszystko naraz.</p>
-
-            <p><em>The 82 Chronicle będzie monitorować sytuację.</em></p>
           </div>
         </article>
 
@@ -558,12 +431,17 @@
       </main>
 
       <aside>
-        <div class="ad-banner">
-          <img
-            class="ad-banner-image"
-            src="myslecki-archeologia.png"
-            alt="Myślecki Archeologia"
-          >
+        <p class="aside-label">Reklama</p>
+        <div class="ad">
+          <small>Ogłoszenie lokalne</small>
+          <div>
+            <div class="ad-mark">S</div>
+            <h4>Twój biznes tutaj</h4>
+            <p>
+              Reklama widoczna dla ludzi, którzy naprawdę mieszkają w okolicy. Bez tańczących banerów, autoplay i innych internetowych zbrodni.
+            </p>
+          </div>
+          <div class="cta">Miejsce na reklamę</div>
         </div>
       </aside>
     </div>
