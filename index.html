@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The 82 Chronicle — rodzinna gazeta Chalimoniuków z domu nr 82." />
+  <title>The 82 Chronicle</title>
+  <style>
+    :root {
+      --paper: #f4f0e6;
+      --ink: #181614;
+      --muted: #6d675f;
+      --line: #2c2925;
+      --accent: #7a1111;
+      --ad: #e8dfc8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.55), transparent 24rem),
+        repeating-linear-gradient(
+          0deg,
+          rgba(70,60,45,.018) 0,
+          rgba(70,60,45,.018) 1px,
+          transparent 1px,
+          transparent 4px
+        ),
+        var(--paper);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto 42px;
+    }
+
+    .top-strip {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+      padding: 6px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .top-strip span:nth-child(2) {
+      font-weight: 700;
+    }
+
+    .top-strip span:last-child {
+      text-align: right;
+    }
+
+    header {
+      text-align: center;
+      padding: 22px 12px 16px;
+      border-bottom: 5px double var(--line);
+    }
+
+    .masthead {
+      margin: 0;
+      font-family: "Old English Text MT", "UnifrakturCook", "Lucida Blackletter", Georgia, serif;
+      font-size: clamp(46px, 8vw, 88px);
+      line-height: .9;
+      letter-spacing: -.04em;
+      font-weight: 900;
+      text-wrap: balance;
+    }
+
+    .masthead::first-letter {
+      font-size: 1.15em;
+    }
+
+    .tagline {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .content-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 270px;
+      gap: 28px;
+      margin-top: 26px;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    article {
+      position: relative;
+    }
+
+    .main-story {
+      padding-bottom: 26px;
+      border-bottom: 2px solid var(--line);
+    }
+
+    .kicker {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: .12em;
+    }
+
+    h2, h3 {
+      margin: 0;
+      line-height: .98;
+      letter-spacing: -.025em;
+    }
+
+    .main-story h2 {
+      font-size: clamp(38px, 5.4vw, 66px);
+      max-width: 920px;
+      text-wrap: balance;
+    }
+
+    .deck {
+      margin: 16px 0 12px;
+      font-size: clamp(18px, 2vw, 23px);
+      line-height: 1.4;
+      color: #39342f;
+      max-width: 860px;
+    }
+
+    .byline {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    .hero {
+      min-height: 310px;
+      display: grid;
+      place-items: end start;
+      margin-top: 14px;
+      padding: 24px;
+      border: 1px solid #474036;
+      background:
+        linear-gradient(180deg, transparent 20%, rgba(0,0,0,.65) 100%),
+        linear-gradient(135deg, #9b8f73 0 25%, #c6b998 25% 50%, #8b806a 50% 75%, #bbaa89 75%);
+      color: white;
+      overflow: hidden;
+    }
+
+    .hero-caption {
+      width: min(680px, 100%);
+      font-size: 14px;
+      line-height: 1.45;
+      text-shadow: 0 1px 2px #000;
+    }
+
+    .body-copy {
+      margin-top: 18px;
+      columns: 2 290px;
+      column-gap: 28px;
+      font-size: 16px;
+      line-height: 1.62;
+      text-align: justify;
+    }
+
+    .body-copy p {
+      margin-top: 0;
+    }
+
+    .body-copy p:first-child::first-letter {
+      float: left;
+      font-size: 4.1em;
+      line-height: .72;
+      padding: 8px 8px 2px 0;
+      font-weight: 700;
+    }
+
+    .secondary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding-top: 24px;
+    }
+
+    .secondary {
+      padding-right: 10px;
+    }
+
+    .secondary + .secondary {
+      border-left: 1px solid var(--line);
+      padding-left: 24px;
+      padding-right: 0;
+    }
+
+    .secondary h3 {
+      font-size: clamp(26px, 3.2vw, 39px);
+      text-wrap: balance;
+    }
+
+    .secondary p {
+      margin: 12px 0 0;
+      font-size: 16px;
+      line-height: 1.55;
+      color: #322f2b;
+    }
+
+    .mini-meta {
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px solid #b7ae9e;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    aside {
+      border-left: 1px solid var(--line);
+      padding-left: 24px;
+    }
+
+    .aside-label {
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .ad {
+      position: sticky;
+      top: 20px;
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 20px;
+      border: 3px double var(--line);
+      background:
+        repeating-linear-gradient(
+          -45deg,
+          rgba(0,0,0,.025) 0,
+          rgba(0,0,0,.025) 2px,
+          transparent 2px,
+          transparent 8px
+        ),
+        var(--ad);
+      text-align: center;
+    }
+
+    .ad small {
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .ad-mark {
+      margin: 24px auto;
+      width: 110px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      font-size: 46px;
+      font-weight: 900;
+    }
+
+    .ad h4 {
+      margin: 0;
+      font-size: 31px;
+      line-height: 1;
+    }
+
+    .ad p {
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .ad .cta {
+      display: block;
+      padding: 10px;
+      border-top: 2px solid var(--line);
+      border-bottom: 2px solid var(--line);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    footer {
+      margin-top: 30px;
+      padding-top: 12px;
+      border-top: 5px double var(--line);
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 850px) {
+      .content-layout {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        padding: 22px 0 0;
+      }
+
+      .ad {
+        position: static;
+        min-height: 0;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 1180px);
+        margin-top: 10px;
+      }
+
+      .top-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .top-strip span:nth-child(2) {
+        display: none;
+      }
+
+      .secondary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .secondary + .secondary {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        padding: 22px 0 0;
+      }
+
+      .body-copy {
+        columns: 1;
+      }
+
+      .hero {
+        min-height: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="top-strip">
+      <span>Słotwina, Dolny Śląsk</span>
+      <span>Gazeta niezależna od rozsądku urzędowego</span>
+      <span>Nr 1 • 2026</span>
+    </div>
+
+    <header>
+      <h1 class="masthead">The 82 Chronicle</h1>
+      <p class="tagline">Family news from No. 82 • Słotwina • Est. 2026</p>
+    </header>
+
+    <div class="content-layout">
+      <main>
+        <article class="main-story">
+          <span class="kicker">Temat dnia</span>
+          <h2>Nowe życie starej Słotwiny. Mieszkańcy chcą zmian, ale po swojemu</h2>
+          <p class="deck">
+            Coraz więcej osób inwestuje w domy, ogrody i lokalne inicjatywy. Słotwina powoli przestaje być tylko miejscem obok Świdnicy.
+          </p>
+          <p class="byline">Tekst: Redakcja The 82 Chronicle</p>
+
+          <div class="hero" aria-label="Ilustracyjne zdjęcie głównego artykułu">
+            <div class="hero-caption">
+              <strong>Słotwina.</strong> Miejscowość zmienia się powoli, lecz wyraźnie. Nowe remonty, ogrody i pomysły mieszkańców coraz mocniej wpływają na jej charakter.
+            </div>
+          </div>
+
+          <div class="body-copy">
+            <p>
+              Jeszcze niedawno większość rozmów o Słotwinie kończyła się na tym, że „jest blisko Świdnicy”. Dziś mieszkańcy coraz częściej chcą, by miejscowość miała własny charakter, własne inicjatywy i własny głos.
+            </p>
+            <p>
+              Widać to choćby po remontowanych domach, porządkowanych podwórkach i planach związanych z lokalnymi usługami. To nie wielka rewolucja, raczej seria drobnych zmian. Czyli dokładnie ten rodzaj postępu, który nie wymaga przecinania wstęgi przez pięciu urzędników.
+            </p>
+            <p>
+              Największym wyzwaniem pozostaje zachowanie tego, co w miejscowości wartościowe. Stare budynki, zieleń i spokojny charakter są częścią jej przewagi. Rozwój nie musi oznaczać zalania wszystkiego kostką brukową i ustawienia tablicy z napisem „rewitalizacja”.
+            </p>
+          </div>
+        </article>
+
+        <section class="secondary-grid" aria-label="Pozostałe wiadomości">
+          <article class="secondary">
+            <span class="kicker">Lokalnie</span>
+            <h3>Ogrody wracają do łask. Warzywa zamiast kolejnego kawałka trawnika</h3>
+            <p>
+              Mieszkańcy coraz chętniej przeznaczają fragmenty działek na warzywniki, drzewa owocowe i niewielkie szklarnie. Własny pomidor najwyraźniej znów wygrał z idealnie przystrzyżoną pustynią biologiczną.
+            </p>
+            <div class="mini-meta">Słotwina • 10 sierpnia 2026</div>
+          </article>
+
+          <article class="secondary">
+            <span class="kicker">Infrastruktura</span>
+            <h3>Droga dobra, chodnik potrzebny. Codzienność pieszych nadal wymaga refleksu</h3>
+            <p>
+              Ruch samochodowy w okolicy rośnie, a część tras pieszych wciąż bardziej przypomina test orientacji w terenie niż normalną drogę do sklepu czy przystanku.
+            </p>
+            <div class="mini-meta">Gmina Świdnica • 10 sierpnia 2026</div>
+          </article>
+        </section>
+      </main>
+
+      <aside>
+        <p class="aside-label">Reklama</p>
+        <div class="ad">
+          <small>Ogłoszenie lokalne</small>
+          <div>
+            <div class="ad-mark">S</div>
+            <h4>Twój biznes tutaj</h4>
+            <p>
+              Reklama widoczna dla ludzi, którzy naprawdę mieszkają w okolicy. Bez tańczących banerów, autoplay i innych internetowych zbrodni.
+            </p>
+          </div>
+          <div class="cta">Miejsce na reklamę</div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      The 82 Chronicle • The Chalimoniuk Family Newspaper • Est. 2026
+    </footer>
+  </div>
+</body>
+</html>
