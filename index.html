@@ -192,6 +192,46 @@
       font-weight: 700;
     }
 
+    /* THE82_MOUSE_STORY */
+    .story-photo {
+      margin: 14px 0 20px;
+    }
+
+    .story-photo img {
+      display: block;
+      width: 100%;
+      max-height: 720px;
+      object-fit: cover;
+      object-position: center 48%;
+      border: 1px solid #474036;
+    }
+
+    .story-photo figcaption {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      font-style: italic;
+    }
+
+    .story-subhead {
+      break-inside: avoid;
+      column-span: all;
+      margin: 20px 0 12px;
+      padding: 8px 0 6px;
+      border-top: 2px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      font-size: clamp(22px, 2.5vw, 31px);
+      line-height: 1.05;
+      letter-spacing: -.015em;
+    }
+
+    .story-shout {
+      break-inside: avoid;
+      font-size: 1.06em;
+      text-align: left;
+    }
+
     .secondary-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -365,6 +405,73 @@
         min-height: 240px;
       }
     }
+
+    /* THE82_STORY_LAYOUT_FIX */
+    .main-story .story-body {
+      columns: initial;
+      column-gap: normal;
+      text-align: left;
+    }
+
+    .main-story .story-columns {
+      columns: 2 290px;
+      column-gap: 32px;
+      column-rule: 1px solid rgba(44, 41, 37, .18);
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    .main-story .story-columns p {
+      break-inside: avoid-column;
+      margin: 0 0 17px;
+    }
+
+    .main-story .story-columns p:first-child::first-letter {
+      float: none;
+      font-size: inherit;
+      line-height: inherit;
+      padding: 0;
+      font-weight: inherit;
+    }
+
+    .main-story .story-body > .story-columns:first-child p:first-child::first-letter {
+      float: left;
+      font-size: 4.1em;
+      line-height: .72;
+      padding: 8px 8px 2px 0;
+      font-weight: 700;
+    }
+
+    .main-story .story-section {
+      margin-top: 26px;
+    }
+
+    .main-story .story-subhead {
+      column-span: none;
+      display: block;
+      width: 100%;
+      margin: 0 0 18px;
+      padding: 10px 2px 8px;
+      border-top: 2px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.08;
+      letter-spacing: -.02em;
+      text-align: left;
+      text-wrap: balance;
+    }
+
+    .main-story .story-shout {
+      text-align: left;
+      letter-spacing: 0;
+    }
+
+    @media (max-width: 700px) {
+      .main-story .story-columns {
+        columns: 1;
+        column-rule: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -377,35 +484,107 @@
 
     <header>
       <h1 class="masthead">The 82 Chronicle</h1>
-      <p class="tagline">News from No. 82 • Słotwina • Est. 2026</p>
+      
     </header>
 
     <div class="content-layout">
       <main>
         <article class="main-story">
           <span class="kicker">Temat dnia</span>
-          <h2>Nowe życie starej Słotwiny. Mieszkańcy chcą zmian, ale po swojemu</h2>
+          <h2>HORROR W SŁOTWINIE! MARTWA MYSZ ZAATAKOWAŁA MIESZKANKĘ NUMERU 82!</h2>
+
           <p class="deck">
-            Coraz więcej osób inwestuje w domy, ogrody i lokalne inicjatywy. Słotwina powoli przestaje być tylko miejscem obok Świdnicy.
+            Chciała tylko skorzystać z kontaktu. Chwilę później stanęła oko w oko z koszmarem,
+            którego nie przewidziałby nawet elektryk po trzech kawach.
           </p>
+
           <p class="byline">Tekst: Redakcja The 82 Chronicle</p>
 
-          <div class="hero" aria-label="Ilustracyjne zdjęcie głównego artykułu">
-            <div class="hero-caption">
-              <strong>Słotwina.</strong> Miejscowość zmienia się powoli, lecz wyraźnie. Nowe remonty, ogrody i pomysły mieszkańców coraz mocniej wpływają na jej charakter.
-            </div>
-          </div>
+          <figure class="story-photo">
+            <img
+              src="assets/martwa-mysz.jpg"
+              alt="Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82"
+            />
+            <figcaption>
+              Makabryczne odkrycie pod numerem 82. Gryzoń został znaleziony za obudową gniazdka elektrycznego.
+            </figcaption>
+          </figure>
 
-          <div class="body-copy">
-            <p>
-              Jeszcze niedawno większość rozmów o Słotwinie kończyła się na tym, że „jest blisko Świdnicy”. Dziś mieszkańcy coraz częściej chcą, by miejscowość miała własny charakter, własne inicjatywy i własny głos.
-            </p>
-            <p>
-              Widać to choćby po remontowanych domach, porządkowanych podwórkach i planach związanych z lokalnymi usługami. To nie wielka rewolucja, raczej seria drobnych zmian. Czyli dokładnie ten rodzaj postępu, który nie wymaga przecinania wstęgi przez pięciu urzędników.
-            </p>
-            <p>
-              Największym wyzwaniem pozostaje zachowanie tego, co w miejscowości wartościowe. Stare budynki, zieleń i spokojny charakter są częścią jej przewagi. Rozwój nie musi oznaczać zalania wszystkiego kostką brukową i ustawienia tablicy z napisem „rewitalizacja”.
-            </p>
+<div class="body-copy story-body">
+            <div class="story-columns">
+              <p>
+                Spokojny dzień w Słotwinie zamienił się w scenę rodem z najtańszego horroru klasy B.
+                <strong>W jednym z lokali pod numerem 82</strong> doszło do makabrycznego odkrycia.
+                Z gniazdka elektrycznego wystawała... <strong>mysz</strong>.
+              </p>
+
+              <p class="story-shout"><strong>Martwa mysz.</strong></p>
+
+              <p>
+                Dramat rozpoczął się niewinnie. Mieszkanka domu zbliżyła się do kontaktu, nie spodziewając
+                się niczego bardziej niebezpiecznego niż ewentualnie krzywo włożona wtyczka. Wtedy ją zobaczyła.
+                Futrzasty intruz tkwił wewnątrz instalacji elektrycznej, wystawiając pyszczek przez otwór w obudowie.
+              </p>
+
+              <p class="story-shout">
+                <strong>SZOK! NIEDOWIERZANIE! GRYZONIE W INFRASTRUKTURZE KRYTYCZNEJ!</strong>
+              </p>
+
+              <p>
+                Nie wiadomo, jak mysz dostała się do środka. Czy weszła przewodem? Czy mieszkała w ścianie?
+                Czy planowała przejąć kontrolę nad instalacją elektryczną całego domu?
+              </p>
+
+              <p>Tego prawdopodobnie już nigdy się nie dowiemy.</p>
+
+              <p>Jedno jest pewne. Jej ostatnia wyprawa zakończyła się tragicznie.</p>
+            </div>
+
+            <section class="story-section">
+              <h3 class="story-subhead">ATAK ZZA GROBU</h3>
+              <div class="story-columns">
+                <p>
+                  Choć zwierzę nie żyło, jego skuteczność w sianiu terroru pozostała imponująca.
+                  Mieszkanka numeru 82 została zaatakowana <strong>psychologicznie</strong>, gdy zupełnie
+                  niespodziewanie zobaczyła gryzonia wystającego z kontaktu.
+                </p>
+
+                <p>
+                  Na zdjęciu wykonanym na miejscu widać wyraźnie niewielką głowę oraz fragment ciała zwierzęcia
+                  ukryty za plastikową obudową.
+                </p>
+
+                <p>
+                  To jeden z tych widoków, po których człowiek przez następne pół roku przed podłączeniem
+                  ładowarki świeci latarką do każdego gniazdka.
+                </p>
+              </div>
+            </section>
+
+            <section class="story-section">
+              <h3 class="story-subhead">CZY MIESZKAŃCY SŁOTWINY MOGĄ CZUĆ SIĘ BEZPIECZNIE?</h3>
+              <div class="story-columns">
+                <p>
+                  Na razie nic nie wskazuje na to, by w okolicy działała zorganizowana grupa myszy zajmujących
+                  instalacje elektryczne.
+                </p>
+
+                <p>
+                  Ale jeszcze wczoraj nic nie wskazywało również na to, że
+                  <strong>z kontaktu może patrzeć trup gryzonia</strong>.
+                </p>
+
+                <p>Mieszkańcy numeru 82 mogą więc jedynie zachować czujność.</p>
+
+                <p>Bo w starym domu nigdy nie wiadomo, co kryje się w ścianach.</p>
+
+                <p class="story-shout"><strong>Kable? Rury? Myszy?</strong></p>
+
+                <p>A może wszystko naraz.</p>
+
+                <p><em>The 82 Chronicle będzie monitorować sytuację.</em></p>
+              </div>
+            </section>
           </div>
         </article>
 
@@ -447,7 +626,7 @@
     </div>
 
     <footer>
-      The 82 Chronicle • The Family Newspaper • Est. 2026
+      The 82 Chronicle • Est. 2026
     </footer>
   </div>
 </body>
