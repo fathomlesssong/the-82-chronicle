@@ -1,0 +1,44 @@
+(()=>{
+  const articles=[...(window.CH82_ARTICLES||[])].sort((a,b)=>b.sort-a.sort);
+  const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+  const storyMedia=a=>`<a class="media" href="${esc(a.href)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}"></a>`;
+  const storyText=(a,summary=true)=>`<div class="story-copy"><span class="section-label">${esc(a.section)}</span><h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:""}<div class="story-meta">${esc(a.date)} • The 82 Chronicle</div></div>`;
+
+  const home=document.querySelector("[data-home-feed]");
+  if(home){
+    const top=articles.slice(0,6);
+    if(!top.length){home.innerHTML='<p class="empty-state">Brak artykułów.</p>';return;}
+    const latest=top[0];
+    const featured=articles.find(a=>a.featured)||latest;
+    const rest=top.filter(a=>a.id!==latest.id&&a.id!==featured.id).slice(0,4);
+    home.innerHTML=`
+      <section class="latest-story" aria-label="Najnowszy artykuł">
+        ${storyMedia(latest)}
+        <div>${storyText(latest)}</div>
+      </section>
+      <section class="featured-story" aria-label="Główny artykuł">
+        <div class="featured-heading"><span class="section-label">Główny artykuł</span></div>
+        <h2 class="story-title"><a href="${esc(featured.href)}">${esc(featured.title)}</a></h2>
+        <div class="featured-grid">
+          ${storyMedia(featured)}
+          <div><span class="section-label">${esc(featured.section)}</span><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div>
+        </div>
+      </section>
+      <section class="stories-grid" aria-label="Pozostałe wiadomości">
+        ${rest.map(a=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a)}${storyText(a)}</article>`).join("")}
+      </section>`;
+  }
+
+  const archive=document.querySelector("[data-archive-list]");
+  if(archive){
+    const params=new URLSearchParams(location.search);
+    const section=(params.get("section")||"").toLowerCase();
+    const filtered=section?articles.filter(a=>a.sectionSlug===section):articles;
+    const heading=document.querySelector("[data-archive-title]");
+    if(heading&&section){
+      const name=articles.find(a=>a.sectionSlug===section)?.section;
+      if(name) heading.textContent=name;
+    }
+    archive.innerHTML=filtered.length?filtered.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a)}</article>`).join(""):'<p class="empty-state">W tym dziale nie ma jeszcze artykułów.</p>';
+  }
+})();
