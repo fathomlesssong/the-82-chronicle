@@ -477,12 +477,24 @@
       display: block;
       width: 100%;
       height: auto;
-      max-height: 360px;
-      margin: 14px 0 12px;
+      margin: 0;
       object-fit: contain;
       object-position: center;
-      border: 1px solid #474036;
-      background: #ebe4d5;
+      border: 0;
+      background: transparent;
+    }
+
+
+    .secondary-figure {
+      margin: 14px 0 12px;
+    }
+
+    .secondary-figure figcaption {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-style: italic;
+      text-align: center;
     }
 
 </style>
@@ -571,11 +583,14 @@
 
             <h3>MŁODOCIANY WYJADACZ OWOCÓW NIE ZWALNIA TEMPA!</h3>
 
-            <img
-              class="secondary-image"
-              src="/assets/chlopiec.png?v=1"
-              alt="Młodociany smakosz owoców"
-            >
+            <figure class="secondary-figure">
+              <img
+                class="secondary-image"
+                src="/assets/chlopiec.png?v=1"
+                alt="Młodociany smakosz owoców"
+              >
+              <figcaption>Portret pamięciowy</figcaption>
+            </figure>
 
             <p>
               Jeszcze niedawno jego specjalnością były <strong>maliny</strong>,
