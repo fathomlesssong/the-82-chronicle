@@ -45,6 +45,10 @@
           <div><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div>
         </div>
       </section>
+      <aside class="home-ad home-ad-mobile" aria-label="Reklama">
+        <p class="ad-label">Reklama</p>
+        <div class="ad-art"><img src="/myslecki-archeologia.png" alt="Myślecki Archeologia" loading="lazy" decoding="async"></div>
+      </aside>
       ${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości">
         <div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div>
         <div class="stories-grid">

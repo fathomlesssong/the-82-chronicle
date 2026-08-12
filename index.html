@@ -6,8 +6,8 @@
   <meta name="description" content="The 82 Chronicle — najświeższe wiadomości, śledztwa i wydarzenia prosto spod numeru 82.">
   <title>The 82 Chronicle</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png?v=4">
-  <link rel="stylesheet" href="/styles.css?v=3">
-  <link rel="stylesheet" href="/mobile.css?v=3">
+  <link rel="stylesheet" href="/styles.css?v=4">
+  <link rel="stylesheet" href="/mobile.css?v=4">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://the82chronicle.vercel.app/">
   <meta property="og:title" content="The 82 Chronicle">
@@ -38,14 +38,16 @@
       <a href="/section.html?section=kacik-kulinarny">Kącik kulinarny</a>
     </nav>
 
-    <main data-home-feed></main>
+    <div class="home-layout">
+      <main data-home-feed></main>
 
-    <aside class="home-ad" aria-label="Reklama">
-      <p class="ad-label">Reklama</p>
-      <div class="ad-art">
-        <img src="/myslecki-archeologia.png" alt="Myślecki Archeologia" loading="lazy" decoding="async">
-      </div>
-    </aside>
+      <aside class="home-ad home-ad-desktop" aria-label="Reklama">
+        <p class="ad-label">Reklama</p>
+        <div class="ad-art">
+          <img src="/myslecki-archeologia.png" alt="Myślecki Archeologia" loading="lazy" decoding="async">
+        </div>
+      </aside>
+    </div>
 
     <footer>The 82 Chronicle • Założono w 2026</footer>
   </div>
@@ -53,6 +55,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
   <script src="/articles.js?v=2"></script>
-  <script src="/site.js?v=6"></script>
+  <script src="/site.js?v=7"></script>
 </body>
 </html>
