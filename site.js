@@ -7,7 +7,7 @@
     'kacik-kulinarny':{name:'Kącik kulinarny',intro:'Smaki, przepisy i kulinarne odkrycia redakcji The 82 Chronicle.'}
   };
   const legacy={'wydarzenia':'aktualnosci','spolecznosc':'aktualnosci','opinie':'aktualnosci','tajemnice':'sledztwa'};
-  const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
+  const esc=s=>String(s??'').replace(/[&<>'\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
   const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const fmtDate=iso=>iso?new Date(iso).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'}):'';
   const normalizeSection=(name,slug)=>{let sectionSlug=slug||slugify(name);sectionSlug=legacy[sectionSlug]||sectionSlug;const info=sections[sectionSlug];return {section:info?.name||name,sectionSlug};};
@@ -57,10 +57,11 @@
   if(home){
     const top=articles.slice(0,6);
     if(!top.length){home.innerHTML='<p class="empty-state">Brak artykułów.</p>';return;}
-    const latest=top[0];
-    const featured=articles.find(a=>a.featured&&a.id!==latest.id)||articles.find(a=>a.id!==latest.id)||latest;
-    const rest=top.filter(a=>a.id!==latest.id&&a.id!==featured.id).slice(0,4);
-    home.innerHTML=`<section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section><section class="featured-story" aria-label="Główny artykuł"><div class="featured-heading"><span class="section-label">Główny artykuł</span></div>${updateBadge(featured)}<h2 class="story-title"><a href="${esc(featured.href)}">${esc(featured.title)}</a></h2><div class="featured-grid">${storyMedia(featured,'eager')}<div><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(metaText(featured))}</div></div></div></section><aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
+    const featured=articles.find(a=>a.featured)||null;
+    const latest=articles.find(a=>!featured||a.id!==featured.id)||featured||top[0];
+    const main=featured||articles.find(a=>a.id!==latest.id)||latest;
+    const rest=top.filter(a=>a.id!==latest.id&&a.id!==main.id).slice(0,4);
+    home.innerHTML=`<section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section><section class="featured-story" aria-label="Główny artykuł"><div class="featured-heading"><span class="section-label">Główny artykuł</span></div>${updateBadge(main)}<h2 class="story-title"><a href="${esc(main.href)}">${esc(main.title)}</a></h2><div class="featured-grid">${storyMedia(main,'eager')}<div><p class="story-summary">${esc(main.summary)}</p><div class="story-meta">${esc(metaText(main))}</div></div></div></section><aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
   }
 
   const sectionList=document.querySelector('[data-section-list]');
