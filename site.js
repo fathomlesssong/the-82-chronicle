@@ -47,7 +47,10 @@
       </section>
       <aside class="home-ad home-ad-mobile" aria-label="Reklama">
         <p class="ad-label">Reklama</p>
-        <div class="ad-art"><img src="/myslecki-archeologia.png" alt="Myślecki Archeologia" loading="lazy" decoding="async"></div>
+        <picture class="ad-art">
+          <source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp">
+          <img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async">
+        </picture>
       </aside>
       ${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości">
         <div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div>
