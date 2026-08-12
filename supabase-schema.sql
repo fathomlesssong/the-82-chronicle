@@ -83,6 +83,15 @@ as $$
   select coalesce(public.current_editor_role() = 'admin', false);
 $$;
 
+-- Funkcje SECURITY DEFINER wspierają RLS, ale nie powinny być dostępne
+-- anonimowo przez Data API.
+revoke all on function public.current_editor_role() from public, anon;
+revoke all on function public.is_editor_or_admin() from public, anon;
+revoke all on function public.is_admin() from public, anon;
+grant execute on function public.current_editor_role() to authenticated, service_role;
+grant execute on function public.is_editor_or_admin() to authenticated, service_role;
+grant execute on function public.is_admin() to authenticated, service_role;
+
 create table if not exists public.articles (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -148,11 +157,25 @@ begin
   if tg_op = 'INSERT' then
     new.created_by = coalesce(new.created_by, auth.uid());
     new.author_id = coalesce(new.author_id, auth.uid());
+  else
+    -- Pola audytowe nie mogą być przepisywane przez żądanie klienta.
+    new.created_at = old.created_at;
+    new.created_by = old.created_by;
+    new.published_by = old.published_by;
+    new.submitted_at = old.submitted_at;
+
+    if public.current_editor_role() = 'author' then
+      new.author_id = old.author_id;
+      new.published_at = old.published_at;
+    end if;
   end if;
-  new.updated_by = auth.uid();
+
+  if auth.uid() is not null then
+    new.updated_by = auth.uid();
+  end if;
 
   if new.status = 'review' and (tg_op = 'INSERT' or old.status is distinct from 'review') then
-    new.submitted_at = coalesce(new.submitted_at, now());
+    new.submitted_at = now();
   end if;
 
   if new.status = 'published' and (tg_op = 'INSERT' or old.status is distinct from 'published') then
@@ -182,14 +205,29 @@ for each row execute function public.set_article_audit_fields();
 alter table public.profiles enable row level security;
 alter table public.articles enable row level security;
 
+-- Jawne granty chronią także projekty z nowszymi, opt-in defaults Supabase.
+-- RLS decyduje o wierszach, a granty o operacjach i kolumnach.
+revoke all on table public.profiles from anon, authenticated;
+revoke all on table public.articles from anon, authenticated;
+grant select on table public.articles to anon, authenticated;
+grant insert, update, delete on table public.articles to authenticated;
+grant select on table public.profiles to authenticated;
+grant update (display_name) on table public.profiles to authenticated;
+grant select, insert, update, delete on table public.profiles, public.articles to service_role;
+
 drop policy if exists "staff can read profiles" on public.profiles;
-create policy "staff can read profiles" on public.profiles for select to authenticated
-using (public.current_editor_role() is not null);
+drop policy if exists "users can read own profile" on public.profiles;
+create policy "users can read own profile" on public.profiles for select to authenticated
+using (id = (select auth.uid()) and active = true);
+
+drop policy if exists "admins can read profiles" on public.profiles;
+create policy "admins can read profiles" on public.profiles for select to authenticated
+using ((select public.is_admin()));
 
 drop policy if exists "users can update own display name" on public.profiles;
 create policy "users can update own display name" on public.profiles for update to authenticated
-using (id = auth.uid() and active = true)
-with check (id = auth.uid() and active = true);
+using (id = (select auth.uid()) and active = true)
+with check (id = (select auth.uid()) and active = true);
 
 drop policy if exists "public can read published articles" on public.articles;
 create policy "public can read published articles" on public.articles for select to anon
@@ -197,34 +235,40 @@ using (status = 'published');
 
 drop policy if exists "staff can read permitted articles" on public.articles;
 create policy "staff can read permitted articles" on public.articles for select to authenticated
-using (status = 'published' or author_id = auth.uid() or public.is_editor_or_admin());
+using (
+  status = 'published'
+  or (
+    (select public.current_editor_role()) is not null
+    and (author_id = (select auth.uid()) or (select public.is_editor_or_admin()))
+  )
+);
 
 drop policy if exists "authors can create own drafts" on public.articles;
 create policy "authors can create own drafts" on public.articles for insert to authenticated
 with check (
-  public.current_editor_role() is not null
-  and author_id = auth.uid()
-  and created_by = auth.uid()
-  and ((public.current_editor_role() = 'author' and status in ('draft','review') and featured = false) or public.is_editor_or_admin())
+  (select public.current_editor_role()) is not null
+  and author_id = (select auth.uid())
+  and created_by = (select auth.uid())
+  and (((select public.current_editor_role()) = 'author' and status in ('draft','review') and featured = false) or (select public.is_editor_or_admin()))
 );
 
 drop policy if exists "authors can update own unpublished articles" on public.articles;
 create policy "authors can update own unpublished articles" on public.articles for update to authenticated
-using (author_id = auth.uid() and public.current_editor_role() = 'author' and status in ('draft','review'))
-with check (author_id = auth.uid() and status in ('draft','review') and featured = false);
+using (author_id = (select auth.uid()) and (select public.current_editor_role()) = 'author' and status in ('draft','review'))
+with check (author_id = (select auth.uid()) and status in ('draft','review') and featured = false);
 
 drop policy if exists "editors can update all articles" on public.articles;
 create policy "editors can update all articles" on public.articles for update to authenticated
-using (public.is_editor_or_admin())
-with check (public.is_editor_or_admin());
+using ((select public.is_editor_or_admin()))
+with check ((select public.is_editor_or_admin()));
 
 drop policy if exists "authors can delete own drafts" on public.articles;
 create policy "authors can delete own drafts" on public.articles for delete to authenticated
-using (author_id = auth.uid() and public.current_editor_role() = 'author' and status = 'draft');
+using (author_id = (select auth.uid()) and (select public.current_editor_role()) = 'author' and status = 'draft');
 
 drop policy if exists "editors can delete articles" on public.articles;
 create policy "editors can delete articles" on public.articles for delete to authenticated
-using (public.is_editor_or_admin());
+using ((select public.is_editor_or_admin()));
 
 insert into storage.buckets (id, name, public)
 values ('article-images','article-images',true)
@@ -236,16 +280,28 @@ using (bucket_id = 'article-images');
 
 drop policy if exists "staff can upload own article images" on storage.objects;
 create policy "staff can upload own article images" on storage.objects for insert to authenticated
-with check (bucket_id = 'article-images' and public.current_editor_role() is not null and (storage.foldername(name))[1] = auth.uid()::text);
+with check (bucket_id = 'article-images' and (select public.current_editor_role()) is not null and (storage.foldername(name))[1] = (select auth.uid())::text);
 
 drop policy if exists "staff can update permitted article images" on storage.objects;
 create policy "staff can update permitted article images" on storage.objects for update to authenticated
-using (bucket_id = 'article-images' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_editor_or_admin()))
-with check (bucket_id = 'article-images');
+using (
+  bucket_id = 'article-images'
+  and (select public.current_editor_role()) is not null
+  and ((storage.foldername(name))[1] = (select auth.uid())::text or (select public.is_editor_or_admin()))
+)
+with check (
+  bucket_id = 'article-images'
+  and (select public.current_editor_role()) is not null
+  and ((storage.foldername(name))[1] = (select auth.uid())::text or (select public.is_editor_or_admin()))
+);
 
 drop policy if exists "staff can delete permitted article images" on storage.objects;
 create policy "staff can delete permitted article images" on storage.objects for delete to authenticated
-using (bucket_id = 'article-images' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_editor_or_admin()));
+using (
+  bucket_id = 'article-images'
+  and (select public.current_editor_role()) is not null
+  and ((storage.foldername(name))[1] = (select auth.uid())::text or (select public.is_editor_or_admin()))
+);
 
 -- Pierwszy administrator po utworzeniu konta:
 -- update public.profiles set role='admin' where email='TWOJ_EMAIL';

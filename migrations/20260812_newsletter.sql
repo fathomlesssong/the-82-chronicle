@@ -15,7 +15,8 @@ create table if not exists public.subscribers (
 );
 
 alter table public.subscribers enable row level security;
-revoke all on table public.subscribers from anon, authenticated;
+revoke all on table public.subscribers from public, anon, authenticated;
+grant select, insert, update, delete on table public.subscribers to service_role;
 
 alter table public.articles add column if not exists newsletter_teaser text;
 alter table public.articles add column if not exists newsletter_update_excerpt text;

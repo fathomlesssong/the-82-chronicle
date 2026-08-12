@@ -27,8 +27,9 @@ RLS jest włączone, a role `anon` i `authenticated` nie mają bezpośrednich pr
 | Zmienna | Zakres | Znaczenie |
 | --- | --- | --- |
 | `SUPABASE_URL` | server | adres projektu Supabase |
-| `SUPABASE_ANON_KEY` | server | weryfikacja sesji redaktora |
-| `SUPABASE_SERVICE_ROLE_KEY` | server, sekret | zapis odbiorców i odczyt listy |
+| `SUPABASE_ANON_KEY` | klient/server | publishable lub starszy anon; weryfikacja sesji redaktora |
+| `SUPABASE_SERVICE_ROLE_KEY` | server, sekret | secret lub starszy service_role; zapis odbiorców i odczyt listy |
+| `SUPABASE_SECRET_KEY` | server, sekret, opcjonalna | nowa nazwa dla `sb_secret_*`; ma pierwszeństwo |
 | `SITE_URL` | server | bazowy adres linków, bez końcowego `/` |
 | `RESEND_API_KEY` | server, sekret | klucz Resend; brak wyłącza wysyłkę |
 | `NEWSLETTER_FROM` | server | nadawca z domeny zweryfikowanej w Resend |

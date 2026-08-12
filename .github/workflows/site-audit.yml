@@ -26,3 +26,7 @@ jobs:
         run: node scripts/audit-site.mjs
       - name: Newsletter skeleton
         run: node scripts/test-newsletter.cjs
+      - name: Supabase server configuration
+        run: node scripts/test-supabase-server.cjs
+      - name: API safety guards
+        run: node scripts/test-api-guards.cjs

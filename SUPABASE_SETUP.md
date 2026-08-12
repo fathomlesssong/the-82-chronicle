@@ -6,8 +6,8 @@ Ten plik opisuje jedyne kroki, których nie da się wykonać bez dostępu do pan
 
 Potrzebne będą:
 - Project URL
-- anon/public key
-- service_role key
+- publishable key (lub starszy `anon`)
+- secret key (lub starszy `service_role`)
 
 Nigdy nie wpisuj `service_role` do plików HTML ani JS ładowanych przez przeglądarkę.
 
@@ -26,6 +26,7 @@ Schema tworzy:
 - RLS zależne od roli
 - Storage `article-images`
 - unikalny główny artykuł
+- jawne granty Data API i blokadę samodzielnej zmiany roli przez użytkownika
 
 Seed importuje obecne trzy artykuły Chronicle.
 
@@ -43,11 +44,13 @@ where email='TWOJ_EMAIL';
 
 Publiczną rejestrację użytkowników wyłącz. Nowe osoby mają trafiać do redakcji przez zaproszenie administratora.
 
+W **Authentication → URL Configuration** ustaw docelowy `Site URL` i dodaj do `Redirect URLs` adres panelu preview oraz docelowe `/admin.html`, zanim zaczniesz testować zaproszenia.
+
 ## 4. Konfiguracja klienta
 
 W `supabase-config.js` wpisz wyłącznie dane publiczne:
 - Project URL
-- anon/public key
+- publishable key (lub starszy `anon`)
 
 Nie wpisuj tam `service_role`.
 
@@ -55,14 +58,14 @@ Nie wpisuj tam `service_role`.
 
 W projekcie Vercel ustaw:
 - `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_ANON_KEY` — wartość publishable albo starszy `anon`
+- `SUPABASE_SERVICE_ROLE_KEY` — wartość secret albo starszy `service_role`
 - `SITE_URL=https://the82chronicle.vercel.app`
 - `RESEND_API_KEY` (pozostaw puste do czasu prawdziwej wysyłki)
 - `NEWSLETTER_FROM`
 - `NEWSLETTER_SIGNING_SECRET`
 
-`SUPABASE_SERVICE_ROLE_KEY` jest używany wyłącznie przez funkcje server-side. Pełne objaśnienie newslettera znajduje się w `NEWSLETTER_SETUP.md`.
+Opcjonalnie nowy klucz `sb_secret_*` można zapisać jako `SUPABASE_SECRET_KEY`; ma wtedy pierwszeństwo. Oba warianty sekretu są używane wyłącznie przez funkcje server-side. Pełne objaśnienie newslettera znajduje się w `NEWSLETTER_SETUP.md`.
 
 ## 6. Test ról
 
