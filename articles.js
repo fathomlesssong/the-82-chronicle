@@ -9,7 +9,7 @@ window.CH82_ARTICLES=[
     summary:"Jeszcze niedawno jego specjalnością były maliny. W ostatni weekend młodociany smakosz oskubał śliwkę do ostatniego owocu.",
     image:"/assets/chlopiec.png?v=1",
     alt:"Portret pamięciowy młodocianego wyjadacza owoców",
-    href:"/index.html#mlodociany-wyjadacz-owocow",
+    href:"/articles/2026-08-11-mlodociany-wyjadacz-owocow.html",
     featured:false
   },
   {
@@ -22,7 +22,7 @@ window.CH82_ARTICLES=[
     summary:"Naprawa uszkodzonych schodów trwa. I trwa. Bezpieczeństwo jest zapewnione, cierpliwość mieszkańców już trochę mniej.",
     image:"/assets/schody.png?v=1",
     alt:"Schody w trakcie naprawy",
-    href:"/index.html#schody-w-naprawie",
+    href:"/articles/2026-08-11-schody-w-naprawie.html",
     featured:false
   },
   {
