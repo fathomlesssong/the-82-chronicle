@@ -10,7 +10,8 @@ window.CH82_ARTICLES=[
     image:"/assets/chlopiec.png?v=1",
     alt:"Portret pamięciowy młodocianego wyjadacza owoców",
     href:"/articles/2026-08-11-mlodociany-wyjadacz-owocow.html",
-    featured:false
+    featured:false,
+    updated:false
   },
   {
     id:"schody-w-naprawie",
@@ -23,7 +24,9 @@ window.CH82_ARTICLES=[
     image:"/assets/schody.png?v=1",
     alt:"Schody w trakcie naprawy",
     href:"/articles/2026-08-11-schody-w-naprawie.html",
-    featured:false
+    featured:false,
+    updated:true,
+    updateDate:"11 sierpnia 2026"
   },
   {
     id:"horror-w-slotwinie",
@@ -36,6 +39,7 @@ window.CH82_ARTICLES=[
     image:"/assets/martwa-mysz.jpeg?v=1",
     alt:"Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82",
     href:"/articles/2026-08-10-horror-w-slotwinie.html",
-    featured:true
+    featured:true,
+    updated:false
   }
 ];
