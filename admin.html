@@ -74,7 +74,9 @@
                 <p class="admin-help">Wiadomość zostanie wysłana dopiero po zapisaniu opublikowanego artykułu. Przy zaznaczonej aktualizacji otrzyma nagłówek „AKTUALIZACJA” i użyje nowego fragmentu.</p>
               </fieldset>
               <label>Zdjęcie<input type="file" name="image" accept="image/*"></label>
-              <label>Opis zdjęcia<input type="text" name="image_alt" maxlength="240"></label>
+              <label>Opis alternatywny zdjęcia (ALT)<input type="text" name="image_alt" maxlength="240" placeholder="Krótki opis tego, co widać na zdjęciu"></label>
+              <label>Podpis pod zdjęciem<input type="text" name="image_caption" maxlength="300" placeholder="Opcjonalny podpis widoczny pod zdjęciem"></label>
+              <label>Autor / źródło zdjęcia<input type="text" name="image_credit" maxlength="160" placeholder="np. fot. Michał lub Archiwum The 82 Chronicle"></label>
               <label data-published-at-field>Data publikacji<input type="datetime-local" name="published_at"></label>
               <label class="check-row"><input type="checkbox" name="is_updated" data-update-toggle> Oznacz jako aktualizację</label>
               <label data-update-at-field hidden>Data aktualizacji<input type="datetime-local" name="update_at"></label>
@@ -127,6 +129,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=5"></script>
+  <script src="/admin.js?v=6"></script>
 </body>
 </html>
