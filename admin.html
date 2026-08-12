@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" href="/assets/favicon.png?v=4">
   <link rel="stylesheet" href="/styles.css?v=4">
   <link rel="stylesheet" href="/mobile.css?v=5">
-  <link rel="stylesheet" href="/front-final.css?v=1">
+  <link rel="stylesheet" href="/front-final.css?v=3">
 </head>
 <body>
   <div class="page admin-page">
@@ -60,6 +60,9 @@
               <label>Zdjęcie<input type="file" name="image" accept="image/*"></label>
               <label>Opis zdjęcia<input type="text" name="image_alt" maxlength="240"></label>
               <label data-published-at-field>Data publikacji<input type="datetime-local" name="published_at"></label>
+              <label class="check-row"><input type="checkbox" name="is_updated" data-update-toggle> Oznacz jako aktualizację</label>
+              <label data-update-at-field hidden>Data aktualizacji<input type="datetime-local" name="update_at"></label>
+              <p class="admin-help">Po zaznaczeniu na stronie pojawi się wyraźne oznaczenie „Aktualizacja” przy tytule artykułu.</p>
               <label class="check-row" data-featured-field><input type="checkbox" name="featured"> Główny artykuł</label>
               <label>Status
                 <select name="status" data-status-select>
@@ -108,6 +111,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=3"></script>
+  <script src="/admin.js?v=4"></script>
 </body>
 </html>
