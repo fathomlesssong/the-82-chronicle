@@ -33,6 +33,8 @@
   const featuredField=document.querySelector('[data-featured-field]');
   const publishedAtField=document.querySelector('[data-published-at-field]');
   const statusSelect=document.querySelector('[data-status-select]');
+  const updateToggle=document.querySelector('[data-update-toggle]');
+  const updateAtField=document.querySelector('[data-update-at-field]');
 
   let db=null;
   let currentSession=null;
@@ -44,6 +46,12 @@
     return;
   }
   db=window.supabase.createClient(cfg.url,cfg.anonKey);
+
+  const syncUpdateUi=()=>{
+    const checked=!!updateToggle?.checked;
+    if(updateAtField)updateAtField.hidden=!checked;
+    if(checked&&articleForm&&!articleForm.elements.update_at.value)articleForm.elements.update_at.value=fmtLocal();
+  };
 
   const configureRoleUi=()=>{
     const role=currentProfile?.role;
@@ -58,14 +66,16 @@
     });
     workflowHelp.textContent=role==='author'
       ? 'Twórz szkice i przekazuj je do akceptacji. Publikację wykonuje Redaktor lub Administrator.'
-      : 'Możesz poprawiać teksty, publikować je i wybierać główny artykuł.';
+      : 'Możesz poprawiać teksty, publikować je, oznaczać aktualizacje i wybierać główny artykuł.';
     listHelp.textContent=role==='author'?'Widoczne są Twoje teksty.':'Widoczne są wszystkie teksty redakcji.';
+    syncUpdateUi();
   };
 
   const resetForm=()=>{
     articleForm.reset();
     articleForm.elements.id.value='';
     articleForm.elements.published_at.value=fmtLocal();
+    articleForm.elements.update_at.value='';
     articleForm.elements.status.value='draft';
     formTitle.textContent='Nowy artykuł';
     status(formStatus,'');
@@ -78,7 +88,7 @@
     if(currentProfile.role==='author')q=q.eq('author_id',currentSession.user.id);
     const {data,error}=await q;
     if(error){list.innerHTML=`<p class="admin-status is-error">${esc(error.message)}</p>`;return;}
-    list.innerHTML=data.length?data.map(a=>`<article class="admin-list-item"><div><span class="section-label">${esc(a.section)} • ${esc(statusNames[a.status]||a.status)}</span><h3>${esc(a.title)}</h3><p>${new Date(a.updated_at||a.created_at).toLocaleString('pl-PL')}</p></div><button type="button" class="button-secondary" data-edit="${esc(a.id)}">Edytuj</button></article>`).join(''):'<p class="admin-help">Brak artykułów.</p>';
+    list.innerHTML=data.length?data.map(a=>`<article class="admin-list-item"><div><span class="section-label">${esc(a.section)} • ${esc(statusNames[a.status]||a.status)}${a.is_updated?' • Aktualizacja':''}</span><h3>${esc(a.title)}</h3><p>${new Date(a.updated_at||a.created_at).toLocaleString('pl-PL')}</p></div><button type="button" class="button-secondary" data-edit="${esc(a.id)}">Edytuj</button></article>`).join(''):'<p class="admin-help">Brak artykułów.</p>';
     list.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>editArticle(btn.dataset.edit,data)));
   };
 
@@ -91,10 +101,13 @@
     articleForm.elements.content.value=a.content||'';
     articleForm.elements.image_alt.value=a.image_alt||'';
     articleForm.elements.published_at.value=fmtLocal(a.published_at||new Date());
+    articleForm.elements.is_updated.checked=!!a.is_updated;
+    articleForm.elements.update_at.value=a.update_at?fmtLocal(a.update_at):'';
     articleForm.elements.featured.checked=!!a.featured;
     articleForm.elements.status.value=currentProfile.role==='author'&&a.status==='published'?'draft':(a.status||'draft');
     formTitle.textContent='Edytuj artykuł';
     configureRoleUi();
+    syncUpdateUi();
     articleForm.scrollIntoView({behavior:'smooth',block:'start'});
   };
 
@@ -151,6 +164,7 @@
 
   document.querySelector('[data-logout]').addEventListener('click',()=>db.auth.signOut());
   document.querySelector('[data-reset-form]').addEventListener('click',resetForm);
+  updateToggle?.addEventListener('change',syncUpdateUi);
 
   articleForm.addEventListener('submit',async e=>{
     e.preventDefault();status(formStatus,'Zapisywanie…');
@@ -163,6 +177,7 @@
     let desiredStatus=String(fd.get('status')||'draft');
     if(currentProfile.role==='author'&&!['draft','review'].includes(desiredStatus))desiredStatus='review';
     const canPublish=currentProfile.role==='editor'||currentProfile.role==='admin';
+    const isUpdated=fd.get('is_updated')==='on';
 
     let imageUrl=null;
     const image=fd.get('image');
@@ -184,6 +199,8 @@
       content:String(fd.get('content')).trim(),
       image_alt:String(fd.get('image_alt')||'').trim(),
       status:desiredStatus,
+      is_updated:isUpdated,
+      update_at:isUpdated?(fd.get('update_at')?new Date(fd.get('update_at')).toISOString():new Date().toISOString()):null,
       featured:canPublish&&desiredStatus==='published'&&fd.get('featured')==='on',
       author_id:id?undefined:currentSession.user.id,
       created_by:id?undefined:currentSession.user.id
@@ -200,7 +217,7 @@
     const q=id?db.from('articles').update(payload).eq('id',id):db.from('articles').insert(payload);
     const {error}=await q;
     if(error){status(formStatus,error.message,true);return;}
-    status(formStatus,desiredStatus==='review'?'Przekazano do akceptacji.':'Zapisano.');
+    status(formStatus,desiredStatus==='review'?'Przekazano do akceptacji.':(isUpdated?'Zapisano jako aktualizację.':'Zapisano.'));
     resetForm();
     await loadArticles();
   });
