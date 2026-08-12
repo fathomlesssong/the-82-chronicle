@@ -14,6 +14,14 @@
   const normalizeArticle=a=>({...a,...normalizeSection(a.section,a.sectionSlug)});
   const fallback=[...(window.CH82_ARTICLES||[])].map(normalizeArticle);
   const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/a/${encodeURIComponent(a.slug)}`,featured:!!a.featured,sort:new Date(a.published_at||a.created_at).getTime(),date:fmtDate(a.published_at||a.created_at)});
+  const setCanonical=url=>{
+    let link=document.querySelector('link[rel="canonical"]');
+    if(!link){link=document.createElement('link');link.rel='canonical';document.head.appendChild(link);}
+    link.href=url;
+  };
+
+  if(window.CH82_SUPABASE_READY)await window.CH82_SUPABASE_READY;
+
   const loadArticles=async()=>{
     const cfg=window.CH82_SUPABASE||{};
     if(cfg.url&&cfg.anonKey&&window.supabase){
@@ -51,6 +59,7 @@
     const count=document.querySelector('[data-list-count]');if(count)count.textContent=`${filtered.length} ${filtered.length===1?'artykuł':'artykuły'}`;
     document.title=`${sectionInfo.name} • The 82 Chronicle`;
     document.querySelector('meta[name="description"]')?.setAttribute('content',`${sectionInfo.name} — artykuły The 82 Chronicle.`);
+    setCanonical(`https://the82chronicle.vercel.app/section.html?section=${encodeURIComponent(requestedSection)}`);
     sectionList.setAttribute('aria-label',`Artykuły w dziale ${sectionInfo.name}`);
     navCurrent(requestedSection);
     sectionList.innerHTML=filtered.length?filtered.map((a,i)=>`<article class="archive-entry${i===0?' section-lead':''}">${storyMedia(a,i===0?'high':'lazy')}${storyText(a,true)}</article>`).join(''):`<p class="empty-state">W dziale ${esc(sectionInfo.name)} nie ma jeszcze artykułów.</p>`;
@@ -58,6 +67,7 @@
 
   const archive=document.querySelector('[data-archive-list]');
   if(archive){
+    setCanonical('https://the82chronicle.vercel.app/archive.html');
     navCurrent('');
     const count=document.querySelector('[data-list-count]');if(count)count.textContent=`${articles.length} ${articles.length===1?'artykuł':'artykuły'}`;
     archive.innerHTML=articles.length?articles.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a,true)}</article>`).join(''):'<p class="empty-state">Archiwum jest jeszcze puste.</p>';
