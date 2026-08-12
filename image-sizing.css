@@ -1,0 +1,17 @@
+/* Duże zdjęcia zachowują pełny kadr, ale pionowe nie mogą przejąć całej strony. */
+.featured-grid .media{display:flex;justify-content:center;align-items:flex-start}
+.featured-grid .story-image{width:auto!important;height:auto!important;max-width:100%;max-height:min(58vh,560px);object-fit:contain;margin-inline:auto}
+.article-hero{text-align:center}
+.article-hero img{display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:min(72vh,680px)!important;object-fit:contain;margin-inline:auto}
+.article-hero figcaption{text-align:left}
+
+@media(max-width:1100px){
+  .featured-grid .story-image{max-height:min(56vh,480px)}
+  .article-hero img{max-height:min(68vh,620px)!important}
+}
+
+@media(max-width:700px){
+  .featured-grid .story-image{max-height:420px}
+  .article-hero{margin-left:0!important;margin-right:0!important}
+  .article-hero img{max-height:65vh!important;border-left:1px solid var(--line)!important;border-right:1px solid var(--line)!important}
+}
