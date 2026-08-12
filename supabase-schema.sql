@@ -96,6 +96,8 @@ create table if not exists public.articles (
   published_at timestamptz,
   featured boolean not null default false,
   status text not null default 'draft',
+  is_updated boolean not null default false,
+  update_at timestamptz,
   author_id uuid references public.profiles(id) on delete set null,
   created_by uuid references public.profiles(id) on delete set null,
   updated_by uuid references public.profiles(id) on delete set null,
@@ -110,6 +112,8 @@ alter table public.articles add column if not exists created_by uuid references 
 alter table public.articles add column if not exists updated_by uuid references public.profiles(id) on delete set null;
 alter table public.articles add column if not exists published_by uuid references public.profiles(id) on delete set null;
 alter table public.articles add column if not exists submitted_at timestamptz;
+alter table public.articles add column if not exists is_updated boolean not null default false;
+alter table public.articles add column if not exists update_at timestamptz;
 alter table public.articles alter column published_at drop not null;
 alter table public.articles alter column published_at drop default;
 
@@ -154,6 +158,12 @@ begin
   if new.status = 'published' and (tg_op = 'INSERT' or old.status is distinct from 'published') then
     new.published_at = coalesce(new.published_at, now());
     new.published_by = auth.uid();
+  end if;
+
+  if new.is_updated then
+    new.update_at = coalesce(new.update_at, now());
+  else
+    new.update_at = null;
   end if;
 
   if new.status <> 'published' then
