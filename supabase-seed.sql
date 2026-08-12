@@ -68,7 +68,7 @@ CZY MIESZKAŃCY SŁOTWINY MOGĄ CZUĆ SIĘ BEZPIECZNIE?
 Na razie nic nie wskazuje na to, by w okolicy działała zorganizowana grupa myszy zajmujących instalacje elektryczne. Ale jeszcze wczoraj nic nie wskazywało również na to, że z kontaktu może patrzeć trup gryzonia.
 
 The 82 Chronicle będzie monitorować sytuację.$$
-,'/assets/martwa-mysz.png?v=4','Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82','published',true,'2026-08-10T12:00:00+02:00'
+,'/assets/martwa-mysz.jpeg?v=1','Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82','published',true,'2026-08-10T12:00:00+02:00'
 )
 on conflict (slug) do update set
   title=excluded.title,
