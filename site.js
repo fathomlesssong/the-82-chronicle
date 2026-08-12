@@ -21,12 +21,25 @@
   };
 
   if(window.CH82_SUPABASE_READY)await window.CH82_SUPABASE_READY;
+  const cfg=window.CH82_SUPABASE||{};
+  const db=cfg.url&&cfg.anonKey&&window.supabase?window.supabase.createClient(cfg.url,cfg.anonKey):null;
+
+  const syncEditorLink=async()=>{
+    const link=document.querySelector('[data-editor-link]');
+    if(!link||!db)return;
+    try{
+      const {data:{session}}=await db.auth.getSession();
+      if(!session){link.hidden=true;return;}
+      const {data:profile,error}=await db.from('profiles').select('role,active').eq('id',session.user.id).maybeSingle();
+      link.hidden=!!error||!profile?.active||!['author','editor','admin'].includes(profile.role);
+    }catch(_e){link.hidden=true;}
+  };
+  await syncEditorLink();
+  db?.auth.onAuthStateChange(()=>syncEditorLink());
 
   const loadArticles=async()=>{
-    const cfg=window.CH82_SUPABASE||{};
-    if(cfg.url&&cfg.anonKey&&window.supabase){
+    if(db){
       try{
-        const db=window.supabase.createClient(cfg.url,cfg.anonKey);
         const {data,error}=await db.from('articles').select('*').eq('status','published').order('published_at',{ascending:false});
         if(!error&&data?.length)return data.map(mapDb);
       }catch(_e){}
