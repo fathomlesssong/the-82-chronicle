@@ -25,6 +25,8 @@ Frontend pozostaje lekki i oparty głównie na statycznym HTML/CSS/JS.
 - `articles.js` — fallback do czasu pełnej migracji Supabase
 - `supabase-schema.sql` — schema, role i RLS
 - `supabase-seed.sql` — import obecnych artykułów
+- `migrations/20260812_newsletter.sql` — minimalna lista odbiorców i pola wysyłki
+- `newsletter.js` + `api/newsletter-*.js` — zapis, wypisanie i bezpieczna wysyłka przez Resend
 - `api/` — funkcje Vercel do operacji wymagających klucza serwerowego
 
 ## Role redakcyjne
@@ -97,3 +99,5 @@ Kroki wymagające Supabase/Vercel są opisane w:
 Finalna checklista przed produkcją:
 
 `DEPLOY_CHECKLIST.md`
+
+Konfiguracja newslettera i Resend: `NEWSLETTER_SETUP.md`.

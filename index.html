@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/styles.css?v=4">
   <link rel="stylesheet" href="/mobile.css?v=5">
   <link rel="stylesheet" href="/front-final.css?v=4">
+  <link rel="stylesheet" href="/newsletter.css?v=1">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://the82chronicle.vercel.app/">
   <meta property="og:title" content="The 82 Chronicle">
@@ -55,6 +56,23 @@
       </aside>
     </div>
 
+    <section class="newsletter-signup" aria-labelledby="newsletter-title">
+      <div>
+        <span class="section-label">Prosto spod numeru 82</span>
+        <h2 id="newsletter-title">Rodzinny newsletter Chronicle</h2>
+        <p>Nowe artykuły i najważniejsze aktualizacje, bez marketingowego zamieszania.</p>
+      </div>
+      <form class="newsletter-form" data-newsletter-form novalidate>
+        <label for="newsletter-email">Adres e-mail</label>
+        <div class="newsletter-form-row">
+          <input id="newsletter-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="rodzina@example.com" required>
+          <button type="submit">Zapisz mnie</button>
+        </div>
+        <label class="newsletter-honeypot" aria-hidden="true">Firma<input name="company" type="text" tabindex="-1" autocomplete="off"></label>
+        <p class="newsletter-status" data-newsletter-status role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
     <footer>The 82 Chronicle • Założono w 2026</footer>
   </div>
 
@@ -62,5 +80,6 @@
   <script src="/supabase-loader.js?v=1"></script>
   <script src="/articles.js?v=3"></script>
   <script src="/site.js?v=10"></script>
+  <script src="/newsletter.js?v=1"></script>
 </body>
 </html>

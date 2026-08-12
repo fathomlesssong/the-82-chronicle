@@ -16,6 +16,7 @@ Nigdy nie wpisuj `service_role` do plików HTML ani JS ładowanych przez przegl�
 W Supabase SQL Editor uruchom kolejno:
 1. `supabase-schema.sql`
 2. `supabase-seed.sql`
+3. `migrations/20260812_newsletter.sql`
 
 Schema tworzy:
 - `profiles`
@@ -27,6 +28,8 @@ Schema tworzy:
 - unikalny główny artykuł
 
 Seed importuje obecne trzy artykuły Chronicle.
+
+Migracja newslettera tworzy minimalną tabelę `subscribers` oraz pola zajawki i znaczników wysyłki w `articles`. Tabela nie jest dostępna bezpośrednio dla klienta.
 
 ## 3. Pierwszy administrator
 
@@ -55,8 +58,11 @@ W projekcie Vercel ustaw:
 - `SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SITE_URL=https://the82chronicle.vercel.app`
+- `RESEND_API_KEY` (pozostaw puste do czasu prawdziwej wysyłki)
+- `NEWSLETTER_FROM`
+- `NEWSLETTER_SIGNING_SECRET`
 
-`SUPABASE_SERVICE_ROLE_KEY` jest używany tylko przez `/api/invite-editor` i `/api/update-user`.
+`SUPABASE_SERVICE_ROLE_KEY` jest używany wyłącznie przez funkcje server-side. Pełne objaśnienie newslettera znajduje się w `NEWSLETTER_SETUP.md`.
 
 ## 6. Test ról
 

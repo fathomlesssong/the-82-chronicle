@@ -52,8 +52,12 @@ for(const file of htmlFiles){
 
 const publicPages=['index.html','archive.html','section.html','404.html'];
 for(const p of publicPages)if(!existing.has(p))errors.push(`Brak wymaganej strony: ${p}`);
-const required=['robots.txt','sitemap.xml','manifest.webmanifest','styles.css','front-final.css','site.js','articles.js'];
+const required=['robots.txt','sitemap.xml','manifest.webmanifest','styles.css','front-final.css','newsletter.css','site.js','articles.js','newsletter.js','api/newsletter-subscribe.js','api/newsletter-unsubscribe.js','api/newsletter-send.js','lib/newsletter.js','migrations/20260812_newsletter.sql','scripts/test-newsletter.cjs'];
 for(const p of required)if(!existing.has(p))errors.push(`Brak wymaganego pliku: ${p}`);
+
+const homepage=fs.readFileSync(path.join(root,'index.html'),'utf8');
+if(!/data-newsletter-form/.test(homepage))errors.push('index.html: brak formularza newslettera');
+if(!/\/api\/newsletter-subscribe/.test(fs.readFileSync(path.join(root,'newsletter.js'),'utf8')))errors.push('newsletter.js: brak połączenia z endpointem zapisu');
 
 console.log(`Audyt: ${htmlFiles.length} plików HTML, ${refs.length} lokalnych odwołań.`);
 for(const w of warnings)console.warn(`WARN: ${w}`);

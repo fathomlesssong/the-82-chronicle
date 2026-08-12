@@ -13,6 +13,13 @@
   const status=(el,msg,bad=false)=>{if(!el)return;el.textContent=msg;el.classList.toggle('is-error',bad)};
   const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,90);
   const fmtLocal=iso=>{const d=iso?new Date(iso):new Date();const z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`};
+  const newsletterExcerpt=(summary,content,max=440)=>{
+    const clean=s=>String(s||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    const lead=clean(summary);const body=clean(content);
+    const joined=body&&lead&&!body.toLowerCase().startsWith(lead.toLowerCase())?`${lead} ${body}`:(body||lead);
+    if(joined.length<=max)return joined;
+    return `${joined.slice(0,max+1).replace(/\s+\S*$/,'').replace(/[\s,;:.-]+$/,'')}…`;
+  };
 
   const loginPanel=document.querySelector('[data-login-panel]');
   const shell=document.querySelector('[data-admin-shell]');
@@ -35,6 +42,11 @@
   const statusSelect=document.querySelector('[data-status-select]');
   const updateToggle=document.querySelector('[data-update-toggle]');
   const updateAtField=document.querySelector('[data-update-at-field]');
+  const newsletterPanel=document.querySelector('[data-newsletter-panel]');
+  const sendNewsletter=document.querySelector('[data-send-newsletter]');
+  const newsletterUpdateField=document.querySelector('[data-newsletter-update-field]');
+  const newsletterCount=document.querySelector('[data-newsletter-count]');
+  const generateNewsletter=document.querySelector('[data-generate-newsletter]');
 
   let db=null;
   let currentSession=null;
@@ -47,10 +59,22 @@
   }
   db=window.supabase.createClient(cfg.url,cfg.anonKey);
 
+  const fillNewsletterTeaser=(force=false)=>{
+    const field=articleForm?.elements.newsletter_teaser;if(!field)return;
+    if(force||!field.value.trim())field.value=newsletterExcerpt(articleForm.elements.summary.value,articleForm.elements.content.value);
+  };
+
+  const syncNewsletterUi=()=>{
+    if(newsletterUpdateField)newsletterUpdateField.hidden=!updateToggle?.checked;
+    const length=articleForm?.elements.newsletter_teaser?.value.length||0;
+    if(newsletterCount)newsletterCount.textContent=`${length}/500 znaków`;
+  };
+
   const syncUpdateUi=()=>{
     const checked=!!updateToggle?.checked;
     if(updateAtField)updateAtField.hidden=!checked;
     if(checked&&articleForm&&!articleForm.elements.update_at.value)articleForm.elements.update_at.value=fmtLocal();
+    syncNewsletterUi();
   };
 
   const configureRoleUi=()=>{
@@ -58,6 +82,8 @@
     const canPublish=role==='editor'||role==='admin';
     featuredField.hidden=!canPublish;
     publishedAtField.hidden=!canPublish;
+    newsletterPanel.hidden=!canPublish;
+    if(sendNewsletter)sendNewsletter.disabled=!canPublish;
     usersPanel.hidden=role!=='admin';
     [...statusSelect.options].forEach(option=>{
       const forbidden=role==='author'&&!['draft','review'].includes(option.value);
@@ -88,7 +114,7 @@
     if(currentProfile.role==='author')q=q.eq('author_id',currentSession.user.id);
     const {data,error}=await q;
     if(error){list.innerHTML=`<p class="admin-status is-error">${esc(error.message)}</p>`;return;}
-    list.innerHTML=data.length?data.map(a=>`<article class="admin-list-item"><div><span class="section-label">${esc(a.section)} • ${esc(statusNames[a.status]||a.status)}${a.is_updated?' • Aktualizacja':''}</span><h3>${esc(a.title)}</h3><p>${new Date(a.updated_at||a.created_at).toLocaleString('pl-PL')}</p></div><button type="button" class="button-secondary" data-edit="${esc(a.id)}">Edytuj</button></article>`).join(''):'<p class="admin-help">Brak artykułów.</p>';
+    list.innerHTML=data.length?data.map(a=>`<article class="admin-list-item"><div><span class="section-label">${esc(a.section)} • ${esc(statusNames[a.status]||a.status)}${a.is_updated?' • Aktualizacja':''}${a.newsletter_sent_at?' • Newsletter wysłany':''}${a.newsletter_update_sent_at?' • Aktualizacja wysłana':''}</span><h3>${esc(a.title)}</h3><p>${new Date(a.updated_at||a.created_at).toLocaleString('pl-PL')}</p></div><button type="button" class="button-secondary" data-edit="${esc(a.id)}">Edytuj</button></article>`).join(''):'<p class="admin-help">Brak artykułów.</p>';
     list.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>editArticle(btn.dataset.edit,data)));
   };
 
@@ -99,6 +125,8 @@
     articleForm.elements.section.value=sections[a.section]?a.section:'Aktualności';
     articleForm.elements.summary.value=a.summary||'';
     articleForm.elements.content.value=a.content||'';
+    articleForm.elements.newsletter_teaser.value=a.newsletter_teaser||'';
+    articleForm.elements.newsletter_update_excerpt.value=a.newsletter_update_excerpt||'';
     articleForm.elements.image_alt.value=a.image_alt||'';
     articleForm.elements.published_at.value=fmtLocal(a.published_at||new Date());
     articleForm.elements.is_updated.checked=!!a.is_updated;
@@ -165,6 +193,9 @@
   document.querySelector('[data-logout]').addEventListener('click',()=>db.auth.signOut());
   document.querySelector('[data-reset-form]').addEventListener('click',resetForm);
   updateToggle?.addEventListener('change',syncUpdateUi);
+  sendNewsletter?.addEventListener('change',()=>{if(sendNewsletter.checked)fillNewsletterTeaser();syncNewsletterUi();});
+  generateNewsletter?.addEventListener('click',()=>{fillNewsletterTeaser(true);syncNewsletterUi();});
+  articleForm.elements.newsletter_teaser?.addEventListener('input',syncNewsletterUi);
 
   articleForm.addEventListener('submit',async e=>{
     e.preventDefault();status(formStatus,'Zapisywanie…');
@@ -178,6 +209,17 @@
     if(currentProfile.role==='author'&&!['draft','review'].includes(desiredStatus))desiredStatus='review';
     const canPublish=currentProfile.role==='editor'||currentProfile.role==='admin';
     const isUpdated=fd.get('is_updated')==='on';
+    const shouldSendNewsletter=canPublish&&fd.get('send_newsletter')==='on';
+    let newsletterTeaser=String(fd.get('newsletter_teaser')||'').trim();
+    const newsletterUpdateExcerpt=String(fd.get('newsletter_update_excerpt')||'').trim();
+    if(!newsletterTeaser)newsletterTeaser=newsletterExcerpt(fd.get('summary'),fd.get('content'));
+    if(shouldSendNewsletter&&desiredStatus!=='published'){
+      status(formStatus,'Newsletter można wysłać dopiero dla opublikowanego artykułu.',true);return;
+    }
+    const selectedNewsletterText=isUpdated?newsletterUpdateExcerpt:newsletterTeaser;
+    if(shouldSendNewsletter&&selectedNewsletterText.length<100){
+      status(formStatus,isUpdated?'Dodaj nowy fragment aktualizacji (najlepiej 300–500 znaków).':'Zajawka newslettera jest za krótka; celuj w około 300–500 znaków.',true);return;
+    }
 
     let imageUrl=null;
     const image=fd.get('image');
@@ -197,6 +239,8 @@
       section_slug:selectedSectionSlug,
       summary:String(fd.get('summary')).trim(),
       content:String(fd.get('content')).trim(),
+      newsletter_teaser:newsletterTeaser||null,
+      newsletter_update_excerpt:newsletterUpdateExcerpt||null,
       image_alt:String(fd.get('image_alt')||'').trim(),
       status:desiredStatus,
       is_updated:isUpdated,
@@ -215,10 +259,19 @@
     }
 
     const q=id?db.from('articles').update(payload).eq('id',id):db.from('articles').insert(payload);
-    const {error}=await q;
+    const {data:saved,error}=await q.select('id').single();
     if(error){status(formStatus,error.message,true);return;}
-    status(formStatus,desiredStatus==='review'?'Przekazano do akceptacji.':(isUpdated?'Zapisano jako aktualizację.':'Zapisano.'));
+    let completion=desiredStatus==='review'?'Przekazano do akceptacji.':(isUpdated?'Zapisano jako aktualizację.':'Zapisano.');
+    let completionError=false;
+    if(shouldSendNewsletter){
+      status(formStatus,'Artykuł zapisany. Przygotowywanie newslettera…');
+      try{
+        const result=await authenticatedPost('/api/newsletter-send',{article_id:saved.id,mode:isUpdated?'update':'article'});
+        completion=result.message||`Newsletter wysłany do ${result.sent||0} odbiorców.`;
+      }catch(error){completion=`Artykuł zapisany, ale newsletter nie został wysłany: ${error.message}`;completionError=true;}
+    }
     resetForm();
+    status(formStatus,completion,completionError);
     await loadArticles();
   });
 

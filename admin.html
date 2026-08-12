@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/styles.css?v=4">
   <link rel="stylesheet" href="/mobile.css?v=5">
   <link rel="stylesheet" href="/front-final.css?v=4">
+  <link rel="stylesheet" href="/newsletter.css?v=1">
 </head>
 <body>
   <div class="page admin-page">
@@ -57,6 +58,21 @@
               </label>
               <label>Lead<textarea name="summary" rows="4" maxlength="600" required></textarea></label>
               <label>Treść<textarea name="content" rows="14" required></textarea></label>
+              <fieldset class="admin-fieldset" data-newsletter-panel hidden>
+                <legend>Newsletter rodzinny</legend>
+                <label>Zajawka newslettera
+                  <textarea name="newsletter_teaser" rows="5" maxlength="500" placeholder="Domyślnie: lead i początek artykułu, około 300–500 znaków"></textarea>
+                </label>
+                <div class="admin-inline-help">
+                  <span data-newsletter-count>0/500 znaków</span>
+                  <button type="button" class="button-link" data-generate-newsletter>Ułóż z leadu i początku tekstu</button>
+                </div>
+                <label data-newsletter-update-field hidden>Nowy fragment aktualizacji
+                  <textarea name="newsletter_update_excerpt" rows="4" maxlength="500" placeholder="Co zmieniło się od poprzedniej wersji artykułu?"></textarea>
+                </label>
+                <label class="check-row"><input type="checkbox" name="send_newsletter" data-send-newsletter> Wyślij newsletter</label>
+                <p class="admin-help">Wiadomość zostanie wysłana dopiero po zapisaniu opublikowanego artykułu. Przy zaznaczonej aktualizacji otrzyma nagłówek „AKTUALIZACJA” i użyje nowego fragmentu.</p>
+              </fieldset>
               <label>Zdjęcie<input type="file" name="image" accept="image/*"></label>
               <label>Opis zdjęcia<input type="text" name="image_alt" maxlength="240"></label>
               <label data-published-at-field>Data publikacji<input type="datetime-local" name="published_at"></label>
@@ -111,6 +127,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=4"></script>
+  <script src="/admin.js?v=5"></script>
 </body>
 </html>

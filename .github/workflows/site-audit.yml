@@ -18,7 +18,11 @@ jobs:
           node --check site.js
           node --check article.js
           node --check admin.js
+          node --check newsletter.js
           node --check supabase-loader.js
           for f in api/*.js; do node --check "$f"; done
+          for f in lib/*.js; do node --check "$f"; done
       - name: Static links and required files
         run: node scripts/audit-site.mjs
+      - name: Newsletter skeleton
+        run: node scripts/test-newsletter.cjs

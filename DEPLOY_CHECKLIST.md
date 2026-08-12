@@ -23,12 +23,16 @@
 - [x] canonicale i OG statycznych stron
 - [x] automatyczny audyt linków i składni JS
 - [x] usunięte nieużywane łatki CSS i `.bak`
+- [x] szkielet rodzinnego newslettera bez aktywnych sekretów
+- [x] bezpieczne endpointy zapisu, wypisu i wysyłki
+- [x] szablon HTML/tekst oraz tryb `AKTUALIZACJA`
 
 ## B. Supabase — do wykonania przy dostępie do panelu
 
 - [ ] wybrać/utworzyć projekt Supabase
 - [ ] wykonać `supabase-schema.sql`
 - [ ] wykonać `supabase-seed.sql`
+- [ ] wykonać `migrations/20260812_newsletter.sql`
 - [ ] utworzyć pierwsze konto redakcyjne
 - [ ] nadać pierwszemu kontu rolę `admin`
 - [ ] wyłączyć publiczny signup
@@ -43,10 +47,24 @@ Ustawić dla Preview i Production:
 - [ ] `SUPABASE_ANON_KEY`
 - [ ] `SUPABASE_SERVICE_ROLE_KEY`
 - [ ] `SITE_URL=https://the82chronicle.vercel.app`
+- [ ] `RESEND_API_KEY`
+- [ ] `NEWSLETTER_FROM`
+- [ ] `NEWSLETTER_SIGNING_SECRET`
 
-Nigdy nie umieszczać `SUPABASE_SERVICE_ROLE_KEY` w plikach klientowych.
+Nigdy nie umieszczać `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` ani `NEWSLETTER_SIGNING_SECRET` w plikach klientowych.
 
-## D. Test ról
+## D. Newsletter
+
+- [ ] formularz zapisuje poprawny adres
+- [ ] ponowny zapis reaktywuje wypisany adres
+- [ ] link wypisu wymaga poprawnego podpisu i potwierdzenia
+- [ ] Redaktor wysyła tylko dla opublikowanego artykułu
+- [ ] wiadomość zawiera nagłówek, zdjęcie, lead, zajawkę i „Czytaj dalej”
+- [ ] aktualizacja ma oznaczenie `AKTUALIZACJA` i nowy fragment
+- [ ] ta sama wersja nie wysyła się ponownie
+- [ ] bez klucza Resend nic nie jest wysyłane
+
+## E. Test ról
 
 ### Author
 - [ ] logowanie działa
@@ -71,7 +89,7 @@ Nigdy nie umieszczać `SUPABASE_SERVICE_ROLE_KEY` w plikach klientowych.
 - [ ] dezaktywuje i aktywuje konto
 - [ ] zachowuje wszystkie prawa redaktora
 
-## E. Test publikacji end-to-end
+## F. Test publikacji end-to-end
 
 - [ ] Autor tworzy artykuł
 - [ ] Autor wysyła do akceptacji
@@ -85,7 +103,7 @@ Nigdy nie umieszczać `SUPABASE_SERVICE_ROLE_KEY` w plikach klientowych.
 - [ ] upload zdjęcia działa
 - [ ] autor/byline są poprawne
 
-## F. Open Graph / WhatsApp
+## G. Open Graph / WhatsApp
 
 Dla nowego artykułu `/a/<slug>`:
 
@@ -95,7 +113,7 @@ Dla nowego artykułu `/a/<slug>`:
 - [ ] canonical wskazuje właściwy adres
 - [ ] WhatsApp pokazuje poprawny tytuł, opis i zdjęcie
 
-## G. Responsywność
+## H. Responsywność
 
 Sprawdzić ręcznie:
 
@@ -116,7 +134,7 @@ Na każdym rozmiarze:
 - [ ] artykuł jest czytelny
 - [ ] formularz admina jest używalny
 
-## H. Wydajność
+## I. Wydajność
 
 - [ ] wygenerować WebP dla `chlopiec.png` i `schody.png` przez `scripts/optimize-images.sh`
 - [ ] dodać warianty 480 i 1200 px do repo
@@ -124,7 +142,7 @@ Na każdym rozmiarze:
 - [ ] zachować oryginały jako źródło/backup
 - [ ] ponownie uruchomić Site audit
 
-## I. Przed merge
+## J. Przed merge
 
 - [ ] Vercel Preview = READY
 - [ ] GitHub `Site audit` = PASS
