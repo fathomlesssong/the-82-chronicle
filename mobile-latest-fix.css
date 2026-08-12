@@ -1,0 +1,37 @@
+@media (max-width:700px){
+  .latest-story{
+    grid-template-columns:minmax(72px,86px) minmax(0,1fr);
+    gap:10px;
+  }
+  .latest-story .media{
+    width:100%;
+    max-width:86px;
+    height:auto;
+    aspect-ratio:1/1;
+    min-height:0;
+    align-self:start;
+    overflow:hidden;
+  }
+  .latest-story .story-image{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .latest-story .story-copy{
+    min-width:0;
+    width:100%;
+  }
+  .latest-story .story-title{
+    max-width:100%;
+    overflow-wrap:normal;
+    word-break:normal;
+    hyphens:auto;
+  }
+}
+@media (max-width:390px){
+  .latest-story{
+    grid-template-columns:minmax(68px,76px) minmax(0,1fr);
+    gap:9px;
+  }
+  .latest-story .media{max-width:76px}
+}
