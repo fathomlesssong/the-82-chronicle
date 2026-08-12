@@ -42,7 +42,7 @@
         <h2 class="story-title"><a href="${esc(featured.href)}">${esc(featured.title)}</a></h2>
         <div class="featured-grid">
           ${storyMedia(featured,'eager')}
-          <div><span class="section-label">${esc(featured.section)}</span><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div>
+          <div><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div>
         </div>
       </section>
       ${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości">
