@@ -49,7 +49,7 @@ module.exports=async(req,res)=>{
 <meta property="og:type" content="article"><meta property="og:site_name" content="The 82 Chronicle"><meta property="og:locale" content="pl_PL">
 <meta property="og:url" content="${esc(canonical)}"><meta property="og:title" content="${esc(article.title)}"><meta property="og:description" content="${esc(article.summary)}"><meta property="og:image" content="${esc(image)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(article.title)}"><meta name="twitter:description" content="${esc(article.summary)}"><meta name="twitter:image" content="${esc(image)}">
-<link rel="stylesheet" href="/styles.css?v=4"><link rel="stylesheet" href="/mobile.css?v=5"><link rel="stylesheet" href="/front-final.css?v=4">
+<link rel="stylesheet" href="/styles.css?v=4"><link rel="stylesheet" href="/mobile.css?v=5"><link rel="stylesheet" href="/front-final.css?v=4"><link rel="stylesheet" href="/image-sizing.css?v=1">
 </head><body><div class="page">
 <div class="top-strip"><span>Słotwina, Dolny Śląsk</span><span>Gazeta niezależna od rozsądku urzędowego</span><span>Nr 1 • 2026</span></div>
 <header class="masthead-wrap"><a href="/" style="color:inherit;text-decoration:none"><h1 class="masthead">The 82 Chronicle</h1></a><p class="tagline">Wiadomości spod numeru 82 • Słotwina • Założono w 2026</p></header>
