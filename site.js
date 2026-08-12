@@ -53,29 +53,25 @@
       </section>`:''}`;
   }
 
-  const archive=document.querySelector('[data-archive-list]');
-  if(archive){
+  const sectionList=document.querySelector('[data-section-list]');
+  if(sectionList){
     const params=new URLSearchParams(location.search);
     const requestedSection=(params.get('section')||'').toLowerCase();
-    const section=sections[requestedSection]?requestedSection:'';
-    const sectionInfo=sections[section];
-    const filtered=section?articles.filter(a=>a.sectionSlug===section):articles;
-    const heading=document.querySelector('[data-archive-title]');
-    const eyebrow=document.querySelector('[data-archive-eyebrow]');
-    const intro=document.querySelector('[data-archive-intro]');
-    if(sectionInfo){
-      heading.textContent=sectionInfo.name;
-      eyebrow.textContent='Dział';
-      intro.textContent=sectionInfo.intro;
-      document.title=`${sectionInfo.name} • The 82 Chronicle`;
-      document.querySelector('meta[name="description"]')?.setAttribute('content',`${sectionInfo.name} — artykuły The 82 Chronicle.`);
-      archive.setAttribute('aria-label',`Artykuły w dziale ${sectionInfo.name}`);
-    }
+    const sectionInfo=sections[requestedSection];
+    if(!sectionInfo){location.replace('/');return;}
+    const filtered=articles.filter(a=>a.sectionSlug===requestedSection);
+    const heading=document.querySelector('[data-section-title]');
+    const intro=document.querySelector('[data-section-intro]');
+    heading.textContent=sectionInfo.name;
+    intro.textContent=sectionInfo.intro;
+    document.title=`${sectionInfo.name} • The 82 Chronicle`;
+    document.querySelector('meta[name="description"]')?.setAttribute('content',`${sectionInfo.name} — artykuły The 82 Chronicle.`);
+    sectionList.setAttribute('aria-label',`Artykuły w dziale ${sectionInfo.name}`);
     document.querySelectorAll('.section-nav a').forEach(link=>{
       const target=new URL(link.href,location.href).searchParams.get('section')||'';
-      if(target===section&&(section||link.pathname.endsWith('/archive.html')))link.setAttribute('aria-current','page');
+      if(target===requestedSection)link.setAttribute('aria-current','page');
     });
-    const emptyMessage=sectionInfo?`W dziale ${sectionInfo.name} nie ma jeszcze artykułów.`:'Archiwum jest jeszcze puste.';
-    archive.innerHTML=filtered.length?filtered.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a)}</article>`).join(''):`<p class="empty-state">${esc(emptyMessage)}</p>`;
+    const emptyMessage=`W dziale ${sectionInfo.name} nie ma jeszcze artykułów.`;
+    sectionList.innerHTML=filtered.length?filtered.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a)}</article>`).join(''):`<p class="empty-state">${esc(emptyMessage)}</p>`;
   }
 })();

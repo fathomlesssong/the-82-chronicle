@@ -1,8 +1,14 @@
 (()=>{
   const cfg=window.CH82_SUPABASE||{};
+  const sections=Object.freeze({
+    'Aktualności':'aktualnosci',
+    'Infrastruktura':'infrastruktura',
+    'Śledztwa':'sledztwa',
+    'Kultura':'kultura',
+    'Kącik kulinarny':'kacik-kulinarny'
+  });
   const status=(el,msg,bad=false)=>{if(!el)return;el.textContent=msg;el.classList.toggle('is-error',bad)};
   const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,90);
-  const sectionSlug=s=>slugify(s);
   const fmtLocal=iso=>{const d=iso?new Date(iso):new Date();const z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`};
   const loginPanel=document.querySelector('[data-login-panel]');
   const shell=document.querySelector('[data-admin-shell]');
@@ -43,7 +49,7 @@
     const a=data.find(x=>String(x.id)===String(id));if(!a)return;
     articleForm.elements.id.value=a.id;
     articleForm.elements.title.value=a.title||'';
-    articleForm.elements.section.value=a.section||'Wydarzenia';
+    articleForm.elements.section.value=sections[a.section]?a.section:'Aktualności';
     articleForm.elements.summary.value=a.summary||'';
     articleForm.elements.content.value=a.content||'';
     articleForm.elements.image_alt.value=a.image_alt||'';
@@ -64,6 +70,9 @@
   articleForm.addEventListener('submit',async e=>{
     e.preventDefault();status(formStatus,'Zapisywanie…');
     const fd=new FormData(articleForm);const id=fd.get('id')||null;let imageUrl=null;
+    const selectedSection=String(fd.get('section')||'');
+    const selectedSectionSlug=sections[selectedSection];
+    if(!selectedSectionSlug){status(formStatus,'Wybierz jeden z pięciu dostępnych działów.',true);return;}
     const image=fd.get('image');
     if(image&&image.size){
       const ext=(image.name.split('.').pop()||'jpg').toLowerCase();
@@ -73,7 +82,7 @@
       imageUrl=db.storage.from('article-images').getPublicUrl(path).data.publicUrl;
     }
     const title=String(fd.get('title')).trim();
-    const payload={title,slug:slugify(title),section:fd.get('section'),section_slug:sectionSlug(fd.get('section')),summary:String(fd.get('summary')).trim(),content:String(fd.get('content')).trim(),image_alt:String(fd.get('image_alt')||'').trim(),published_at:new Date(fd.get('published_at')).toISOString(),featured:fd.get('featured')==='on',status:fd.get('status')};
+    const payload={title,slug:slugify(title),section:selectedSection,section_slug:selectedSectionSlug,summary:String(fd.get('summary')).trim(),content:String(fd.get('content')).trim(),image_alt:String(fd.get('image_alt')||'').trim(),published_at:new Date(fd.get('published_at')).toISOString(),featured:fd.get('featured')==='on',status:fd.get('status')};
     if(imageUrl)payload.image_url=imageUrl;
     if(payload.featured){await db.from('articles').update({featured:false}).neq('id',id||'00000000-0000-0000-0000-000000000000');}
     const q=id?db.from('articles').update(payload).eq('id',id):db.from('articles').insert(payload);

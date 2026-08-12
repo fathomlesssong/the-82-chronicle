@@ -17,6 +17,18 @@ create table if not exists public.articles (
   updated_at timestamptz not null default now()
 );
 
+alter table public.articles
+drop constraint if exists articles_section_allowed;
+
+alter table public.articles
+add constraint articles_section_allowed check (
+  (section = 'Aktualności' and section_slug = 'aktualnosci') or
+  (section = 'Infrastruktura' and section_slug = 'infrastruktura') or
+  (section = 'Śledztwa' and section_slug = 'sledztwa') or
+  (section = 'Kultura' and section_slug = 'kultura') or
+  (section = 'Kącik kulinarny' and section_slug = 'kacik-kulinarny')
+);
+
 create or replace function public.set_updated_at()
 returns trigger language plpgsql as $$
 begin

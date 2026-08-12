@@ -3,18 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta name="description" content="The 82 Chronicle — najświeższe wiadomości, śledztwa i wydarzenia prosto spod numeru 82.">
+  <meta name="description" content="Działy The 82 Chronicle.">
   <title>The 82 Chronicle</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png?v=4">
   <link rel="stylesheet" href="/styles.css?v=3">
   <link rel="stylesheet" href="/mobile.css?v=3">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://the82chronicle.vercel.app/">
-  <meta property="og:title" content="The 82 Chronicle">
-  <meta property="og:description" content="Najświeższe wiadomości, afery i wydarzenia prosto spod numeru 82.">
-  <meta property="og:image" content="https://the82chronicle.vercel.app/assets/og-image.png">
-  <meta property="og:locale" content="pl_PL">
-  <meta property="og:site_name" content="The 82 Chronicle">
 </head>
 <body>
   <div class="page">
@@ -25,12 +18,12 @@
     </div>
 
     <header class="masthead-wrap">
-      <h1 class="masthead">The 82 Chronicle</h1>
+      <a href="/" style="color:inherit;text-decoration:none"><h1 class="masthead">The 82 Chronicle</h1></a>
       <p class="tagline">Wiadomości spod numeru 82 • Słotwina • Założono w 2026</p>
     </header>
 
     <nav class="section-nav" aria-label="Działy gazety">
-      <a href="/" aria-current="page">Strona główna</a>
+      <a href="/">Strona główna</a>
       <a href="/section.html?section=aktualnosci">Aktualności</a>
       <a href="/section.html?section=infrastruktura">Infrastruktura</a>
       <a href="/section.html?section=sledztwa">Śledztwa</a>
@@ -38,16 +31,18 @@
       <a href="/section.html?section=kacik-kulinarny">Kącik kulinarny</a>
     </nav>
 
-    <main data-home-feed></main>
+    <main>
+      <section class="archive-header">
+        <div>
+          <span class="section-label">Dział</span>
+          <h2 data-section-title></h2>
+        </div>
+        <p class="archive-intro" data-section-intro></p>
+      </section>
+      <section class="archive-list" data-section-list aria-label="Lista artykułów"></section>
+    </main>
 
-    <aside class="home-ad" aria-label="Reklama">
-      <p class="ad-label">Reklama</p>
-      <div class="ad-art">
-        <img src="/myslecki-archeologia.png" alt="Myślecki Archeologia" loading="lazy" decoding="async">
-      </div>
-    </aside>
-
-    <footer>The 82 Chronicle • Założono w 2026</footer>
+    <footer><a href="/" style="color:inherit">Strona główna</a> • The 82 Chronicle • Założono w 2026</footer>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
