@@ -3,16 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta name="robots" content="noindex">
-  <title>Przekierowanie • The 82 Chronicle</title>
+  <meta name="description" content="Archiwum The 82 Chronicle — wszystkie opublikowane historie.">
+  <title>Archiwum • The 82 Chronicle</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png?v=4">
+  <link rel="stylesheet" href="/styles.css?v=4">
+  <link rel="stylesheet" href="/mobile.css?v=5">
+  <link rel="stylesheet" href="/front-final.css?v=1">
 </head>
 <body>
-  <p>Przenoszenie do właściwego działu…</p>
-  <script>
-    const allowedSections=new Set(['aktualnosci','infrastruktura','sledztwa','kultura','kacik-kulinarny']);
-    const section=(new URLSearchParams(location.search).get('section')||'').toLowerCase();
-    location.replace(allowedSections.has(section)?`/section.html?section=${encodeURIComponent(section)}`:'/');
-  </script>
-  <noscript><a href="/">Przejdź na stronę główną</a></noscript>
+  <div class="page">
+    <div class="top-strip"><span>Słotwina, Dolny Śląsk</span><span>Gazeta niezależna od rozsądku urzędowego</span><span>Nr 1 • 2026</span></div>
+    <header class="masthead-wrap">
+      <a href="/" style="color:inherit;text-decoration:none"><h1 class="masthead">The 82 Chronicle</h1></a>
+      <p class="tagline">Wiadomości spod numeru 82 • Słotwina • Założono w 2026</p>
+    </header>
+    <nav class="section-nav" aria-label="Działy gazety">
+      <a href="/">Strona główna</a>
+      <a href="/section.html?section=aktualnosci">Aktualności</a>
+      <a href="/section.html?section=infrastruktura">Infrastruktura</a>
+      <a href="/section.html?section=sledztwa">Śledztwa</a>
+      <a href="/section.html?section=kultura">Kultura</a>
+      <a href="/section.html?section=kacik-kulinarny">Kącik kulinarny</a>
+      <a href="/archive.html" aria-current="page">Archiwum</a>
+    </nav>
+    <main>
+      <section class="listing-header">
+        <div><span class="section-label">The 82 Chronicle</span><h2>Archiwum</h2><div class="listing-count" data-list-count></div></div>
+        <p class="listing-intro">Wszystkie opublikowane historie w porządku od najnowszych. Strona główna pokazuje tylko sześć, tutaj nic nie ginie w redakcyjnej szufladzie.</p>
+      </section>
+      <section class="archive-list" data-archive-list aria-label="Wszystkie artykuły"></section>
+    </main>
+    <footer><a href="/" style="color:inherit">Strona główna</a> • The 82 Chronicle • Założono w 2026</footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js?v=1"></script>
+  <script src="/articles.js?v=2"></script>
+  <script src="/site.js?v=9"></script>
 </body>
 </html>
