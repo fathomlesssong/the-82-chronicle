@@ -35,7 +35,7 @@
   };
   const articles=(await loadArticles()).sort((a,b)=>b.sort-a.sort);
   const updateBadge=a=>a.updated?`<span class="update-badge">Aktualizacja</span>`:'';
-  const metaText=a=>a.updated&&a.updateDate?`Aktualizacja: ${a.updateDate} • ${a.date} • The 82 Chronicle`:`${a.date} • The 82 Chronicle`;
+  const metaText=a=>a.updated&&a.updateDate?`Aktualizacja: ${a.updateDate} • The 82 Chronicle`:`${a.date} • The 82 Chronicle`;
   const storyMedia=(a,priority='lazy')=>`<a class="media" href="${esc(a.href)}" aria-label="Czytaj: ${esc(a.title)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}" loading="${priority==='lazy'?'lazy':'eager'}" decoding="async"${priority==='high'?' fetchpriority="high"':''}></a>`;
   const storyText=(a,summary=true,label=a.section)=>`<div class="story-copy"><span class="section-label">${esc(label)}</span>${updateBadge(a)}<h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:''}<div class="story-meta">${esc(metaText(a))}</div></div>`;
   const navCurrent=section=>document.querySelectorAll('.section-nav a').forEach(link=>{const url=new URL(link.href,location.href);const target=url.searchParams.get('section')||'';if(section&&target===section)link.setAttribute('aria-current','page');if(!section&&location.pathname.endsWith('/archive.html')&&url.pathname.endsWith('/archive.html'))link.setAttribute('aria-current','page');});
