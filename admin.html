@@ -6,8 +6,9 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Redakcja • The 82 Chronicle</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png?v=4">
-  <link rel="stylesheet" href="/styles.css?v=3">
-  <link rel="stylesheet" href="/mobile.css?v=3">
+  <link rel="stylesheet" href="/styles.css?v=4">
+  <link rel="stylesheet" href="/mobile.css?v=5">
+  <link rel="stylesheet" href="/front-final.css?v=1">
 </head>
 <body>
   <div class="page admin-page">
@@ -20,7 +21,7 @@
     <main>
       <section class="admin-card" data-login-panel>
         <h2>Logowanie</h2>
-        <p class="admin-help">Panel jest dostępny wyłącznie dla kont redakcyjnych.</p>
+        <p class="admin-help">Panel jest dostępny wyłącznie dla aktywnych kont redakcyjnych.</p>
         <form class="admin-form" data-login-form>
           <label>E-mail<input type="email" name="email" autocomplete="email" required></label>
           <label>Hasło<input type="password" name="password" autocomplete="current-password" required></label>
@@ -31,13 +32,17 @@
 
       <section class="admin-shell" data-admin-shell hidden>
         <div class="admin-toolbar">
-          <div><strong>Panel redakcyjny</strong><span data-user-email></span></div>
+          <div>
+            <strong>Panel redakcyjny</strong>
+            <span><span data-user-email></span> • <span data-user-role></span></span>
+          </div>
           <button type="button" class="button-secondary" data-logout>Wyloguj</button>
         </div>
 
         <div class="admin-grid">
           <section class="admin-card">
             <h2 data-form-title>Nowy artykuł</h2>
+            <p class="admin-help" data-workflow-help></p>
             <form class="admin-form" data-article-form>
               <input type="hidden" name="id">
               <label>Tytuł<input type="text" name="title" maxlength="180" required></label>
@@ -54,12 +59,14 @@
               <label>Treść<textarea name="content" rows="14" required></textarea></label>
               <label>Zdjęcie<input type="file" name="image" accept="image/*"></label>
               <label>Opis zdjęcia<input type="text" name="image_alt" maxlength="240"></label>
-              <label>Data publikacji<input type="datetime-local" name="published_at" required></label>
-              <label class="check-row"><input type="checkbox" name="featured"> Główny artykuł</label>
+              <label data-published-at-field>Data publikacji<input type="datetime-local" name="published_at"></label>
+              <label class="check-row" data-featured-field><input type="checkbox" name="featured"> Główny artykuł</label>
               <label>Status
-                <select name="status">
+                <select name="status" data-status-select>
                   <option value="draft">Szkic</option>
+                  <option value="review">Do akceptacji</option>
                   <option value="published">Opublikowany</option>
+                  <option value="archived">Archiwalny</option>
                 </select>
               </label>
               <div class="admin-actions">
@@ -72,15 +79,35 @@
 
           <section class="admin-card">
             <h2>Artykuły</h2>
+            <p class="admin-help" data-list-help></p>
             <div class="admin-list" data-admin-list></div>
           </section>
         </div>
+
+        <section class="admin-card" data-users-panel hidden>
+          <h2>Redakcja</h2>
+          <p class="admin-help">Zapraszaj autorów i redaktorów. Publiczna rejestracja nie jest częścią projektu.</p>
+          <form class="admin-form" data-invite-form>
+            <label>E-mail<input type="email" name="email" required></label>
+            <label>Nazwa wyświetlana<input type="text" name="display_name" maxlength="80"></label>
+            <label>Rola
+              <select name="role" required>
+                <option value="author">Autor</option>
+                <option value="editor">Redaktor</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </label>
+            <button type="submit">Wyślij zaproszenie</button>
+            <p class="admin-status" data-invite-status></p>
+          </form>
+          <div class="admin-list" data-users-list></div>
+        </section>
       </section>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=2"></script>
+  <script src="/admin.js?v=3"></script>
 </body>
 </html>
