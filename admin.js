@@ -128,6 +128,8 @@
     articleForm.elements.newsletter_teaser.value=a.newsletter_teaser||'';
     articleForm.elements.newsletter_update_excerpt.value=a.newsletter_update_excerpt||'';
     articleForm.elements.image_alt.value=a.image_alt||'';
+    articleForm.elements.image_caption.value=a.image_caption||'';
+    articleForm.elements.image_credit.value=a.image_credit||'';
     articleForm.elements.published_at.value=fmtLocal(a.published_at||new Date());
     articleForm.elements.is_updated.checked=!!a.is_updated;
     articleForm.elements.update_at.value=a.update_at?fmtLocal(a.update_at):'';
@@ -242,6 +244,8 @@
       newsletter_teaser:newsletterTeaser||null,
       newsletter_update_excerpt:newsletterUpdateExcerpt||null,
       image_alt:String(fd.get('image_alt')||'').trim(),
+      image_caption:String(fd.get('image_caption')||'').trim()||null,
+      image_credit:String(fd.get('image_credit')||'').trim()||null,
       status:desiredStatus,
       is_updated:isUpdated,
       update_at:isUpdated?(fd.get('update_at')?new Date(fd.get('update_at')).toISOString():new Date().toISOString()):null,
