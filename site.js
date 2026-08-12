@@ -6,10 +6,24 @@
     kultura:{name:'Kultura',intro:'Lokalne wydarzenia, twórczość i życie kulturalne wokół numeru 82.'},
     'kacik-kulinarny':{name:'Kącik kulinarny',intro:'Smaki, przepisy i kulinarne odkrycia redakcji The 82 Chronicle.'}
   };
-  const fallback=[...(window.CH82_ARTICLES||[])];
-  const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+  const legacy={
+    'wydarzenia':'aktualnosci',
+    'spolecznosc':'aktualnosci',
+    'opinie':'aktualnosci',
+    'tajemnice':'sledztwa'
+  };
+  const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
+  const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const fmtDate=iso=>new Date(iso).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'});
-  const mapDb=a=>({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/article.html?slug=${encodeURIComponent(a.slug)}`,featured:!!a.featured,sort:new Date(a.published_at).getTime(),date:fmtDate(a.published_at)});
+  const normalizeSection=(name,slug)=>{
+    let sectionSlug=slug||slugify(name);
+    sectionSlug=legacy[sectionSlug]||sectionSlug;
+    const info=sections[sectionSlug];
+    return {section:info?.name||name,sectionSlug};
+  };
+  const normalizeArticle=a=>({...a,...normalizeSection(a.section,a.sectionSlug)});
+  const fallback=[...(window.CH82_ARTICLES||[])].map(normalizeArticle);
+  const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/article.html?slug=${encodeURIComponent(a.slug)}`,featured:!!a.featured,sort:new Date(a.published_at).getTime(),date:fmtDate(a.published_at)});
   const loadArticles=async()=>{
     const cfg=window.CH82_SUPABASE||{};
     if(cfg.url&&cfg.anonKey&&window.supabase){
@@ -23,7 +37,13 @@
   };
   const articles=(await loadArticles()).sort((a,b)=>b.sort-a.sort);
   const storyMedia=(a,priority='lazy')=>`<a class="media" href="${esc(a.href)}" aria-label="Czytaj: ${esc(a.title)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}" loading="${priority==='lazy'?'lazy':'eager'}" decoding="async"${priority==='high'?' fetchpriority="high"':''}></a>`;
-  const storyText=(a,summary=true,label=a.section)=>`<div class="story-copy"><span class="section-label">${esc(label)}</span><h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:""}<div class="story-meta">${esc(a.date)} • The 82 Chronicle</div></div>`;
+  const storyText=(a,summary=true,label=a.section)=>`<div class="story-copy"><span class="section-label">${esc(label)}</span><h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:''}<div class="story-meta">${esc(a.date)} • The 82 Chronicle</div></div>`;
+  const navCurrent=section=>document.querySelectorAll('.section-nav a').forEach(link=>{
+    const url=new URL(link.href,location.href);
+    const target=url.searchParams.get('section')||'';
+    if(section&&target===section)link.setAttribute('aria-current','page');
+    if(!section&&location.pathname.endsWith('/archive.html')&&url.pathname.endsWith('/archive.html'))link.setAttribute('aria-current','page');
+  });
 
   const home=document.querySelector('[data-home-feed]');
   if(home){
@@ -33,52 +53,36 @@
     const featured=articles.find(a=>a.featured&&a.id!==latest.id)||articles.find(a=>a.id!==latest.id)||latest;
     const rest=top.filter(a=>a.id!==latest.id&&a.id!==featured.id).slice(0,4);
     home.innerHTML=`
-      <section class="latest-story" aria-label="Najnowszy artykuł">
-        ${storyMedia(latest,'high')}
-        ${storyText(latest,true,`Najnowsze • ${latest.section}`)}
-      </section>
+      <section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section>
       <section class="featured-story" aria-label="Główny artykuł">
         <div class="featured-heading"><span class="section-label">Główny artykuł</span></div>
         <h2 class="story-title"><a href="${esc(featured.href)}">${esc(featured.title)}</a></h2>
-        <div class="featured-grid">
-          ${storyMedia(featured,'eager')}
-          <div><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div>
-        </div>
+        <div class="featured-grid">${storyMedia(featured,'eager')}<div><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div></div>
       </section>
-      <aside class="home-ad home-ad-mobile" aria-label="Reklama">
-        <p class="ad-label">Reklama</p>
-        <picture class="ad-art">
-          <source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp">
-          <img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async">
-        </picture>
-      </aside>
-      ${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości">
-        <div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div>
-        <div class="stories-grid">
-          ${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}
-        </div>
-      </section>`:''}`;
+      <aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>
+      ${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
   }
 
   const sectionList=document.querySelector('[data-section-list]');
   if(sectionList){
-    const params=new URLSearchParams(location.search);
-    const requestedSection=(params.get('section')||'').toLowerCase();
+    const requestedSection=(new URLSearchParams(location.search).get('section')||'').toLowerCase();
     const sectionInfo=sections[requestedSection];
     if(!sectionInfo){location.replace('/');return;}
     const filtered=articles.filter(a=>a.sectionSlug===requestedSection);
-    const heading=document.querySelector('[data-section-title]');
-    const intro=document.querySelector('[data-section-intro]');
-    heading.textContent=sectionInfo.name;
-    intro.textContent=sectionInfo.intro;
+    document.querySelector('[data-section-title]').textContent=sectionInfo.name;
+    document.querySelector('[data-section-intro]').textContent=sectionInfo.intro;
+    const count=document.querySelector('[data-list-count]');if(count)count.textContent=`${filtered.length} ${filtered.length===1?'artykuł':'artykuły'}`;
     document.title=`${sectionInfo.name} • The 82 Chronicle`;
     document.querySelector('meta[name="description"]')?.setAttribute('content',`${sectionInfo.name} — artykuły The 82 Chronicle.`);
     sectionList.setAttribute('aria-label',`Artykuły w dziale ${sectionInfo.name}`);
-    document.querySelectorAll('.section-nav a').forEach(link=>{
-      const target=new URL(link.href,location.href).searchParams.get('section')||'';
-      if(target===requestedSection)link.setAttribute('aria-current','page');
-    });
-    const emptyMessage=`W dziale ${sectionInfo.name} nie ma jeszcze artykułów.`;
-    sectionList.innerHTML=filtered.length?filtered.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a)}</article>`).join(''):`<p class="empty-state">${esc(emptyMessage)}</p>`;
+    navCurrent(requestedSection);
+    sectionList.innerHTML=filtered.length?filtered.map((a,i)=>`<article class="archive-entry${i===0?' section-lead':''}">${storyMedia(a,i===0?'high':'lazy')}${storyText(a,true)}</article>`).join(''):`<p class="empty-state">W dziale ${esc(sectionInfo.name)} nie ma jeszcze artykułów.</p>`;
+  }
+
+  const archive=document.querySelector('[data-archive-list]');
+  if(archive){
+    navCurrent('');
+    const count=document.querySelector('[data-list-count]');if(count)count.textContent=`${articles.length} ${articles.length===1?'artykuł':'artykuły'}`;
+    archive.innerHTML=articles.length?articles.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a,true)}</article>`).join(''):'<p class="empty-state">Archiwum jest jeszcze puste.</p>';
   }
 })();
