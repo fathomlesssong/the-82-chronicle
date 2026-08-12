@@ -2,7 +2,7 @@
 -- Importuje obecne trzy artykuły Chronicle do tabeli articles.
 
 insert into public.articles
-(title,slug,section,section_slug,summary,content,image_url,image_alt,status,featured,published_at)
+(title,slug,section,section_slug,summary,content,image_url,image_alt,status,featured,published_at,is_updated,update_at)
 values
 (
 'MŁODOCIANY WYJADACZ OWOCÓW NIE ZWALNIA TEMPA!',
@@ -24,7 +24,7 @@ CO BĘDZIE NASTĘPNE?
 Właściciele jabłoni, grusz i innych obiektów o charakterze owocowym mają powody, by obserwować rozwój sytuacji. Redakcja nie zamierza siać paniki, ale doświadczenie uczy, że po malinach i śliwkach lista możliwości pozostaje niepokojąco długa.
 
 The 82 Chronicle będzie monitorować sytuację oraz stan lokalnych zapasów owoców.$$
-,'/assets/chlopiec.png?v=1','Portret pamięciowy młodocianego wyjadacza owoców','published',false,'2026-08-11T12:00:00+02:00'
+,'/assets/chlopiec.png?v=1','Portret pamięciowy młodocianego wyjadacza owoców','published',false,'2026-08-11T12:00:00+02:00',false,null
 ),
 (
 'SCHODY W NAPRAWIE. ILE MOŻNA NAPRAWIAĆ KILKA STOPNI?',
@@ -46,7 +46,7 @@ Po naszej dziennikarskiej interwencji remont ruszył z kopyta. Około godziny 10
 Do godziny 14 udało się wmurować kilka cegieł. Prawdziwy szał. Najważniejsze jednak, że coś wreszcie się ruszyło.
 
 The 82 Chronicle będzie monitorować sytuację.$$
-,'/assets/schody.png?v=1','Schody w trakcie naprawy','published',false,'2026-08-11T11:00:00+02:00'
+,'/assets/schody.png?v=1','Schody w trakcie naprawy','published',false,'2026-08-11T11:00:00+02:00',true,'2026-08-11T14:00:00+02:00'
 ),
 (
 'HORROR W SŁOTWINIE! MARTWA MYSZ ZAATAKOWAŁA MIESZKANKĘ NUMERU 82!',
@@ -68,7 +68,7 @@ CZY MIESZKAŃCY SŁOTWINY MOGĄ CZUĆ SIĘ BEZPIECZNIE?
 Na razie nic nie wskazuje na to, by w okolicy działała zorganizowana grupa myszy zajmujących instalacje elektryczne. Ale jeszcze wczoraj nic nie wskazywało również na to, że z kontaktu może patrzeć trup gryzonia.
 
 The 82 Chronicle będzie monitorować sytuację.$$
-,'/assets/martwa-mysz.jpeg?v=1','Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82','published',true,'2026-08-10T12:00:00+02:00'
+,'/assets/martwa-mysz.jpeg?v=1','Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82','published',true,'2026-08-10T12:00:00+02:00',false,null
 )
 on conflict (slug) do update set
   title=excluded.title,
@@ -80,4 +80,6 @@ on conflict (slug) do update set
   image_alt=excluded.image_alt,
   status=excluded.status,
   featured=excluded.featured,
-  published_at=excluded.published_at;
+  published_at=excluded.published_at,
+  is_updated=excluded.is_updated,
+  update_at=excluded.update_at;
