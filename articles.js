@@ -33,7 +33,7 @@ window.CH82_ARTICLES=[
     sectionSlug:"sledztwa",
     title:"HORROR W SŁOTWINIE! MARTWA MYSZ ZAATAKOWAŁA MIESZKANKĘ NUMERU 82!",
     summary:"Chciała tylko skorzystać z kontaktu. Chwilę później stanęła oko w oko z koszmarem, którego nie przewidziałby nawet elektryk po trzech kawach.",
-    image:"/assets/martwa-mysz.png?v=4",
+    image:"/assets/martwa-mysz.jpeg?v=1",
     alt:"Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82",
     href:"/articles/2026-08-10-horror-w-slotwinie.html",
     featured:true
