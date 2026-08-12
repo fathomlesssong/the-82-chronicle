@@ -7,6 +7,7 @@
   const legacy={'wydarzenia':'aktualnosci','spolecznosc':'aktualnosci','opinie':'aktualnosci','tajemnice':'sledztwa'};
   const sectionName={'aktualnosci':'Aktualności','infrastruktura':'Infrastruktura','sledztwa':'Śledztwa','kultura':'Kultura','kacik-kulinarny':'Kącik kulinarny'};
   const paras=s=>String(s||'').split(/\n{2,}/).map(p=>`<p>${esc(p).replace(/\n/g,'<br>')}</p>`).join('');
+  if(window.CH82_SUPABASE_READY)await window.CH82_SUPABASE_READY;
   if(!slug||!cfg.url||!cfg.anonKey||!window.supabase){root.innerHTML='<p class="empty-state">Nie udało się wczytać artykułu.</p>';return;}
   const db=window.supabase.createClient(cfg.url,cfg.anonKey);
   const {data,error}=await db.from('articles').select('*').eq('slug',slug).eq('status','published').maybeSingle();
