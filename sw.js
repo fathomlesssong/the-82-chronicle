@@ -1,4 +1,4 @@
-const CACHE='chronicle-shell-v2';
+const CACHE='chronicle-shell-v3';
 const SHELL=[
   '/',
   '/index.html',
@@ -6,6 +6,7 @@ const SHELL=[
   '/styles.css?v=4',
   '/mobile.css?v=5',
   '/front-final.css?v=4',
+  '/image-sizing.css?v=1',
   '/manifest.webmanifest',
   '/assets/favicon.png?v=4'
 ];
