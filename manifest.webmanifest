@@ -1,0 +1,19 @@
+{
+  "name": "The 82 Chronicle",
+  "short_name": "82 Chronicle",
+  "description": "Lokalna gazeta spod numeru 82.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f0e6",
+  "theme_color": "#f4f0e6",
+  "lang": "pl",
+  "icons": [
+    {
+      "src": "/assets/favicon.png?v=4",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
