@@ -15,7 +15,7 @@
     return fallback;
   };
   const articles=(await loadArticles()).sort((a,b)=>b.sort-a.sort);
-  const storyMedia=a=>`<a class="media" href="${esc(a.href)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}"></a>`;
+  const storyMedia=(a,priority='lazy')=>`<a class="media" href="${esc(a.href)}" aria-label="Czytaj: ${esc(a.title)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}" loading="${priority==='lazy'?'lazy':'eager'}" decoding="async"${priority==='high'?' fetchpriority="high"':''}></a>`;
   const storyText=(a,summary=true,label=a.section)=>`<div class="story-copy"><span class="section-label">${esc(label)}</span><h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:""}<div class="story-meta">${esc(a.date)} • The 82 Chronicle</div></div>`;
 
   const home=document.querySelector('[data-home-feed]');
@@ -27,20 +27,23 @@
     const rest=top.filter(a=>a.id!==latest.id&&a.id!==featured.id).slice(0,4);
     home.innerHTML=`
       <section class="latest-story" aria-label="Najnowszy artykuł">
-        ${storyMedia(latest)}
+        ${storyMedia(latest,'high')}
         ${storyText(latest,true,`Najnowsze • ${latest.section}`)}
       </section>
       <section class="featured-story" aria-label="Główny artykuł">
         <div class="featured-heading"><span class="section-label">Główny artykuł</span></div>
         <h2 class="story-title"><a href="${esc(featured.href)}">${esc(featured.title)}</a></h2>
         <div class="featured-grid">
-          ${storyMedia(featured)}
+          ${storyMedia(featured,'eager')}
           <div><span class="section-label">${esc(featured.section)}</span><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div>
         </div>
       </section>
-      <section class="stories-grid" aria-label="Pozostałe wiadomości">
-        ${rest.map(a=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a)}${storyText(a)}</article>`).join('')}
-      </section>`;
+      ${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości">
+        <div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div>
+        <div class="stories-grid">
+          ${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}
+        </div>
+      </section>`:''}`;
   }
 
   const archive=document.querySelector('[data-archive-list]');
