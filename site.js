@@ -6,24 +6,14 @@
     kultura:{name:'Kultura',intro:'Lokalne wydarzenia, twórczość i życie kulturalne wokół numeru 82.'},
     'kacik-kulinarny':{name:'Kącik kulinarny',intro:'Smaki, przepisy i kulinarne odkrycia redakcji The 82 Chronicle.'}
   };
-  const legacy={
-    'wydarzenia':'aktualnosci',
-    'spolecznosc':'aktualnosci',
-    'opinie':'aktualnosci',
-    'tajemnice':'sledztwa'
-  };
+  const legacy={'wydarzenia':'aktualnosci','spolecznosc':'aktualnosci','opinie':'aktualnosci','tajemnice':'sledztwa'};
   const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
   const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  const fmtDate=iso=>new Date(iso).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'});
-  const normalizeSection=(name,slug)=>{
-    let sectionSlug=slug||slugify(name);
-    sectionSlug=legacy[sectionSlug]||sectionSlug;
-    const info=sections[sectionSlug];
-    return {section:info?.name||name,sectionSlug};
-  };
+  const fmtDate=iso=>iso?new Date(iso).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'}):'';
+  const normalizeSection=(name,slug)=>{let sectionSlug=slug||slugify(name);sectionSlug=legacy[sectionSlug]||sectionSlug;const info=sections[sectionSlug];return {section:info?.name||name,sectionSlug};};
   const normalizeArticle=a=>({...a,...normalizeSection(a.section,a.sectionSlug)});
   const fallback=[...(window.CH82_ARTICLES||[])].map(normalizeArticle);
-  const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/article.html?slug=${encodeURIComponent(a.slug)}`,featured:!!a.featured,sort:new Date(a.published_at).getTime(),date:fmtDate(a.published_at)});
+  const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/a/${encodeURIComponent(a.slug)}`,featured:!!a.featured,sort:new Date(a.published_at||a.created_at).getTime(),date:fmtDate(a.published_at||a.created_at)});
   const loadArticles=async()=>{
     const cfg=window.CH82_SUPABASE||{};
     if(cfg.url&&cfg.anonKey&&window.supabase){
@@ -38,12 +28,7 @@
   const articles=(await loadArticles()).sort((a,b)=>b.sort-a.sort);
   const storyMedia=(a,priority='lazy')=>`<a class="media" href="${esc(a.href)}" aria-label="Czytaj: ${esc(a.title)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}" loading="${priority==='lazy'?'lazy':'eager'}" decoding="async"${priority==='high'?' fetchpriority="high"':''}></a>`;
   const storyText=(a,summary=true,label=a.section)=>`<div class="story-copy"><span class="section-label">${esc(label)}</span><h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:''}<div class="story-meta">${esc(a.date)} • The 82 Chronicle</div></div>`;
-  const navCurrent=section=>document.querySelectorAll('.section-nav a').forEach(link=>{
-    const url=new URL(link.href,location.href);
-    const target=url.searchParams.get('section')||'';
-    if(section&&target===section)link.setAttribute('aria-current','page');
-    if(!section&&location.pathname.endsWith('/archive.html')&&url.pathname.endsWith('/archive.html'))link.setAttribute('aria-current','page');
-  });
+  const navCurrent=section=>document.querySelectorAll('.section-nav a').forEach(link=>{const url=new URL(link.href,location.href);const target=url.searchParams.get('section')||'';if(section&&target===section)link.setAttribute('aria-current','page');if(!section&&location.pathname.endsWith('/archive.html')&&url.pathname.endsWith('/archive.html'))link.setAttribute('aria-current','page');});
 
   const home=document.querySelector('[data-home-feed]');
   if(home){
@@ -52,15 +37,7 @@
     const latest=top[0];
     const featured=articles.find(a=>a.featured&&a.id!==latest.id)||articles.find(a=>a.id!==latest.id)||latest;
     const rest=top.filter(a=>a.id!==latest.id&&a.id!==featured.id).slice(0,4);
-    home.innerHTML=`
-      <section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section>
-      <section class="featured-story" aria-label="Główny artykuł">
-        <div class="featured-heading"><span class="section-label">Główny artykuł</span></div>
-        <h2 class="story-title"><a href="${esc(featured.href)}">${esc(featured.title)}</a></h2>
-        <div class="featured-grid">${storyMedia(featured,'eager')}<div><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div></div>
-      </section>
-      <aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>
-      ${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
+    home.innerHTML=`<section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section><section class="featured-story" aria-label="Główny artykuł"><div class="featured-heading"><span class="section-label">Główny artykuł</span></div><h2 class="story-title"><a href="${esc(featured.href)}">${esc(featured.title)}</a></h2><div class="featured-grid">${storyMedia(featured,'eager')}<div><p class="story-summary">${esc(featured.summary)}</p><div class="story-meta">${esc(featured.date)} • The 82 Chronicle</div></div></div></section><aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
   }
 
   const sectionList=document.querySelector('[data-section-list]');
