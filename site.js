@@ -1,4 +1,11 @@
 (async()=>{
+  const sections={
+    aktualnosci:{name:'Aktualności',intro:'Najnowsze wiadomości z numeru 82, Słotwiny i najbliższej okolicy.'},
+    infrastruktura:{name:'Infrastruktura',intro:'Drogi, schody, remonty i inne sprawy, które miały być załatwione już dawno.'},
+    sledztwa:{name:'Śledztwa',intro:'Tropy, dowody i pytania, których rozsądniejsi ludzie woleliby nie zadawać.'},
+    kultura:{name:'Kultura',intro:'Lokalne wydarzenia, twórczość i życie kulturalne wokół numeru 82.'},
+    'kacik-kulinarny':{name:'Kącik kulinarny',intro:'Smaki, przepisy i kulinarne odkrycia redakcji The 82 Chronicle.'}
+  };
   const fallback=[...(window.CH82_ARTICLES||[])];
   const esc=s=>String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   const fmtDate=iso=>new Date(iso).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'});
@@ -49,14 +56,26 @@
   const archive=document.querySelector('[data-archive-list]');
   if(archive){
     const params=new URLSearchParams(location.search);
-    const section=(params.get('section')||'').toLowerCase();
+    const requestedSection=(params.get('section')||'').toLowerCase();
+    const section=sections[requestedSection]?requestedSection:'';
+    const sectionInfo=sections[section];
     const filtered=section?articles.filter(a=>a.sectionSlug===section):articles;
     const heading=document.querySelector('[data-archive-title]');
-    if(heading&&section){const name=articles.find(a=>a.sectionSlug===section)?.section;if(name)heading.textContent=name;}
+    const eyebrow=document.querySelector('[data-archive-eyebrow]');
+    const intro=document.querySelector('[data-archive-intro]');
+    if(sectionInfo){
+      heading.textContent=sectionInfo.name;
+      eyebrow.textContent='Dział';
+      intro.textContent=sectionInfo.intro;
+      document.title=`${sectionInfo.name} • The 82 Chronicle`;
+      document.querySelector('meta[name="description"]')?.setAttribute('content',`${sectionInfo.name} — artykuły The 82 Chronicle.`);
+      archive.setAttribute('aria-label',`Artykuły w dziale ${sectionInfo.name}`);
+    }
     document.querySelectorAll('.section-nav a').forEach(link=>{
       const target=new URL(link.href,location.href).searchParams.get('section')||'';
       if(target===section&&(section||link.pathname.endsWith('/archive.html')))link.setAttribute('aria-current','page');
     });
-    archive.innerHTML=filtered.length?filtered.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a)}</article>`).join(''):'<p class="empty-state">W tym dziale nie ma jeszcze artykułów.</p>';
+    const emptyMessage=sectionInfo?`W dziale ${sectionInfo.name} nie ma jeszcze artykułów.`:'Archiwum jest jeszcze puste.';
+    archive.innerHTML=filtered.length?filtered.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a)}</article>`).join(''):`<p class="empty-state">${esc(emptyMessage)}</p>`;
   }
 })();
