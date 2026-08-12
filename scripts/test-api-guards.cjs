@@ -10,6 +10,7 @@ const handlers={
 
 const envNames=['SUPABASE_URL','SUPABASE_ANON_KEY','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_SECRET_KEY','RESEND_API_KEY','NEWSLETTER_FROM','NEWSLETTER_SIGNING_SECRET'];
 const original=Object.fromEntries(envNames.map(name=>[name,process.env[name]]));
+const originalFetch=global.fetch;
 
 function response(){
   return {
@@ -52,8 +53,26 @@ async function call(handler,req){
     res=await call(handlers.updateUser,{method:'POST',body:{id:'00000000-0000-0000-0000-000000000001',role:'editor'}});
     assert.equal(res.statusCode,503);
 
+    let captured;
+    global.fetch=async(url,options)=>{
+      captured={url,options};
+      return {ok:true,json:async()=>[]};
+    };
+    process.env.SUPABASE_URL='https://example.supabase.co';
+    process.env.SUPABASE_ANON_KEY='sb_publishable_test';
+    res=await call(handlers.article,{method:'GET',query:{slug:'test'}});
+    assert.equal(res.statusCode,404);
+    assert.equal(captured.options.headers.apikey,'sb_publishable_test');
+    assert.equal(captured.options.headers.authorization,undefined);
+
+    process.env.SUPABASE_ANON_KEY='legacy-anon-jwt';
+    res=await call(handlers.article,{method:'GET',query:{slug:'test'}});
+    assert.equal(res.statusCode,404);
+    assert.equal(captured.options.headers.authorization,'Bearer legacy-anon-jwt');
+
     console.log('OK: endpointy odmawiają operacji bez konfiguracji, a zapis cross-site jest blokowany.');
   }finally{
+    global.fetch=originalFetch;
     for(const [name,value] of Object.entries(original)){
       if(value===undefined)delete process.env[name];
       else process.env[name]=value;

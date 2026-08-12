@@ -1,4 +1,5 @@
 const {requiredEnv,serviceHeaders,requireAdmin}=require('../lib/supabase-server');
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 module.exports=async(req,res)=>{
   if(req.method!=='POST')return res.status(405).json({error:'Method not allowed'});
@@ -21,7 +22,7 @@ module.exports=async(req,res)=>{
     if(!invite.ok)return res.status(invite.status).json({error:invited.msg||invited.message||'Nie udało się wysłać zaproszenia.'});
 
     const userId=invited.id||invited.user?.id;
-    if(!userId)return res.status(502).json({error:'Supabase nie zwrócił identyfikatora zaproszonego użytkownika.'});
+    if(!UUID.test(String(userId||'')))return res.status(502).json({error:'Supabase nie zwrócił prawidłowego identyfikatora zaproszonego użytkownika.'});
 
     const upsert=await fetch(`${url}/rest/v1/profiles?on_conflict=id`,{
       method:'POST',

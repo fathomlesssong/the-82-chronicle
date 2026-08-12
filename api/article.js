@@ -14,8 +14,15 @@ module.exports=async(req,res)=>{
 
   try{
     const endpoint=`${url}/rest/v1/articles?slug=eq.${encodeURIComponent(slug)}&status=eq.published&select=title,slug,section,section_slug,summary,content,image_url,image_alt,published_at,is_updated,update_at&limit=1`;
-    const response=await fetch(endpoint,{headers:{apikey:anonKey,authorization:`Bearer ${anonKey}`}});
-    const rows=response.ok?await response.json():[];
+    const headers={apikey:anonKey};
+    if(!String(anonKey).startsWith('sb_publishable_'))headers.authorization=`Bearer ${anonKey}`;
+    const response=await fetch(endpoint,{headers});
+    if(!response.ok){
+      res.statusCode=502;
+      res.setHeader('content-type','text/plain; charset=utf-8');
+      return res.end('Nie udało się odczytać artykułu z bazy.');
+    }
+    const rows=await response.json();
     const article=rows[0];
     if(!article){
       res.statusCode=404;

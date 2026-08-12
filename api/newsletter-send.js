@@ -1,5 +1,6 @@
 const {requiredEnv,serviceHeaders,requireEditor}=require('../lib/supabase-server');
 const {configured,renderNewsletter,sendWithResend,deliveryKey}=require('../lib/newsletter');
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 module.exports=async(req,res)=>{
   res.setHeader('cache-control','no-store');
@@ -12,10 +13,11 @@ module.exports=async(req,res)=>{
     if(!configured())return res.status(503).json({error:'Wysyłka czeka na RESEND_API_KEY, NEWSLETTER_FROM i NEWSLETTER_SIGNING_SECRET. Nic nie zostało wysłane.'});
     const articleId=String(req.body?.article_id||'').trim();
     const mode=req.body?.mode==='update'?'update':'article';
-    if(!/^[0-9a-f-]{36}$/i.test(articleId))return res.status(400).json({error:'Nieprawidłowy identyfikator artykułu.'});
+    if(!UUID.test(articleId))return res.status(400).json({error:'Nieprawidłowy identyfikator artykułu.'});
     const {url,serviceKey}=requiredEnv();
     const articleResponse=await fetch(`${url}/rest/v1/articles?id=eq.${encodeURIComponent(articleId)}&select=id,title,slug,summary,content,image_url,image_alt,status,is_updated,update_at,updated_at,newsletter_teaser,newsletter_update_excerpt,newsletter_sent_at,newsletter_update_sent_at,newsletter_update_sent_for&limit=1`,{headers:serviceHeaders(serviceKey)});
-    const articles=articleResponse.ok?await articleResponse.json():[];
+    if(!articleResponse.ok)return res.status(502).json({error:'Nie udało się odczytać artykułu z Supabase.'});
+    const articles=await articleResponse.json();
     const article=articles[0];
     if(!article)return res.status(404).json({error:'Artykułu nie znaleziono.'});
     if(article.status!=='published')return res.status(400).json({error:'Newsletter można wysłać tylko dla opublikowanego artykułu.'});
