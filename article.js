@@ -15,7 +15,7 @@
   const rawSectionSlug=data.section_slug||slugify(data.section);
   const sectionSlug=legacy[rawSectionSlug]||rawSectionSlug;
   const section=sectionName[sectionSlug]||data.section;
-  const author=data.author_name||data.author_display_name||'Redakcja The 82 Chronicle';
+  const author=data.author_name||data.author_display_name||'Redakcja Kroniki 82';
   const date=new Date(data.published_at).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'});
   const updateDate=data.is_updated&&data.update_at?new Date(data.update_at).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'}):'';
   const imageCaption=data.image_caption||'';
@@ -31,7 +31,7 @@
       ${data.is_updated?'<span class="update-badge">Aktualizacja</span>':''}
       <h1>${esc(data.title)}</h1>
       <p class="article-lead">${esc(data.summary)}</p>
-      <div class="article-byline">${esc(author)} • ${esc(date)}</div>
+      <div class="article-byline">Tekst: ${esc(author)} • ${esc(date)}</div>
       ${updateDate?`<div class="article-update-meta">Aktualizacja: ${esc(updateDate)}</div>`:''}
     </header>
     ${data.image_url?`<figure class="article-hero"><img src="${esc(data.image_url)}" alt="${esc(data.image_alt||data.title)}" fetchpriority="high" decoding="async">${figcaption}</figure>`:''}

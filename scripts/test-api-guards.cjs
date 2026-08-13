@@ -70,7 +70,48 @@ async function call(handler,req){
     assert.equal(res.statusCode,404);
     assert.equal(captured.options.headers.authorization,'Bearer legacy-anon-jwt');
 
-    console.log('OK: endpointy odmawiają operacji bez konfiguracji, a zapis cross-site jest blokowany.');
+    const article={
+      title:'Test autora',
+      slug:'test-autora',
+      section:'Aktualności',
+      section_slug:'aktualnosci',
+      summary:'Lead',
+      content:'Treść artykułu.',
+      image_url:null,
+      image_alt:null,
+      image_caption:null,
+      image_credit:null,
+      published_at:'2026-08-13T18:00:00.000Z',
+      is_updated:false,
+      update_at:null,
+      author_id:'11111111-1111-1111-1111-111111111111'
+    };
+    const calls=[];
+    global.fetch=async(url,options)=>{
+      calls.push({url,options});
+      if(String(url).includes('/rest/v1/profiles'))return {ok:true,json:async()=>[{display_name:'Michał & Syn'}]};
+      return {ok:true,json:async()=>[article]};
+    };
+    process.env.SUPABASE_ANON_KEY='sb_publishable_test';
+    process.env.SUPABASE_SECRET_KEY='sb_secret_test';
+    res=await call(handlers.article,{method:'GET',query:{slug:'test-autora'}});
+    assert.equal(res.statusCode,200);
+    assert.match(res.body,/Tekst: Michał &amp; Syn/);
+    assert.doesNotMatch(res.body,/Redakcja The 82 Chronicle/);
+    const profileCall=calls.find(call=>String(call.url).includes('/rest/v1/profiles'));
+    assert.ok(profileCall);
+    assert.match(String(profileCall.url),/select=display_name/);
+    assert.equal(profileCall.options.headers.apikey,'sb_secret_test');
+    assert.equal(profileCall.options.headers.authorization,undefined);
+
+    global.fetch=async(url)=>String(url).includes('/rest/v1/profiles')
+      ? {ok:true,json:async()=>[]}
+      : {ok:true,json:async()=>[article]};
+    res=await call(handlers.article,{method:'GET',query:{slug:'test-autora'}});
+    assert.equal(res.statusCode,200);
+    assert.match(res.body,/Tekst: Redakcja Kroniki 82/);
+
+    console.log('OK: endpointy mają bezpieczne guardy, a byline używa profilu autora z kontrolowanym fallbackiem.');
   }finally{
     global.fetch=originalFetch;
     for(const [name,value] of Object.entries(original)){
