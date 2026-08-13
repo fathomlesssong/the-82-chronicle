@@ -1,4 +1,11 @@
-(()=>{
+const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ł/g,'l').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,90);
+const slugForSave=(id,title)=>id?undefined:slugify(title);
+const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave});
+
+if(typeof module==='object'&&module.exports)module.exports=CH82_ADMIN_SLUGS;
+
+if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
+  const {slugForSave}=CH82_ADMIN_SLUGS;
   const cfg=window.CH82_SUPABASE||{};
   const sections=Object.freeze({
     'Aktualności':'aktualnosci',
@@ -11,7 +18,6 @@
   const statusNames={draft:'Szkic',review:'Do akceptacji',published:'Opublikowany',archived:'Archiwalny'};
   const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
   const status=(el,msg,bad=false)=>{if(!el)return;el.textContent=msg;el.classList.toggle('is-error',bad)};
-  const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,90);
   const fmtLocal=iso=>{const d=iso?new Date(iso):new Date();const z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`};
   const newsletterExcerpt=(summary,content,max=440)=>{
     const clean=s=>String(s||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
@@ -236,7 +242,7 @@
     const title=String(fd.get('title')).trim();
     const payload={
       title,
-      slug:slugify(title),
+      slug:slugForSave(id,title),
       section:selectedSection,
       section_slug:selectedSectionSlug,
       summary:String(fd.get('summary')).trim(),
