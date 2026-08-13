@@ -28,6 +28,14 @@
   .home-ad-mobile{display:none}
 }
 
+/* Keep story cards readable while the desktop sidebar still takes space. */
+@media(min-width:901px) and (max-width:1199.98px){
+  .stories-grid{grid-template-columns:1fr}
+  .story-card,.story-card:nth-child(odd),.story-card:nth-child(even){grid-template-columns:clamp(170px,20vw,220px) minmax(0,1fr);gap:20px;padding:20px 0;border-left:0}
+  .story-card .media{height:clamp(140px,15vw,170px)}
+  .story-card .story-title{font-size:clamp(25px,3vw,34px)}
+}
+
 /* Tablet */
 @media(min-width:701px) and (max-width:900.98px){
   .home-layout{display:block}
@@ -37,6 +45,8 @@
   .featured-grid{grid-template-columns:clamp(210px,31vw,240px) minmax(0,1fr);gap:24px;align-items:start}
   .featured-grid .media{width:100%;min-height:0;max-height:340px;aspect-ratio:auto;display:flex;align-items:flex-start;justify-content:flex-start}
   .featured-grid .story-image{width:auto;height:auto;max-width:100%;max-height:340px;object-fit:contain;object-position:top left}
+  .stories-grid{grid-template-columns:1fr}
+  .story-card,.story-card:nth-child(odd),.story-card:nth-child(even){grid-template-columns:clamp(170px,26vw,210px) minmax(0,1fr);gap:18px;padding:20px 0;border-left:0}
   .story-card .media{height:170px;min-height:0}
   .home-ad-desktop{display:none}
   .home-ad-mobile{display:block;width:100%;max-width:none;margin:20px 0;padding:18px 0;border-top:1px solid var(--soft-line);border-bottom:1px solid var(--soft-line)}
