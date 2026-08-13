@@ -1,6 +1,9 @@
 /* Duże zdjęcia zachowują pełny kadr, ale pionowe nie mogą przejąć całej strony. */
 
-@media(min-width:1101px){
+/* Zwarty blok „Najnowsze” dla każdego viewportu większego niż telefon.
+   Poprzedni próg 1101 px powodował, że zwykłe okno desktopowe około 1000 px wpadało w reguły tabletowe
+   i portret znowu robił się absurdalnie duży. */
+@media(min-width:701px){
   .home-layout{align-items:start}
   .latest-story{grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start;padding:18px 0 20px}
   .latest-story .media{width:260px;height:320px;min-height:0;max-height:320px;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;background:transparent}
