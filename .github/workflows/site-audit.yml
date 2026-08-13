@@ -24,6 +24,8 @@ jobs:
           for f in lib/*.js; do node --check "$f"; done
       - name: Static links and required files
         run: node scripts/audit-site.mjs
+      - name: Stable article slug
+        run: node scripts/test-stable-slug.cjs
       - name: Newsletter skeleton
         run: node scripts/test-newsletter.cjs
       - name: Supabase server configuration
