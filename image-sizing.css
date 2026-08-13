@@ -1,11 +1,10 @@
 /* Duże zdjęcia zachowują pełny kadr, ale pionowe nie mogą przejąć całej strony. */
 
-/* Desktop homepage: najnowszy artykuł ma własny, zwarty blok. Sidebar reklamowy pozostaje niezależną kolumną. */
 @media(min-width:1101px){
   .home-layout{align-items:start}
-  .latest-story{grid-template-columns:320px minmax(0,1fr);align-items:start}
-  .latest-story .media{width:100%;height:auto;min-height:0;max-height:400px;display:flex;align-items:flex-start;justify-content:center}
-  .latest-story .story-image{display:block;width:100%;height:auto!important;max-height:400px;object-fit:contain;object-position:top center}
+  .latest-story{grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start;padding:18px 0 20px}
+  .latest-story .media{width:260px;height:320px;min-height:0;max-height:320px;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;background:transparent}
+  .latest-story .story-image{display:block;width:100%!important;height:100%!important;max-width:260px;max-height:320px;object-fit:contain;object-position:top center;background:transparent}
 }
 
 .featured-grid .media{display:flex;justify-content:center;align-items:flex-start}
