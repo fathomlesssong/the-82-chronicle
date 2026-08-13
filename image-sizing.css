@@ -7,6 +7,11 @@
   .latest-story .story-image{display:block;width:100%!important;height:100%!important;max-width:260px;max-height:320px;object-fit:contain;object-position:top center;background:transparent}
 }
 
+@media(min-width:901px){
+  .latest-story{padding-top:17px}
+  .home-ad-desktop{margin-top:0}
+}
+
 .featured-grid .media{display:flex;justify-content:center;align-items:flex-start;min-height:0;max-height:430px}
 .featured-grid .story-image{display:block;width:auto!important;height:auto!important;max-width:100%;max-height:430px!important;object-fit:contain;object-position:top center;margin-inline:auto}
 
