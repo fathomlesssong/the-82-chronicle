@@ -7,7 +7,7 @@
   .latest-story .story-image{display:block;width:100%!important;height:100%!important;max-width:260px;max-height:320px;object-fit:contain;object-position:top center;background:transparent}
 }
 
-@media(min-width:901px){
+@media(min-width:900.01px){
   .latest-story{padding-top:17px}
   .home-ad-desktop{margin-top:0}
 }

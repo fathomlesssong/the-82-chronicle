@@ -4,7 +4,7 @@
 .story-copy{min-width:0}.story-title{overflow-wrap:normal;word-break:normal;hyphens:auto}.media{min-width:0;overflow:hidden}.story-image{object-position:center}
 .update-badge{display:inline-block;margin:5px 0 8px;padding:5px 9px;border:1.5px solid currentColor;color:#7d1e24;font:700 11px/1 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}.section-label+.update-badge{margin-left:9px}.featured-story>.update-badge,.article-header>.update-badge{margin-left:0}.article-header>.update-badge{font-size:13px;padding:6px 11px;margin:8px 0 10px;border-width:2px}.article-update-meta{margin-top:8px;color:#7d1e24;font:700 11px/1.35 Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}
 /* Homepage desktop */
-@media(min-width:901px){
+@media(min-width:900.01px){
   .home-layout{grid-template-columns:minmax(0,1fr) 280px;gap:34px}
   .home-layout>[data-home-feed]{min-width:0}
   .latest-story{max-width:none;margin:0;grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr);gap:24px;padding:20px 0 22px}
