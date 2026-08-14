@@ -29,7 +29,7 @@
 }
 
 /* Keep story cards readable while the desktop sidebar still takes space. */
-@media(min-width:901px) and (max-width:1199.98px){
+@media(min-width:901px) and (max-width:1279.98px){
   .stories-grid{grid-template-columns:1fr}
   .story-card,.story-card:nth-child(odd),.story-card:nth-child(even){grid-template-columns:clamp(170px,20vw,220px) minmax(0,1fr);gap:20px;padding:20px 0;border-left:0}
   .story-card .media{height:clamp(140px,15vw,170px)}
