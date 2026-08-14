@@ -13,7 +13,7 @@ assert.match(client,/class="article-content/);
 assert.match(client,/class="article-caption"/);
 assert.match(client,/class="article-credit"/);
 assert.match(classifier,/naturalWidth<=img\.naturalHeight/);
-assert.match(css,/@media\(min-width:901px\).*?\.article-content--compact/s);
+assert.match(css,/@media\(min-width:701px\).*?\.article-content--compact/s);
 assert.match(css,/\.article-content--compact \.article-hero\{float:left/);
 assert.match(css,/max-height:600px/);
 assert.match(css,/@media\(max-width:700px\).*?\.article-content\{margin-top:17px\}/s);
