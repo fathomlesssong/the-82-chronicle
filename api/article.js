@@ -56,7 +56,7 @@ module.exports=async(req,res)=>{
     const authorName=await resolveAuthorName(url,article.author_id);
     const imageCaption=article.image_caption||'';
     const imageCredit=article.image_credit||'';
-    const figcaption=imageCaption||imageCredit?`<figcaption>${imageCaption?esc(imageCaption):''}${imageCaption&&imageCredit?' • ':''}${imageCredit?esc(imageCredit):''}</figcaption>`:'';
+    const figcaption=imageCaption||imageCredit?`<figcaption>${imageCaption?`<span class="article-caption">${esc(imageCaption)}</span>`:''}${imageCredit?`<span class="article-credit">${esc(imageCredit)}</span>`:''}</figcaption>`:'';
 
     const html=`<!DOCTYPE html>
 <html lang="pl"><head>
@@ -67,13 +67,13 @@ module.exports=async(req,res)=>{
 <meta property="og:type" content="article"><meta property="og:site_name" content="The 82 Chronicle"><meta property="og:locale" content="pl_PL">
 <meta property="og:url" content="${esc(canonical)}"><meta property="og:title" content="${esc(article.title)}"><meta property="og:description" content="${esc(article.summary)}"><meta property="og:image" content="${esc(image)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(article.title)}"><meta name="twitter:description" content="${esc(article.summary)}"><meta name="twitter:image" content="${esc(image)}">
-<link rel="stylesheet" href="/styles.css?v=4"><link rel="stylesheet" href="/mobile.css?v=5"><link rel="stylesheet" href="/front-final.css?v=10">
+<link rel="stylesheet" href="/styles.css?v=4"><link rel="stylesheet" href="/mobile.css?v=5"><link rel="stylesheet" href="/front-final.css?v=11">
 </head><body><div class="page">
 <div class="top-strip"><span>Słotwina, Dolny Śląsk</span><span>Gazeta niezależna od rozsądku urzędowego</span><span>Nr 1 • 2026</span></div>
 <header class="masthead-wrap"><a href="/" style="color:inherit;text-decoration:none"><h1 class="masthead">The 82 Chronicle</h1></a><p class="tagline">Wiadomości spod numeru 82 • Słotwina • Założono w 2026</p></header>
 <nav class="section-nav" aria-label="Działy gazety"><a href="/">Strona główna</a><a href="/section.html?section=aktualnosci">Aktualności</a><a href="/section.html?section=infrastruktura">Infrastruktura</a><a href="/section.html?section=sledztwa">Śledztwa</a><a href="/section.html?section=kultura">Kultura</a><a href="/section.html?section=kacik-kulinarny">Kącik kulinarny</a><a href="/archive.html">Archiwum</a></nav>
-<main class="article-page"><article><div class="article-breadcrumb"><a href="/">Strona główna</a> / <a href="${sectionHref(article.section_slug)}">${esc(article.section)}</a></div><span class="section-label">${esc(article.section)}</span>${updateBadge}<h1>${esc(article.title)}</h1><p class="article-lead">${esc(article.summary)}</p><div class="article-byline">Tekst: ${esc(authorName)}${date?` • ${esc(date)}`:''}</div>${updateDate?`<div class="article-update-meta">Aktualizacja: ${esc(updateDate)}</div>`:''}${article.image_url?`<figure class="article-hero"><img src="${esc(article.image_url)}" alt="${esc(article.image_alt||article.title)}">${figcaption}</figure>`:''}<div class="article-body">${paragraphs(article.content)}</div><p class="article-return"><a href="${sectionHref(article.section_slug)}">← Więcej z działu ${esc(article.section)}</a></p></article></main>
-<footer><a href="/" style="color:inherit">Strona główna</a> • The 82 Chronicle • Założono w 2026</footer></div></body></html>`;
+<main class="article-page"><article><header class="article-header"><div class="article-breadcrumb"><a href="/">Strona główna</a> / <a href="${sectionHref(article.section_slug)}">${esc(article.section)}</a></div><span class="section-label">${esc(article.section)}</span>${updateBadge}<h1>${esc(article.title)}</h1><p class="article-lead">${esc(article.summary)}</p><div class="article-byline">Tekst: ${esc(authorName)}${date?` • ${esc(date)}`:''}</div>${updateDate?`<div class="article-update-meta">Aktualizacja: ${esc(updateDate)}</div>`:''}</header><div class="article-content${article.image_url?'':' article-content--no-image'}">${article.image_url?`<figure class="article-hero"><img src="${esc(article.image_url)}" alt="${esc(article.image_alt||article.title)}" fetchpriority="high" decoding="async">${figcaption}</figure>`:''}<div class="article-body">${paragraphs(article.content)}</div></div><p class="article-return"><a href="${sectionHref(article.section_slug)}">← Więcej z działu ${esc(article.section)}</a></p></article></main>
+<footer><a href="/" style="color:inherit">Strona główna</a> • The 82 Chronicle • Założono w 2026</footer></div><script src="/article-layout.js?v=1"></script></body></html>`;
     res.statusCode=200;
     res.setHeader('content-type','text/html; charset=utf-8');
     res.setHeader('cache-control','public, s-maxage=60, stale-while-revalidate=300');
