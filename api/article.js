@@ -8,23 +8,24 @@ const authorFallback='Redakcja Kroniki 82';
 async function resolveGallery(url,articleId,anonKey){
   if(!articleId)return [];
   try{
-    const serviceKey=process.env.SUPABASE_SECRET_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const headers=serviceKey
-      ?serviceHeaders(serviceKey)
-      :{apikey:anonKey};
+    const headers={apikey:anonKey};
 
-    if(!serviceKey&&!String(anonKey).startsWith('sb_publishable_')){
+    if(!String(anonKey).startsWith('sb_publishable_')){
       headers.authorization=`Bearer ${anonKey}`;
     }
 
     const endpoint=`${url}/rest/v1/article_images?article_id=eq.${encodeURIComponent(articleId)}&select=image_url,image_alt,image_caption,image_credit,sort_order&order=sort_order.asc,created_at.asc`;
     const response=await fetch(endpoint,{headers});
 
-    if(!response.ok)return [];
+    if(!response.ok){
+      console.error('Gallery request failed:',response.status,await response.text());
+      return [];
+    }
 
     const rows=await response.json();
     return Array.isArray(rows)?rows:[];
-  }catch(_error){
+  }catch(error){
+    console.error('Gallery request error:',error);
     return [];
   }
 }
