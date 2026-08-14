@@ -1,11 +1,12 @@
 const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ł/g,'l').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,90);
 const slugForSave=(id,title)=>id?undefined:slugify(title);
-const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave});
+const gallerySortOrder=value=>{const raw=String(value??'').trim();const n=Number(raw);return raw&&Number.isInteger(n)&&n>=0?n:null};
+const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave,gallerySortOrder});
 
 if(typeof module==='object'&&module.exports)module.exports=CH82_ADMIN_SLUGS;
 
 if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
-  const {slugForSave}=CH82_ADMIN_SLUGS;
+  const {slugForSave,gallerySortOrder}=CH82_ADMIN_SLUGS;
   const cfg=window.CH82_SUPABASE||{};
   const sections=Object.freeze({
     'Aktualności':'aktualnosci',
@@ -53,10 +54,14 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   const newsletterUpdateField=document.querySelector('[data-newsletter-update-field]');
   const newsletterCount=document.querySelector('[data-newsletter-count]');
   const generateNewsletter=document.querySelector('[data-generate-newsletter]');
+  const galleryInput=document.querySelector('[data-gallery-input]');
+  const galleryList=document.querySelector('[data-gallery-list]');
 
   let db=null;
   let currentSession=null;
   let currentProfile=null;
+  let galleryItems=[];
+  let gallerySequence=0;
 
   if(!cfg.url||!cfg.anonKey||!window.supabase){
     status(loginStatus,'Panel czeka na podłączenie projektu Supabase.',true);
@@ -83,6 +88,90 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     syncNewsletterUi();
   };
 
+  const nextGalleryOrder=()=>galleryItems.reduce((max,item)=>Math.max(max,item.sortOrder??-1),-1)+1;
+  const galleryItemLabel=item=>{
+    if(item.file)return item.file.name;
+    const tail=String(item.imageUrl||'').split('/').pop()?.split('?')[0];
+    try{return decodeURIComponent(tail||'Zapisane zdjęcie');}catch{return tail||'Zapisane zdjęcie';}
+  };
+
+  const renderGallery=()=>{
+    if(!galleryList)return;
+    if(!galleryItems.length){galleryList.innerHTML='<p class="admin-help">Brak dodatkowych zdjęć.</p>';return;}
+    galleryList.innerHTML=galleryItems.map(item=>`
+      <div class="admin-gallery-item" data-gallery-key="${esc(item.key)}">
+        <div class="admin-gallery-item-head">
+          <strong>${esc(galleryItemLabel(item))}</strong>
+          ${item.id?'<span class="admin-help">Zapisane</span>':`<button type="button" class="button-secondary" data-gallery-remove="${esc(item.key)}">Usuń wybór</button>`}
+        </div>
+        <div class="admin-gallery-fields">
+          <label>Opis alternatywny (ALT)
+            <input type="text" maxlength="240" required value="${esc(item.alt)}" data-gallery-alt>
+          </label>
+          <label>Podpis
+            <input type="text" maxlength="300" value="${esc(item.caption)}" data-gallery-caption>
+          </label>
+          <label>Autor / źródło
+            <input type="text" maxlength="160" value="${esc(item.credit)}" data-gallery-credit>
+          </label>
+          <label>Kolejność
+            <input type="number" min="0" step="1" required value="${esc(item.sortOrder)}" data-gallery-sort-order>
+          </label>
+        </div>
+      </div>`).join('');
+    galleryList.querySelectorAll('[data-gallery-remove]').forEach(button=>button.addEventListener('click',()=>{
+      galleryItems=galleryItems.filter(item=>item.key!==button.dataset.galleryRemove);
+      renderGallery();
+    }));
+  };
+
+  const resetGallery=()=>{
+    galleryItems=[];
+    if(galleryInput)galleryInput.value='';
+    renderGallery();
+  };
+
+  const collectGalleryItems=()=>{
+    const collected=[...galleryList.querySelectorAll('[data-gallery-key]')].map(row=>{
+      const item=galleryItems.find(candidate=>candidate.key===row.dataset.galleryKey);
+      if(!item)throw new Error('Nie udało się odczytać jednego ze zdjęć galerii.');
+      const alt=String(row.querySelector('[data-gallery-alt]').value||'').trim();
+      const sortOrder=gallerySortOrder(row.querySelector('[data-gallery-sort-order]').value);
+      if(!alt)throw new Error(`Uzupełnij opis ALT dla zdjęcia „${galleryItemLabel(item)}”.`);
+      if(sortOrder===null)throw new Error(`Podaj nieujemną, całkowitą kolejność dla zdjęcia „${galleryItemLabel(item)}”.`);
+      return {
+        ...item,
+        alt,
+        caption:String(row.querySelector('[data-gallery-caption]').value||'').trim(),
+        credit:String(row.querySelector('[data-gallery-credit]').value||'').trim(),
+        sortOrder
+      };
+    });
+    galleryItems=collected;
+    return collected;
+  };
+
+  const loadArticleGallery=async articleId=>{
+    const {data,error}=await db.from('article_images')
+      .select('id,image_url,image_alt,image_caption,image_credit,sort_order')
+      .eq('article_id',articleId)
+      .order('sort_order',{ascending:true})
+      .order('created_at',{ascending:true});
+    if(error)throw error;
+    if(articleForm.elements.id.value!==String(articleId))return false;
+    galleryItems=(data||[]).map(image=>({
+      key:`saved-${image.id}`,
+      id:image.id,
+      imageUrl:image.image_url,
+      alt:image.image_alt||'',
+      caption:image.image_caption||'',
+      credit:image.image_credit||'',
+      sortOrder:image.sort_order??0
+    }));
+    renderGallery();
+    return true;
+  };
+
   const configureRoleUi=()=>{
     const role=currentProfile?.role;
     const canPublish=role==='editor'||role==='admin';
@@ -105,6 +194,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
 
   const resetForm=()=>{
     articleForm.reset();
+    resetGallery();
     articleForm.elements.id.value='';
     articleForm.elements.published_at.value=fmtLocal();
     articleForm.elements.update_at.value='';
@@ -124,8 +214,9 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     list.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>editArticle(btn.dataset.edit,data)));
   };
 
-  const editArticle=(id,data)=>{
+  const editArticle=async(id,data)=>{
     const a=data.find(x=>String(x.id)===String(id));if(!a)return;
+    resetGallery();
     articleForm.elements.id.value=a.id;
     articleForm.elements.title.value=a.title||'';
     articleForm.elements.section.value=sections[a.section]?a.section:'Aktualności';
@@ -145,6 +236,13 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     configureRoleUi();
     syncUpdateUi();
     articleForm.scrollIntoView({behavior:'smooth',block:'start'});
+    status(formStatus,'Wczytywanie dodatkowych zdjęć…');
+    try{
+      const applied=await loadArticleGallery(a.id);
+      if(applied)status(formStatus,'');
+    }catch(error){
+      if(articleForm.elements.id.value===String(a.id))status(formStatus,`Nie udało się wczytać dodatkowych zdjęć: ${error.message}`,true);
+    }
   };
 
   const loadUsers=async()=>{
@@ -164,6 +262,53 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     const data=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(data.error||'Operacja nie powiodła się.');
     return data;
+  };
+
+  const removeUploadedGalleryFiles=async paths=>{
+    if(!paths.length)return;
+    await db.storage.from('article-images').remove(paths);
+  };
+
+  const persistArticleGallery=async(articleId,items)=>{
+    const metadata=item=>({
+      image_alt:item.alt,
+      image_caption:item.caption||null,
+      image_credit:item.credit||null,
+      sort_order:item.sortOrder
+    });
+
+    for(const item of items.filter(candidate=>candidate.id)){
+      const {error}=await db.from('article_images')
+        .update(metadata(item))
+        .eq('id',item.id)
+        .eq('article_id',articleId)
+        .select('id')
+        .single();
+      if(error)throw error;
+    }
+
+    const pending=items.filter(item=>item.file);
+    if(!pending.length)return;
+    const uploadedPaths=[];
+    const rows=[];
+    for(const [index,item] of pending.entries()){
+      status(formStatus,`Artykuł zapisany. Wysyłanie dodatkowego zdjęcia ${index+1}/${pending.length}…`);
+      const ext=(item.file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+      const path=`${currentSession.user.id}/${articleId}/gallery/${Date.now()}-${index}-${Math.random().toString(36).slice(2)}.${ext||'jpg'}`;
+      const upload=await db.storage.from('article-images').upload(path,item.file,{upsert:false});
+      if(upload.error){await removeUploadedGalleryFiles(uploadedPaths);throw upload.error;}
+      uploadedPaths.push(path);
+      const imageUrl=db.storage.from('article-images').getPublicUrl(path).data.publicUrl;
+      rows.push({
+        article_id:articleId,
+        image_url:imageUrl,
+        ...metadata(item),
+        created_by:currentSession.user.id
+      });
+    }
+
+    const {error}=await db.from('article_images').insert(rows);
+    if(error){await removeUploadedGalleryFiles(uploadedPaths);throw error;}
   };
 
   const updateUser=async(id,changes)=>{
@@ -204,6 +349,20 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   sendNewsletter?.addEventListener('change',()=>{if(sendNewsletter.checked)fillNewsletterTeaser();syncNewsletterUi();});
   generateNewsletter?.addEventListener('click',()=>{fillNewsletterTeaser(true);syncNewsletterUi();});
   articleForm.elements.newsletter_teaser?.addEventListener('input',syncNewsletterUi);
+  galleryInput?.addEventListener('change',()=>{
+    const files=[...(galleryInput.files||[])];
+    const invalid=files.find(file=>file.type&&!file.type.startsWith('image/'));
+    if(invalid){status(formStatus,`Plik „${invalid.name}” nie jest obrazem.`,true);galleryInput.value='';return;}
+    let order=nextGalleryOrder();
+    for(const file of files){
+      gallerySequence+=1;
+      galleryItems.push({key:`new-${gallerySequence}`,file,alt:'',caption:'',credit:'',sortOrder:order});
+      order+=1;
+    }
+    galleryInput.value='';
+    renderGallery();
+    status(formStatus,'');
+  });
 
   articleForm.addEventListener('submit',async e=>{
     e.preventDefault();status(formStatus,'Zapisywanie…');
@@ -212,6 +371,9 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     const selectedSection=String(fd.get('section')||'');
     const selectedSectionSlug=sections[selectedSection];
     if(!selectedSectionSlug){status(formStatus,'Wybierz jeden z pięciu dostępnych działów.',true);return;}
+    let preparedGallery=[];
+    try{preparedGallery=collectGalleryItems();}
+    catch(error){status(formStatus,error.message,true);return;}
 
     let desiredStatus=String(fd.get('status')||'draft');
     if(currentProfile.role==='author'&&!['draft','review'].includes(desiredStatus))desiredStatus='review';
@@ -271,6 +433,15 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     const q=id?db.from('articles').update(payload).eq('id',id):db.from('articles').insert(payload);
     const {data:saved,error}=await q.select('id').single();
     if(error){status(formStatus,error.message,true);return;}
+    articleForm.elements.id.value=saved.id;
+    formTitle.textContent='Edytuj artykuł';
+    if(imageUrl)articleForm.elements.image.value='';
+    try{await persistArticleGallery(saved.id,preparedGallery);}
+    catch(error){
+      status(formStatus,`Artykuł zapisano, ale dodatkowe zdjęcia nie zostały zapisane w całości: ${error.message}`,true);
+      await loadArticles();
+      return;
+    }
     let completion=desiredStatus==='review'?'Przekazano do akceptacji.':(isUpdated?'Zapisano jako aktualizację.':'Zapisano.');
     let completionError=false;
     if(shouldSendNewsletter){

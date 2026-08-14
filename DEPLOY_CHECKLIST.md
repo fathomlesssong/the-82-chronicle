@@ -33,6 +33,7 @@
 - [ ] wykonać `supabase-schema.sql`
 - [ ] wykonać `supabase-seed.sql`
 - [ ] wykonać `migrations/20260812_newsletter.sql`
+- [ ] wykonać `migrations/20260814_article_images.sql`
 - [ ] utworzyć pierwsze konto redakcyjne
 - [ ] nadać pierwszemu kontu rolę `admin`
 - [ ] wyłączyć publiczny signup

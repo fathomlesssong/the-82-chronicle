@@ -26,6 +26,8 @@ jobs:
         run: node scripts/audit-site.mjs
       - name: Stable article slug
         run: node scripts/test-stable-slug.cjs
+      - name: Article gallery foundation
+        run: node scripts/test-article-gallery.cjs
       - name: Newsletter skeleton
         run: node scripts/test-newsletter.cjs
       - name: Supabase server configuration

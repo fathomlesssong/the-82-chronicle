@@ -26,6 +26,7 @@ Frontend pozostaje lekki i oparty głównie na statycznym HTML/CSS/JS.
 - `supabase-schema.sql` — schema, role i RLS
 - `supabase-seed.sql` — import obecnych artykułów
 - `migrations/20260812_newsletter.sql` — minimalna lista odbiorców i pola wysyłki
+- `migrations/20260814_article_images.sql` — dodatkowe zdjęcia artykułów, metadane, kolejność i RLS
 - `newsletter.js` + `api/newsletter-*.js` — zapis, wypisanie i bezpieczna wysyłka przez Resend
 - `api/` — funkcje Vercel do operacji wymagających klucza serwerowego
 

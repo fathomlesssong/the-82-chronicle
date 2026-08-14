@@ -17,6 +17,7 @@ W Supabase SQL Editor uruchom kolejno:
 1. `supabase-schema.sql`
 2. `supabase-seed.sql`
 3. `migrations/20260812_newsletter.sql`
+4. `migrations/20260814_article_images.sql`
 
 Schema tworzy:
 - `profiles`
@@ -31,6 +32,8 @@ Schema tworzy:
 Seed importuje obecne trzy artykuły Chronicle.
 
 Migracja newslettera tworzy minimalną tabelę `subscribers` oraz pola zajawki i znaczników wysyłki w `articles`. Tabela nie jest dostępna bezpośrednio dla klienta.
+
+Migracja dodatkowych zdjęć tworzy `article_images`, kolejność i metadane zdjęć oraz RLS zgodne z rolami CMS. To trwały snippet SQL pierwszego etapu galerii.
 
 ## 3. Pierwszy administrator
 

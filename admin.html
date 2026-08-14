@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="/styles.css?v=4">
   <link rel="stylesheet" href="/mobile.css?v=5">
   <link rel="stylesheet" href="/front-final.css?v=12">
-  <link rel="stylesheet" href="/newsletter.css?v=1">
+  <link rel="stylesheet" href="/newsletter.css?v=2">
 </head>
 <body>
   <div class="page admin-page">
@@ -77,6 +77,14 @@
               <label>Opis alternatywny zdjęcia (ALT)<input type="text" name="image_alt" maxlength="240" placeholder="Krótki opis tego, co widać na zdjęciu"></label>
               <label>Podpis pod zdjęciem<input type="text" name="image_caption" maxlength="300" placeholder="Opcjonalny podpis widoczny pod zdjęciem"></label>
               <label>Autor / źródło zdjęcia<input type="text" name="image_credit" maxlength="160" placeholder="np. fot. Michał lub Archiwum The 82 Chronicle"></label>
+              <fieldset class="admin-fieldset" data-gallery-panel>
+                <legend>Dodatkowe zdjęcia artykułu</legend>
+                <label>Dodaj zdjęcia
+                  <input type="file" name="gallery_images" accept="image/*" multiple data-gallery-input>
+                </label>
+                <p class="admin-help">Możesz wybrać wiele plików. Każde zdjęcie wymaga opisu ALT; podpis i źródło są opcjonalne. Kolejność zaczyna się od 0.</p>
+                <div class="admin-gallery-list" data-gallery-list></div>
+              </fieldset>
               <label data-published-at-field>Data publikacji<input type="datetime-local" name="published_at"></label>
               <label class="check-row"><input type="checkbox" name="is_updated" data-update-toggle> Oznacz jako aktualizację</label>
               <label data-update-at-field hidden>Data aktualizacji<input type="datetime-local" name="update_at"></label>
@@ -129,6 +137,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=7"></script>
+  <script src="/admin.js?v=8"></script>
 </body>
 </html>
