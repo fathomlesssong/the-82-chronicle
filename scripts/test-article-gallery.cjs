@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE}=require('../admin');
+const {gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE}=require('../admin-article');
 
 assert.equal(gallerySortOrder('0'),0);
 assert.equal(gallerySortOrder('12'),12);
@@ -14,12 +14,12 @@ assert.equal(MAX_IMAGE_BYTES,8*1024*1024);
 assert.equal(MAX_IMAGE_EDGE,2400);
 
 const root=path.join(__dirname,'..');
-const adminHtml=fs.readFileSync(path.join(root,'admin.html'),'utf8');
+const adminHtml=fs.readFileSync(path.join(root,'admin-article.html'),'utf8');
 assert.match(adminHtml,/name="gallery_images"[^>]*multiple/);
 assert.match(adminHtml,/data-gallery-list/);
 assert.match(adminHtml,/Maksymalnie 20 zdjęć/);
 
-const adminJs=fs.readFileSync(path.join(root,'admin.js'),'utf8');
+const adminJs=fs.readFileSync(path.join(root,'admin-article.js'),'utf8');
 assert.match(adminJs,/prepareImageFile/);
 assert.match(adminJs,/image\/webp/);
 assert.match(adminJs,/galleryItems\.length\+files\.length>MAX_GALLERY_IMAGES/);

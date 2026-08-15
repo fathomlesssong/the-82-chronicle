@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Wideo strony głównej • Kronika 82</title>
+
+  <link rel="icon" type="image/png" href="/assets/favicon.png?v=4">
+  <link rel="stylesheet" href="/styles.css?v=4">
+  <link rel="stylesheet" href="/mobile.css?v=5">
+  <link rel="stylesheet" href="/front-final.css?v=18">
+  <link rel="stylesheet" href="/newsletter.css?v=2">
+  <link rel="stylesheet" href="/admin-dashboard.css?v=1">
+
+  <style>
+    .admin-video-wrap{
+      max-width:820px;
+      margin:28px auto 0;
+    }
+
+    .admin-video-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .admin-video-preview{
+      margin-top:26px;
+      padding-top:22px;
+      border-top:1px solid var(--line,#aaa);
+    }
+
+    .admin-video-preview-frame{
+      position:relative;
+      width:100%;
+      aspect-ratio:16/9;
+      overflow:hidden;
+      background:#111;
+    }
+
+    .admin-video-preview-frame img{
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .admin-video-delete{
+      margin-left:auto;
+    }
+
+    @media(max-width:560px){
+      .admin-video-actions{
+        display:grid;
+        grid-template-columns:1fr;
+      }
+
+      .admin-video-delete{
+        margin-left:0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page admin-page">
+
+    <header class="masthead-wrap admin-masthead">
+      <a class="admin-back" href="/admin.html">← Redakcja</a>
+      <h1 class="masthead">Wideo</h1>
+      <p class="tagline">Film na stronie głównej Kroniki 82</p>
+    </header>
+
+    <main class="admin-video-wrap">
+
+      <section class="admin-card" data-login-panel>
+        <h2>Logowanie</h2>
+
+        <form class="admin-form" data-login-form>
+          <label>
+            E-mail
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+
+          <label>
+            Hasło
+            <input type="password" name="password" autocomplete="current-password" required>
+          </label>
+
+          <button type="submit">Zaloguj</button>
+        </form>
+
+        <p class="admin-status" data-login-status></p>
+      </section>
+
+      <section data-admin-shell hidden>
+
+        <div class="admin-toolbar">
+          <div>
+            <strong>Wideo strony głównej</strong>
+            <span>
+              <span data-user-email></span>
+              •
+              <span data-user-role></span>
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="button-secondary"
+            data-logout
+          >
+            Wyloguj
+          </button>
+        </div>
+
+        <section class="admin-card">
+
+          <p class="admin-help">
+            Film jest niezależny od artykułów. Kronika przechowuje tylko link do YouTube.
+          </p>
+
+          <form class="admin-form" data-video-form>
+
+            <input type="hidden" name="id">
+
+            <label>
+              Tytuł filmu
+              <input
+                type="text"
+                name="title"
+                maxlength="180"
+                required
+              >
+            </label>
+
+            <label>
+              Link YouTube
+              <input
+                type="url"
+                name="video_url"
+                placeholder="https://youtu.be/..."
+                required
+              >
+            </label>
+
+            <label>
+              Podpis / opis
+              <textarea
+                name="caption"
+                rows="5"
+                maxlength="500"
+                placeholder="Opcjonalny opis filmu"
+              ></textarea>
+            </label>
+
+            <label class="check-row">
+              <input
+                type="checkbox"
+                name="active"
+              >
+              Pokaż film na stronie głównej
+            </label>
+
+            <div class="admin-video-actions">
+
+              <button type="submit">
+                Zapisz wideo
+              </button>
+
+              <button
+                type="button"
+                class="button-secondary"
+                data-new-video
+              >
+                Nowe wideo
+              </button>
+
+              <button
+                type="button"
+                class="button-secondary admin-video-delete"
+                data-delete-video
+                hidden
+              >
+                Usuń wideo
+              </button>
+
+            </div>
+
+            <p
+              class="admin-status"
+              data-video-status
+            ></p>
+
+          </form>
+
+          <div
+            class="admin-video-preview"
+            data-video-preview
+            hidden
+          >
+            <span class="section-label">Podgląd miniatury</span>
+
+            <div
+              class="admin-video-preview-frame"
+              data-video-preview-frame
+            ></div>
+          </div>
+
+        </section>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js?v=1"></script>
+  <script src="/admin-video.js?v=1"></script>
+</body>
+</html>

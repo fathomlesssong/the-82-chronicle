@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Redakcja • Kronika 82</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png?v=4">
+  <link rel="stylesheet" href="/styles.css?v=4">
+  <link rel="stylesheet" href="/mobile.css?v=5">
+  <link rel="stylesheet" href="/front-final.css?v=12">
+  <link rel="stylesheet" href="/newsletter.css?v=2">
+
+  <style>
+    .admin-article-page .admin-grid{
+      grid-template-columns:minmax(0,1fr) !important;
+    }
+    .admin-article-page [data-article-page-hidden]{
+      display:none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="page admin-page admin-article-page">
+    <header class="masthead-wrap admin-masthead">
+      <a class="admin-back" href="/admin.html">← Redakcja</a>
+      <h1 class="masthead">Artykuł</h1>
+      <p class="tagline">Panel publikacji</p>
+    </header>
+
+    <main>
+      <section class="admin-card" data-login-panel>
+        <h2>Logowanie</h2>
+        <p class="admin-help">Panel jest dostępny wyłącznie dla aktywnych kont redakcyjnych.</p>
+        <form class="admin-form" data-login-form>
+          <label>E-mail<input type="email" name="email" autocomplete="email" required></label>
+          <label>Hasło<input type="password" name="password" autocomplete="current-password" required></label>
+          <button type="submit">Zaloguj</button>
+        </form>
+        <p class="admin-status" data-login-status></p>
+      </section>
+
+      <section class="admin-shell" data-admin-shell hidden>
+        <div class="admin-toolbar">
+          <div>
+            <strong>Panel redakcyjny</strong>
+            <span><span data-user-email></span> • <span data-user-role></span></span>
+          </div>
+          <button type="button" class="button-secondary" data-logout>Wyloguj</button>
+        </div>
+
+        <div class="admin-grid">
+          <section class="admin-card">
+            <h2 data-form-title>Nowy artykuł</h2>
+            <p class="admin-help" data-workflow-help></p>
+            <form class="admin-form" data-article-form>
+              <input type="hidden" name="id">
+              <label>Tytuł<input type="text" name="title" maxlength="180" required></label>
+              <label>Dział
+                <select name="section" required>
+                  <option value="Aktualności">Aktualności</option>
+                  <option value="Infrastruktura">Infrastruktura</option>
+                  <option value="Śledztwa">Śledztwa</option>
+                  <option value="Kultura">Kultura</option>
+                  <option value="Kącik kulinarny">Kącik kulinarny</option>
+                </select>
+              </label>
+              <label>Lead<textarea name="summary" rows="4" maxlength="600" required></textarea></label>
+              <label>Treść<textarea name="content" rows="14" required></textarea></label>
+              <fieldset class="admin-fieldset" data-newsletter-panel hidden>
+                <legend>Newsletter Kroniki 82</legend>
+                <label>Zajawka newslettera
+                  <textarea name="newsletter_teaser" rows="5" maxlength="500" placeholder="Domyślnie: lead i początek artykułu, około 300–500 znaków"></textarea>
+                </label>
+                <div class="admin-inline-help">
+                  <span data-newsletter-count>0/500 znaków</span>
+                  <button type="button" class="button-link" data-generate-newsletter>Ułóż z leadu i początku tekstu</button>
+                </div>
+                <label data-newsletter-update-field hidden>Nowy fragment aktualizacji
+                  <textarea name="newsletter_update_excerpt" rows="4" maxlength="500" placeholder="Co zmieniło się od poprzedniej wersji artykułu?"></textarea>
+                </label>
+                <label class="check-row"><input type="checkbox" name="send_newsletter" data-send-newsletter> Wyślij newsletter</label>
+                <p class="admin-help">Wiadomość zostanie wysłana dopiero po zapisaniu opublikowanego artykułu. Przy zaznaczonej aktualizacji otrzyma nagłówek „AKTUALIZACJA” i użyje nowego fragmentu.</p>
+              </fieldset>
+              <label>Zdjęcie<input type="file" name="image" accept="image/*"></label>
+              <label>Opis alternatywny zdjęcia (ALT)<input type="text" name="image_alt" maxlength="240" placeholder="Krótki opis tego, co widać na zdjęciu"></label>
+              <label>Podpis pod zdjęciem<input type="text" name="image_caption" maxlength="300" placeholder="Opcjonalny podpis widoczny pod zdjęciem"></label>
+              <label>Autor / źródło zdjęcia<input type="text" name="image_credit" maxlength="160" placeholder="np. fot. Michał lub Archiwum Kroniki 82"></label>
+              <fieldset class="admin-fieldset" data-video-panel>
+                <legend>Wideo w artykule</legend>
+                <label>Link do filmu YouTube
+                  <input type="url" name="video_url" placeholder="https://youtu.be/...">
+                </label>
+                <label>Podpis pod wideo
+                  <input type="text" name="video_caption" maxlength="300" placeholder="Opcjonalny podpis pod filmem">
+                </label>
+                <label class="check-row">
+                  <input type="checkbox" name="video_show_in_article">
+                  Pokaż wideo w artykule
+                </label>
+                <p class="admin-help">Film umieść na YouTube, najlepiej jako niepubliczny. Kronika 82 przechowuje tylko link do filmu.</p>
+              </fieldset>
+              <fieldset class="admin-fieldset" data-gallery-panel>
+                <legend>Dodatkowe zdjęcia artykułu</legend>
+                <label>Dodaj zdjęcia
+                  <input type="file" name="gallery_images" accept="image/*" multiple data-gallery-input>
+                </label>
+                <p class="admin-help">Maksymalnie 20 zdjęć. Duże fotografie są przed wysłaniem automatycznie zmniejszane do maks. 2400 px na dłuższym boku i 8 MB. Każde zdjęcie wymaga opisu ALT; podpis i źródło są opcjonalne.</p>
+                <div class="admin-gallery-list" data-gallery-list></div>
+              </fieldset>
+              <label data-published-at-field>Data publikacji<input type="datetime-local" name="published_at"></label>
+              <label class="check-row"><input type="checkbox" name="is_updated" data-update-toggle> Oznacz jako aktualizację</label>
+              <label data-update-at-field hidden>Data aktualizacji<input type="datetime-local" name="update_at"></label>
+              <p class="admin-help">Po zaznaczeniu na stronie pojawi się wyraźne oznaczenie „Aktualizacja” przy tytule artykułu.</p>
+              <label class="check-row" data-featured-field><input type="checkbox" name="featured"> Główny artykuł</label>
+              <label>Status
+                <select name="status" data-status-select>
+                  <option value="draft">Szkic</option>
+                  <option value="review">Do akceptacji</option>
+                  <option value="published">Opublikowany</option>
+                  <option value="archived">Archiwalny</option>
+                </select>
+              </label>
+              <div class="admin-actions">
+                <button type="submit">Zapisz artykuł</button>
+                <button type="button" class="button-secondary" data-reset-form>Wyczyść</button>
+              </div>
+              <p class="admin-status" data-form-status></p>
+            </form>
+          </section>
+
+          <section class="admin-card" data-article-page-hidden>
+            <h2>Artykuły</h2>
+            <p class="admin-help" data-list-help></p>
+            <div class="admin-list" data-admin-list></div>
+          </section>
+        </div>
+
+        <section class="admin-card" data-article-page-hidden data-homepage-video-panel hidden>
+          <h2>Wideo strony głównej</h2>
+          <p class="admin-help">Ten film jest niezależny od artykułów. Na stronie głównej może być aktywny tylko jeden materiał.</p>
+
+          <form class="admin-form" data-homepage-video-form>
+            <input type="hidden" name="id">
+
+            <label>Tytuł filmu
+              <input type="text" name="title" maxlength="180" required>
+            </label>
+
+            <label>Link do filmu YouTube
+              <input type="url" name="video_url" placeholder="https://youtu.be/..." required>
+            </label>
+
+            <label>Podpis / opis
+              <textarea name="caption" rows="4" maxlength="500" placeholder="Opcjonalny opis filmu"></textarea>
+            </label>
+
+            <label class="check-row">
+              <input type="checkbox" name="active">
+              Pokaż film na stronie głównej
+            </label>
+
+            <div class="admin-actions">
+              <button type="submit">Zapisz wideo</button>
+              <button type="button" class="button-secondary" data-homepage-video-clear>Nowe wideo</button>
+              <button type="button" class="button-secondary" data-homepage-video-delete hidden>Usuń wideo</button>
+            </div>
+
+            <p class="admin-status" data-homepage-video-status></p>
+          </form>
+        </section>
+
+        <section class="admin-card" data-article-page-hidden data-users-panel hidden>
+          <h2>Redakcja</h2>
+          <p class="admin-help">Zapraszaj autorów i redaktorów. Publiczna rejestracja nie jest częścią projektu.</p>
+          <form class="admin-form" data-invite-form>
+            <label>E-mail<input type="email" name="email" required></label>
+            <label>Nazwa wyświetlana<input type="text" name="display_name" maxlength="80"></label>
+            <label>Rola
+              <select name="role" required>
+                <option value="author">Autor</option>
+                <option value="editor">Redaktor</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </label>
+            <button type="submit">Wyślij zaproszenie</button>
+            <p class="admin-status" data-invite-status></p>
+          </form>
+          <div class="admin-list" data-users-list></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js?v=1"></script>
+  <script src="/admin-article.js?v=1"></script>
+</body>
+</html>
