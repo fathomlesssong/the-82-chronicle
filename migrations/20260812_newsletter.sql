@@ -1,4 +1,4 @@
--- Minimalny szkielet rodzinnego newslettera Kronika 82.
+-- Minimalny szkielet newslettera Kronika 82.
 -- Tabela subscribers jest dostępna wyłącznie przez endpointy server-side
 -- korzystające z service_role. Klient nie otrzymuje bezpośredniego dostępu.
 
@@ -32,7 +32,7 @@ alter table public.articles drop constraint if exists articles_newsletter_update
 alter table public.articles add constraint articles_newsletter_update_excerpt_length
 check (newsletter_update_excerpt is null or char_length(newsletter_update_excerpt) <= 500);
 
-comment on table public.subscribers is 'Minimalna lista odbiorców rodzinnego newslettera Kroniki 82; dostęp tylko server-side.';
+comment on table public.subscribers is 'Minimalna lista odbiorców newslettera Kroniki 82; dostęp tylko server-side.';
 comment on column public.articles.newsletter_teaser is 'Zajawka wiadomości, zwykle 300–500 znaków.';
 comment on column public.articles.newsletter_update_excerpt is 'Nowy fragment używany w wiadomości oznaczonej AKTUALIZACJA.';
 comment on column public.articles.newsletter_update_sent_for is 'Wartość update_at, dla której wysłano ostatnią aktualizację.';

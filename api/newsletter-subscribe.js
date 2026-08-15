@@ -25,7 +25,7 @@ module.exports=async(req,res)=>{
       });
       throw new Error('Nie udało się zapisać adresu.');
     }
-    return res.status(200).json({ok:true,message:'Gotowe — adres jest na liście rodzinnego newslettera.'});
+    return res.status(200).json({ok:true,message:'Gotowe — adres jest na liście newslettera Kroniki 82.'});
   }catch(error){
     const unavailable=/not configured/i.test(error.message||'');
     return res.status(unavailable?503:502).json({error:unavailable?'Zapisy ruszą po podłączeniu Supabase.':'Nie udało się teraz zapisać adresu. Spróbuj ponownie później.'});

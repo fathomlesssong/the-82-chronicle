@@ -1,4 +1,4 @@
-# Kronika 82 — newsletter rodzinny
+# Kronika 82 — newsletter
 
 Szkielet można rozwijać bez logowania do Supabase. Uruchomienie zapisu i prawdziwej wysyłki wymaga później wykonania migracji oraz ustawienia sekretów w Vercel.
 
@@ -42,7 +42,7 @@ Sekret linków można wygenerować lokalnie poleceniem `openssl rand -hex 32`.
 ## 3. Resend
 
 1. Utwórz konto/projekt Resend i zweryfikuj domenę nadawcy (SPF i DKIM).
-2. Ustaw `NEWSLETTER_FROM`, np. `Kronika 82 <rodzina@twoja-domena.pl>`.
+2. Ustaw `NEWSLETTER_FROM`, np. `Kronika 82 <newsletter@twoja-domena.pl>`.
 3. Dodaj `RESEND_API_KEY` wyłącznie jako sekret Vercel.
 
 Integracja używa serwerowego API Resend bez biblioteki klientowej. Każdy odbiorca otrzymuje własny podpisany link wypisu.

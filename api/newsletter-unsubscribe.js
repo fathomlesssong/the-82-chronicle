@@ -28,7 +28,7 @@ module.exports=async(req,res)=>{
       method:'PATCH',headers:{...serviceHeaders(serviceKey),Prefer:'return=minimal'},body:JSON.stringify({active:false,unsubscribed_at:new Date().toISOString()})
     });
     if(!response.ok)throw new Error('Supabase rejected unsubscribe.');
-    return res.status(200).end(page('Adres wypisany','<h1>Adres został wypisany.</h1><p>Nie otrzymasz kolejnych wydań rodzinnego newslettera.</p>'));
+    return res.status(200).end(page('Adres wypisany','<h1>Adres został wypisany.</h1><p>Nie otrzymasz kolejnych wydań newslettera Kroniki 82.</p>'));
   }catch(error){
     return res.status(502).end(page('Nie udało się wypisać','<h1>Nie udało się teraz wypisać adresu.</h1><p>Spróbuj ponownie później.</p>'));
   }

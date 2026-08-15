@@ -23,7 +23,7 @@
 - [x] canonicale i OG statycznych stron
 - [x] automatyczny audyt linków i składni JS
 - [x] usunięte nieużywane łatki CSS i `.bak`
-- [x] szkielet rodzinnego newslettera bez aktywnych sekretów
+- [x] szkielet newslettera bez aktywnych sekretów
 - [x] bezpieczne endpointy zapisu, wypisu i wysyłki
 - [x] szablon HTML/tekst oraz tryb `AKTUALIZACJA`
 
