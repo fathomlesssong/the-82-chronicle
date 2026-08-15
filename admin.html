@@ -82,7 +82,7 @@
                 <label>Dodaj zdjęcia
                   <input type="file" name="gallery_images" accept="image/*" multiple data-gallery-input>
                 </label>
-                <p class="admin-help">Możesz wybrać wiele plików. Każde zdjęcie wymaga opisu ALT; podpis i źródło są opcjonalne. Kolejność zaczyna się od 0.</p>
+                <p class="admin-help">Maksymalnie 20 zdjęć. Duże fotografie są przed wysłaniem automatycznie zmniejszane do maks. 2400 px na dłuższym boku i 8 MB. Każde zdjęcie wymaga opisu ALT; podpis i źródło są opcjonalne.</p>
                 <div class="admin-gallery-list" data-gallery-list></div>
               </fieldset>
               <label data-published-at-field>Data publikacji<input type="datetime-local" name="published_at"></label>
@@ -137,6 +137,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=8"></script>
+  <script src="/admin.js?v=9"></script>
 </body>
 </html>

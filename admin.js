@@ -1,12 +1,15 @@
 const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ł/g,'l').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,90);
 const slugForSave=(id,title)=>id?undefined:slugify(title);
 const gallerySortOrder=value=>{const raw=String(value??'').trim();const n=Number(raw);return raw&&Number.isInteger(n)&&n>=0?n:null};
-const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave,gallerySortOrder});
+const MAX_GALLERY_IMAGES=20;
+const MAX_IMAGE_BYTES=8*1024*1024;
+const MAX_IMAGE_EDGE=2400;
+const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave,gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE});
 
 if(typeof module==='object'&&module.exports)module.exports=CH82_ADMIN_SLUGS;
 
 if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
-  const {slugForSave,gallerySortOrder}=CH82_ADMIN_SLUGS;
+  const {slugForSave,gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE}=CH82_ADMIN_SLUGS;
   const cfg=window.CH82_SUPABASE||{};
   const sections=Object.freeze({
     'Aktualności':'aktualnosci',
@@ -89,6 +92,104 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   };
 
   const nextGalleryOrder=()=>galleryItems.reduce((max,item)=>Math.max(max,item.sortOrder??-1),-1)+1;
+
+  const canvasBlob=(canvas,type,quality)=>new Promise((resolve,reject)=>{
+    canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Nie udało się skompresować zdjęcia.')),type,quality);
+  });
+
+  const decodeImage=async file=>{
+    if(typeof createImageBitmap==='function'){
+      try{return await createImageBitmap(file,{imageOrientation:'from-image'});}
+      catch(_error){
+        try{return await createImageBitmap(file);}
+        catch(_error2){}
+      }
+    }
+
+    return new Promise((resolve,reject)=>{
+      const url=URL.createObjectURL(file);
+      const image=new Image();
+      image.onload=()=>{
+        URL.revokeObjectURL(url);
+        resolve(image);
+      };
+      image.onerror=()=>{
+        URL.revokeObjectURL(url);
+        reject(new Error(`Nie udało się odczytać zdjęcia „${file.name}”.`));
+      };
+      image.src=url;
+    });
+  };
+
+  const prepareImageFile=async file=>{
+    if(!file||!file.type?.startsWith('image/')){
+      throw new Error(`Plik „${file?.name||'bez nazwy'}” nie jest obrazem.`);
+    }
+
+    const source=await decodeImage(file);
+
+    try{
+      const sourceWidth=source.width||source.naturalWidth;
+      const sourceHeight=source.height||source.naturalHeight;
+
+      if(!sourceWidth||!sourceHeight){
+        throw new Error(`Nie udało się odczytać wymiarów zdjęcia „${file.name}”.`);
+      }
+
+      const longest=Math.max(sourceWidth,sourceHeight);
+      const needsProcessing=longest>MAX_IMAGE_EDGE||file.size>MAX_IMAGE_BYTES;
+
+      if(!needsProcessing){
+        return {file,changed:false};
+      }
+
+      const initialScale=Math.min(1,MAX_IMAGE_EDGE/longest);
+      let width=Math.max(1,Math.round(sourceWidth*initialScale));
+      let height=Math.max(1,Math.round(sourceHeight*initialScale));
+      let bestBlob=null;
+
+      outer:
+      for(let pass=0;pass<5;pass++){
+        const canvas=document.createElement('canvas');
+        canvas.width=width;
+        canvas.height=height;
+
+        const ctx=canvas.getContext('2d');
+        if(!ctx)throw new Error('Przeglądarka nie może przetworzyć zdjęcia.');
+
+        ctx.drawImage(source,0,0,width,height);
+
+        for(const quality of [0.88,0.80,0.72,0.64]){
+          const blob=await canvasBlob(canvas,'image/webp',quality);
+          bestBlob=blob;
+
+          if(blob.size<=MAX_IMAGE_BYTES)break outer;
+        }
+
+        width=Math.max(1,Math.round(width*0.82));
+        height=Math.max(1,Math.round(height*0.82));
+      }
+
+      if(!bestBlob||bestBlob.size>MAX_IMAGE_BYTES){
+        throw new Error(`Zdjęcia „${file.name}” nie udało się zmniejszyć poniżej 8 MB.`);
+      }
+
+      const base=file.name.replace(/\.[^.]+$/,'')||'zdjecie';
+      const optimized=new File(
+        [bestBlob],
+        `${base}.webp`,
+        {
+          type:'image/webp',
+          lastModified:file.lastModified||Date.now()
+        }
+      );
+
+      return {file:optimized,changed:true};
+    }finally{
+      source.close?.();
+    }
+  };
+
   const galleryItemLabel=item=>{
     if(item.file)return item.file.name;
     const tail=String(item.imageUrl||'').split('/').pop()?.split('?')[0];
@@ -132,6 +233,9 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   };
 
   const collectGalleryItems=()=>{
+    if(galleryItems.length>MAX_GALLERY_IMAGES){
+      throw new Error(`Galeria może zawierać maksymalnie ${MAX_GALLERY_IMAGES} zdjęć.`);
+    }
     const collected=[...galleryList.querySelectorAll('[data-gallery-key]')].map(row=>{
       const item=galleryItems.find(candidate=>candidate.key===row.dataset.galleryKey);
       if(!item)throw new Error('Nie udało się odczytać jednego ze zdjęć galerii.');
@@ -270,6 +374,15 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   };
 
   const persistArticleGallery=async(articleId,items)=>{
+    if(items.length>MAX_GALLERY_IMAGES){
+      throw new Error(`Galeria może zawierać maksymalnie ${MAX_GALLERY_IMAGES} zdjęć.`);
+    }
+
+    const oversized=items.find(item=>item.file&&item.file.size>MAX_IMAGE_BYTES);
+    if(oversized){
+      throw new Error(`Zdjęcie „${galleryItemLabel(oversized)}” przekracza limit 8 MB.`);
+    }
+
     const metadata=item=>({
       image_alt:item.alt,
       image_caption:item.caption||null,
@@ -349,19 +462,66 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   sendNewsletter?.addEventListener('change',()=>{if(sendNewsletter.checked)fillNewsletterTeaser();syncNewsletterUi();});
   generateNewsletter?.addEventListener('click',()=>{fillNewsletterTeaser(true);syncNewsletterUi();});
   articleForm.elements.newsletter_teaser?.addEventListener('input',syncNewsletterUi);
-  galleryInput?.addEventListener('change',()=>{
+  galleryInput?.addEventListener('change',async()=>{
     const files=[...(galleryInput.files||[])];
-    const invalid=files.find(file=>file.type&&!file.type.startsWith('image/'));
-    if(invalid){status(formStatus,`Plik „${invalid.name}” nie jest obrazem.`,true);galleryInput.value='';return;}
+    if(!files.length)return;
+
+    const invalid=files.find(file=>!file.type?.startsWith('image/'));
+    if(invalid){
+      status(formStatus,`Plik „${invalid.name}” nie jest obrazem.`,true);
+      galleryInput.value='';
+      return;
+    }
+
+    if(galleryItems.length+files.length>MAX_GALLERY_IMAGES){
+      status(
+        formStatus,
+        `Galeria może zawierać maksymalnie ${MAX_GALLERY_IMAGES} zdjęć. Obecnie: ${galleryItems.length}, wybrano: ${files.length}.`,
+        true
+      );
+      galleryInput.value='';
+      return;
+    }
+
+    const prepared=[];
+    let optimizedCount=0;
+
+    try{
+      for(const [index,file] of files.entries()){
+        status(formStatus,`Przygotowywanie zdjęcia ${index+1}/${files.length}…`);
+        const result=await prepareImageFile(file);
+        prepared.push(result.file);
+        if(result.changed)optimizedCount+=1;
+      }
+    }catch(error){
+      status(formStatus,error.message,true);
+      galleryInput.value='';
+      return;
+    }
+
     let order=nextGalleryOrder();
-    for(const file of files){
+
+    for(const file of prepared){
       gallerySequence+=1;
-      galleryItems.push({key:`new-${gallerySequence}`,file,alt:'',caption:'',credit:'',sortOrder:order});
+      galleryItems.push({
+        key:`new-${gallerySequence}`,
+        file,
+        alt:'',
+        caption:'',
+        credit:'',
+        sortOrder:order
+      });
       order+=1;
     }
+
     galleryInput.value='';
     renderGallery();
-    status(formStatus,'');
+
+    const message=optimizedCount
+      ?`Dodano ${prepared.length} zdjęć. Automatycznie zmniejszono: ${optimizedCount}.`
+      :`Dodano ${prepared.length} zdjęć.`;
+
+    status(formStatus,message);
   });
 
   articleForm.addEventListener('submit',async e=>{
@@ -392,8 +552,16 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     }
 
     let imageUrl=null;
-    const image=fd.get('image');
+    let image=fd.get('image');
     if(image&&image.size){
+      try{
+        status(formStatus,'Przygotowywanie zdjęcia głównego…');
+        image=(await prepareImageFile(image)).file;
+      }catch(error){
+        status(formStatus,error.message,true);
+        return;
+      }
+
       const ext=(image.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
       const path=`${currentSession.user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext||'jpg'}`;
       const up=await db.storage.from('article-images').upload(path,image,{upsert:false});
