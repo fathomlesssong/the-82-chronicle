@@ -17,7 +17,14 @@ module.exports=async(req,res)=>{
     const response=await fetch(`${url}/rest/v1/subscribers?on_conflict=email`,{
       method:'POST',headers:{...serviceHeaders(serviceKey),Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({email,active:true,unsubscribed_at:null})
     });
-    if(!response.ok)throw new Error('Nie udało się zapisać adresu.');
+    if(!response.ok){
+      const details=await response.text().catch(()=>'');
+      console.error('newsletter-subscribe Supabase error',{
+        status:response.status,
+        details:details.slice(0,500)
+      });
+      throw new Error('Nie udało się zapisać adresu.');
+    }
     return res.status(200).json({ok:true,message:'Gotowe — adres jest na liście rodzinnego newslettera.'});
   }catch(error){
     const unavailable=/not configured/i.test(error.message||'');
