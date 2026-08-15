@@ -85,8 +85,6 @@
 
                 <label>Zdjęcie<input type="file" name="image" accept="image/*"></label>
 
-                              <label>Opis zdjęcia dla dostępności (ALT)<input type="text" name="image_alt" maxlength="240" placeholder="Krótko opisz, co widać na zdjęciu. Ten tekst nie jest widoczny pod fotografią."></label>
-
                               <label>Podpis widoczny pod zdjęciem<input type="text" name="image_caption" maxlength="300" placeholder="Opcjonalny tekst wyświetlany pod fotografią"></label>
 
                               <label>Autor / źródło zdjęcia<input type="text" name="image_credit" maxlength="160" placeholder="np. fot. Michał lub Archiwum Kroniki 82"></label>
@@ -111,7 +109,7 @@
                 <label>Dodaj zdjęcia
                   <input type="file" name="gallery_images" accept="image/*" multiple data-gallery-input>
                 </label>
-                <p class="admin-help">Maksymalnie 20 zdjęć. Duże fotografie są przed wysłaniem automatycznie zmniejszane do maks. 2400 px na dłuższym boku i 8 MB. Każde zdjęcie wymaga opisu ALT; podpis i źródło są opcjonalne.</p>
+                <p class="admin-help">Maksymalnie 20 zdjęć. Duże fotografie są przed wysłaniem automatycznie zmniejszane do maks. 2400 px na dłuższym boku i 8 MB. Podpis i źródło zdjęcia są opcjonalne.</p>
                 <div class="admin-gallery-list" data-gallery-list></div>
               </fieldset>
               <label data-published-at-field>Data publikacji<input type="datetime-local" name="published_at"></label>

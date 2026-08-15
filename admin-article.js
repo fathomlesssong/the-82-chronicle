@@ -265,9 +265,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
           ${item.id?'<span class="admin-help">Zapisane</span>':`<button type="button" class="button-secondary" data-gallery-remove="${esc(item.key)}">Usuń wybór</button>`}
         </div>
         <div class="admin-gallery-fields">
-          <label>Opis zdjęcia dla dostępności (ALT)
-            <input type="text" maxlength="240" required value="${esc(item.alt)}" data-gallery-alt>
-          </label>
           <label>Podpis widoczny pod zdjęciem
             <input type="text" maxlength="300" value="${esc(item.caption)}" data-gallery-caption>
           </label>
@@ -298,14 +295,13 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     const collected=[...galleryList.querySelectorAll('[data-gallery-key]')].map(row=>{
       const item=galleryItems.find(candidate=>candidate.key===row.dataset.galleryKey);
       if(!item)throw new Error('Nie udało się odczytać jednego ze zdjęć galerii.');
-      const alt=String(row.querySelector('[data-gallery-alt]').value||'').trim();
+      const caption=String(row.querySelector('[data-gallery-caption]').value||'').trim();
       const sortOrder=gallerySortOrder(row.querySelector('[data-gallery-sort-order]').value);
-      if(!alt)throw new Error(`Uzupełnij opis ALT dla zdjęcia „${galleryItemLabel(item)}”.`);
       if(sortOrder===null)throw new Error(`Podaj nieujemną, całkowitą kolejność dla zdjęcia „${galleryItemLabel(item)}”.`);
       return {
         ...item,
-        alt,
-        caption:String(row.querySelector('[data-gallery-caption]').value||'').trim(),
+        alt:caption||item.alt||galleryItemLabel(item),
+        caption,
         credit:String(row.querySelector('[data-gallery-credit]').value||'').trim(),
         sortOrder
       };
@@ -382,7 +378,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.summary.value=a.summary||'';
     articleForm.elements.content.value=a.content||'';
     articleForm.elements.newsletter_teaser.value=a.newsletter_teaser||'';
-    articleForm.elements.image_alt.value=a.image_alt||'';
     articleForm.elements.image_caption.value=a.image_caption||'';
     articleForm.elements.image_credit.value=a.image_credit||'';
     articleForm.elements.video_url.value=a.video_url||'';
@@ -974,7 +969,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       summary:String(fd.get('summary')).trim(),
       content:String(fd.get('content')).trim(),
       newsletter_teaser:newsletterTeaser||null,
-      image_alt:String(fd.get('image_alt')||'').trim(),
+      image_alt:String(fd.get('image_caption')||'').trim()||title,
       image_caption:String(fd.get('image_caption')||'').trim()||null,
       image_credit:String(fd.get('image_credit')||'').trim()||null,
       video_url:videoUrl||null,
