@@ -142,7 +142,7 @@ alter table public.articles add constraint articles_section_allowed check (
   (section = 'Infrastruktura' and section_slug = 'infrastruktura') or
   (section = 'Śledztwa' and section_slug = 'sledztwa') or
   (section = 'Kultura' and section_slug = 'kultura') or
-  (section = 'Kącik kulinarny' and section_slug = 'kacik-kulinarny')
+  (section = 'Na Stole' and section_slug = 'na-stole')
 );
 alter table public.articles drop constraint if exists featured_only_when_published;
 alter table public.articles add constraint featured_only_when_published check (featured = false or status = 'published');

@@ -43,7 +43,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     'Infrastruktura':'infrastruktura',
     'Śledztwa':'sledztwa',
     'Kultura':'kultura',
-    'Kącik kulinarny':'kacik-kulinarny'
+    'Na Stole':'na-stole'
   });
   const roleNames={author:'Autor',admin:'Administrator'};
   const statusNames={draft:'Szkic',review:'Do akceptacji',published:'Opublikowany',archived:'Archiwalny'};

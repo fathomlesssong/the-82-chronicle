@@ -5,7 +5,7 @@
   const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
   const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const legacy={'wydarzenia':'aktualnosci','spolecznosc':'aktualnosci','opinie':'aktualnosci','tajemnice':'sledztwa'};
-  const sectionName={'aktualnosci':'Aktualności','infrastruktura':'Infrastruktura','sledztwa':'Śledztwa','kultura':'Kultura','kacik-kulinarny':'Kącik kulinarny'};
+  const sectionName={'aktualnosci':'Aktualności','infrastruktura':'Infrastruktura','sledztwa':'Śledztwa','kultura':'Kultura','na-stole':'Na Stole'};
   const paras=s=>String(s||'').split(/\n{2,}/).map(p=>`<p>${esc(p).replace(/\n/g,'<br>')}</p>`).join('');
   if(window.CH82_SUPABASE_READY)await window.CH82_SUPABASE_READY;
   if(!slug||!cfg.url||!cfg.anonKey||!window.supabase){root.innerHTML='<p class="empty-state">Nie udało się wczytać artykułu.</p>';return;}
