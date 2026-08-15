@@ -85,6 +85,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   const generateNewsletter=document.querySelector('[data-generate-newsletter]');
   const galleryInput=document.querySelector('[data-gallery-input]');
   const galleryList=document.querySelector('[data-gallery-list]');
+  const deleteArticleButton=document.querySelector('[data-delete-article]');
   const homepageVideoPanel=document.querySelector('[data-homepage-video-panel]');
   const homepageVideoForm=document.querySelector('[data-homepage-video-form]');
   const homepageVideoStatus=document.querySelector('[data-homepage-video-status]');
@@ -330,6 +331,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.published_at.value=fmtLocal();
     articleForm.elements.update_at.value='';
     formTitle.textContent='Nowy artykuł';
+    if(deleteArticleButton)deleteArticleButton.hidden=true;
     status(formStatus,'');
     configureRoleUi();
   };
@@ -365,6 +367,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.update_at.value=a.update_at?fmtLocal(a.update_at):'';
     articleForm.elements.featured.checked=!!a.featured;
     formTitle.textContent='Edytuj artykuł';
+    if(deleteArticleButton)deleteArticleButton.hidden=false;
     configureRoleUi();
     syncUpdateUi();
     articleForm.scrollIntoView({behavior:'smooth',block:'start'});
@@ -594,6 +597,181 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     if(error){await removeUploadedGalleryFiles(uploadedPaths);throw error;}
   };
 
+  const storagePathFromPublicUrl=value=>{
+    const raw=String(value||'').trim();
+
+    if(!raw)return null;
+
+    const marker='/storage/v1/object/public/article-images/';
+    const index=raw.indexOf(marker);
+
+    if(index<0)return null;
+
+    const encoded=raw
+      .slice(index+marker.length)
+      .split('?')[0];
+
+    if(!encoded)return null;
+
+    try{
+      return decodeURIComponent(encoded);
+    }catch(_error){
+      return encoded;
+    }
+  };
+
+  const deleteArticle=async()=>{
+    const id=String(
+      articleForm.elements.id.value||''
+    ).trim();
+
+    if(!id)return;
+
+    const title=String(
+      articleForm.elements.title.value||''
+    ).trim()||'ten artykuł';
+
+    const confirmed=window.confirm(
+      `Usunąć artykuł „${title}”?\n\n`+
+      'Usunięty zostanie artykuł, zdjęcie główne i wszystkie zdjęcia galerii. '+
+      'Tej operacji nie można cofnąć.'
+    );
+
+    if(!confirmed)return;
+
+    if(deleteArticleButton){
+      deleteArticleButton.disabled=true;
+    }
+
+    status(
+      formStatus,
+      'Przygotowywanie artykułu do usunięcia…'
+    );
+
+    try{
+      const [
+        articleResult,
+        galleryResult
+      ]=await Promise.all([
+        db
+          .from('articles')
+          .select('id,image_url')
+          .eq('id',id)
+          .maybeSingle(),
+
+        db
+          .from('article_images')
+          .select('image_url')
+          .eq('article_id',id)
+      ]);
+
+      if(articleResult.error){
+        throw articleResult.error;
+      }
+
+      if(!articleResult.data){
+        throw new Error(
+          'Nie znaleziono artykułu albo nie masz do niego dostępu.'
+        );
+      }
+
+      if(galleryResult.error){
+        throw galleryResult.error;
+      }
+
+      const paths=[
+        storagePathFromPublicUrl(
+          articleResult.data.image_url
+        ),
+        ...(galleryResult.data||[]).map(
+          image=>storagePathFromPublicUrl(
+            image.image_url
+          )
+        )
+      ].filter(Boolean);
+
+      const uniquePaths=[...new Set(paths)];
+
+      status(
+        formStatus,
+        'Usuwanie artykułu…'
+      );
+
+      const {
+        data:deleted,
+        error:deleteError
+      }=await db
+        .from('articles')
+        .delete()
+        .eq('id',id)
+        .select('id');
+
+      if(deleteError){
+        throw deleteError;
+      }
+
+      if(!deleted?.length){
+        throw new Error(
+          'Artykuł nie został usunięty. Sprawdź uprawnienia użytkownika.'
+        );
+      }
+
+      let storageWarning='';
+
+      if(uniquePaths.length){
+        status(
+          formStatus,
+          'Artykuł usunięty. Sprzątanie zdjęć…'
+        );
+
+        const {error:storageError}=await db
+          .storage
+          .from('article-images')
+          .remove(uniquePaths);
+
+        if(storageError){
+          storageWarning=
+            ' Artykuł usunięto, ale nie udało się skasować wszystkich plików ze Storage: '+
+            storageError.message;
+        }
+      }
+
+      resetForm();
+
+      window.history.replaceState(
+        {},
+        '',
+        '/admin-article.html'
+      );
+
+      await loadArticles();
+
+      if(storageWarning){
+        status(
+          formStatus,
+          storageWarning.trim(),
+          true
+        );
+      }else{
+        status(
+          formStatus,
+          'Artykuł oraz jego zdjęcia zostały usunięte.'
+        );
+      }
+
+    }catch(error){
+      status(
+        formStatus,
+        error.message||'Nie udało się usunąć artykułu.',
+        true
+      );
+    }finally{
+      if(deleteArticleButton){
+        deleteArticleButton.disabled=false;
+      }
+    }
+  };
+
   const updateUser=async(id,changes)=>{
     try{await authenticatedPost('/api/update-user',{id,...changes});await loadUsers();}
     catch(error){alert(error.message);}
@@ -636,6 +814,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
 
   document.querySelector('[data-logout]').addEventListener('click',()=>db.auth.signOut());
   document.querySelector('[data-reset-form]').addEventListener('click',resetForm);
+  deleteArticleButton?.addEventListener('click',deleteArticle);
   updateToggle?.addEventListener('change',syncUpdateUi);
   sendNewsletter?.addEventListener('change',()=>{if(sendNewsletter.checked)fillNewsletterTeaser();syncNewsletterUi();});
   generateNewsletter?.addEventListener('click',()=>{fillNewsletterTeaser(true);syncNewsletterUi();});

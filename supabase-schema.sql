@@ -286,20 +286,24 @@ with check (
   and featured = false
 );
 
-drop policy if exists "editors can update all articles";
+drop policy if exists "editors can update all articles" on public.articles;
 drop policy if exists "admins can update all articles" on public.articles;
 create policy "admins can update all articles" on public.articles for update to authenticated
 using ((select public.is_editor_or_admin()))
 with check ((select public.is_editor_or_admin()));
 
 drop policy if exists "authors can delete own drafts" on public.articles;
-create policy "authors can delete own drafts" on public.articles for delete to authenticated
-using (author_id = (select auth.uid()) and (select public.current_editor_role()) = 'author' and status = 'draft');
+drop policy if exists "authors can delete own articles" on public.articles;
+create policy "authors can delete own articles" on public.articles for delete to authenticated
+using (
+  author_id = (select auth.uid())
+  and (select public.current_editor_role()) = 'author'
+);
 
-drop policy if exists "editors can delete articles";
+drop policy if exists "editors can delete articles" on public.articles;
 drop policy if exists "admins can delete articles" on public.articles;
 create policy "admins can delete articles" on public.articles for delete to authenticated
-using ((select public.is_editor_or_admin()));
+using ((select public.is_admin()));
 
 insert into storage.buckets (id, name, public)
 values ('article-images','article-images',true)
