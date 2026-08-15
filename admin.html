@@ -77,6 +77,16 @@
               <label>Opis alternatywny zdjęcia (ALT)<input type="text" name="image_alt" maxlength="240" placeholder="Krótki opis tego, co widać na zdjęciu"></label>
               <label>Podpis pod zdjęciem<input type="text" name="image_caption" maxlength="300" placeholder="Opcjonalny podpis widoczny pod zdjęciem"></label>
               <label>Autor / źródło zdjęcia<input type="text" name="image_credit" maxlength="160" placeholder="np. fot. Michał lub Archiwum Kroniki 82"></label>
+              <fieldset class="admin-fieldset" data-video-panel>
+                <legend>Wideo artykułu</legend>
+                <label>Link do filmu YouTube
+                  <input type="url" name="video_url" placeholder="https://youtu.be/...">
+                </label>
+                <label>Podpis pod wideo
+                  <input type="text" name="video_caption" maxlength="300" placeholder="Opcjonalny podpis pod filmem">
+                </label>
+                <p class="admin-help">Film umieść na YouTube, najlepiej jako niepubliczny. Kronika 82 przechowuje tylko link do filmu.</p>
+              </fieldset>
               <fieldset class="admin-fieldset" data-gallery-panel>
                 <legend>Dodatkowe zdjęcia artykułu</legend>
                 <label>Dodaj zdjęcia
@@ -137,6 +147,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=9"></script>
+  <script src="/admin.js?v=10"></script>
 </body>
 </html>

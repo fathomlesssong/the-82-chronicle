@@ -4,12 +4,39 @@ const gallerySortOrder=value=>{const raw=String(value??'').trim();const n=Number
 const MAX_GALLERY_IMAGES=20;
 const MAX_IMAGE_BYTES=8*1024*1024;
 const MAX_IMAGE_EDGE=2400;
-const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave,gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE});
+const youtubeVideoId=value=>{
+  const raw=String(value||'').trim();
+  if(!raw)return null;
+
+  try{
+    const url=new URL(raw);
+    const host=url.hostname.replace(/^www\./,'').toLowerCase();
+
+    if(host==='youtu.be'){
+      return url.pathname.split('/').filter(Boolean)[0]||null;
+    }
+
+    if(host==='youtube.com'||host==='m.youtube.com'){
+      if(url.pathname==='/watch'){
+        return url.searchParams.get('v')||null;
+      }
+
+      const parts=url.pathname.split('/').filter(Boolean);
+
+      if(['shorts','embed','live'].includes(parts[0])){
+        return parts[1]||null;
+      }
+    }
+  }catch(_error){}
+
+  return null;
+};
+const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave,gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE,youtubeVideoId});
 
 if(typeof module==='object'&&module.exports)module.exports=CH82_ADMIN_SLUGS;
 
 if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
-  const {slugForSave,gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE}=CH82_ADMIN_SLUGS;
+  const {slugForSave,gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE,youtubeVideoId}=CH82_ADMIN_SLUGS;
   const cfg=window.CH82_SUPABASE||{};
   const sections=Object.freeze({
     'Aktualności':'aktualnosci',
@@ -331,6 +358,8 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.image_alt.value=a.image_alt||'';
     articleForm.elements.image_caption.value=a.image_caption||'';
     articleForm.elements.image_credit.value=a.image_credit||'';
+    articleForm.elements.video_url.value=a.video_url||'';
+    articleForm.elements.video_caption.value=a.video_caption||'';
     articleForm.elements.published_at.value=fmtLocal(a.published_at||new Date());
     articleForm.elements.is_updated.checked=!!a.is_updated;
     articleForm.elements.update_at.value=a.update_at?fmtLocal(a.update_at):'';
@@ -569,6 +598,13 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       imageUrl=db.storage.from('article-images').getPublicUrl(path).data.publicUrl;
     }
 
+    const videoUrl=String(fd.get('video_url')||'').trim();
+
+    if(videoUrl&&!youtubeVideoId(videoUrl)){
+      status(formStatus,'Podaj poprawny link do filmu YouTube.',true);
+      return;
+    }
+
     const title=String(fd.get('title')).trim();
     const payload={
       title,
@@ -582,6 +618,8 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       image_alt:String(fd.get('image_alt')||'').trim(),
       image_caption:String(fd.get('image_caption')||'').trim()||null,
       image_credit:String(fd.get('image_credit')||'').trim()||null,
+      video_url:videoUrl||null,
+      video_caption:String(fd.get('video_caption')||'').trim()||null,
       status:desiredStatus,
       is_updated:isUpdated,
       update_at:isUpdated?(fd.get('update_at')?new Date(fd.get('update_at')).toISOString():new Date().toISOString()):null,

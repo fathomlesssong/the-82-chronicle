@@ -102,6 +102,8 @@ create table if not exists public.articles (
   content text not null,
   image_url text,
   image_alt text,
+  video_url text,
+  video_caption text,
   published_at timestamptz,
   featured boolean not null default false,
   status text not null default 'draft',
@@ -123,6 +125,8 @@ alter table public.articles add column if not exists published_by uuid reference
 alter table public.articles add column if not exists submitted_at timestamptz;
 alter table public.articles add column if not exists is_updated boolean not null default false;
 alter table public.articles add column if not exists update_at timestamptz;
+alter table public.articles add column if not exists video_url text;
+alter table public.articles add column if not exists video_caption text;
 alter table public.articles alter column published_at drop not null;
 alter table public.articles alter column published_at drop default;
 
