@@ -68,7 +68,7 @@
               <label>Lead<textarea name="summary" rows="4" maxlength="600" required></textarea></label>
               <label>Treść<textarea name="content" rows="14" required></textarea></label>
               <fieldset class="admin-fieldset" data-newsletter-panel hidden>
-                <legend>Newsletter Kroniki 82</legend>
+                <legend>Newsletter</legend>
                 <label>Zajawka newslettera
                   <textarea name="newsletter_teaser" rows="5" maxlength="500" placeholder="Domyślnie: lead i początek artykułu, około 300–500 znaków"></textarea>
                 </label>
@@ -82,7 +82,7 @@
                 <label class="check-row"><input type="checkbox" name="send_newsletter" data-send-newsletter> Wyślij newsletter</label>
                 <p class="admin-help">Wiadomość zostanie wysłana dopiero po zapisaniu opublikowanego artykułu. Przy zaznaczonej aktualizacji otrzyma nagłówek „AKTUALIZACJA” i użyje nowego fragmentu.</p>
               </fieldset>
-              <fieldset>
+              <fieldset class="admin-fieldset">
 
                 <legend>Zdjęcie</legend>
 
@@ -122,17 +122,16 @@
               <label data-update-at-field hidden>Data aktualizacji<input type="datetime-local" name="update_at"></label>
               <p class="admin-help">Po zaznaczeniu na stronie pojawi się wyraźne oznaczenie „Aktualizacja” przy tytule artykułu.</p>
               <label class="check-row" data-featured-field><input type="checkbox" name="featured"> Główny artykuł</label>
-              <label>Status
-                <select name="status" data-status-select>
-                  <option value="draft">Szkic</option>
-                  <option value="review">Do akceptacji</option>
-                  <option value="published">Opublikowany</option>
-                  <option value="archived">Archiwalny</option>
-                </select>
-              </label>
               <div class="admin-actions">
-                <button type="submit">Zapisz artykuł</button>
-                <button type="button" class="button-secondary" data-reset-form>Wyczyść</button>
+                <button type="submit" class="button-secondary" data-save-status="draft">
+                  Zapisz jako szkic
+                </button>
+                <button type="submit" data-save-status="published">
+                  Opublikuj
+                </button>
+                <button type="button" class="button-secondary" data-reset-form>
+                  Wyczyść
+                </button>
               </div>
               <p class="admin-status" data-form-status></p>
             </form>
@@ -203,6 +202,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin-article.js?v=1"></script>
+  <script src="/admin-article.js?v=3"></script>
 </body>
 </html>

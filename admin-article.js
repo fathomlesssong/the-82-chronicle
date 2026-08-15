@@ -76,7 +76,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   const inviteStatus=document.querySelector('[data-invite-status]');
   const featuredField=document.querySelector('[data-featured-field]');
   const publishedAtField=document.querySelector('[data-published-at-field]');
-  const statusSelect=document.querySelector('[data-status-select]');
   const updateToggle=document.querySelector('[data-update-toggle]');
   const updateAtField=document.querySelector('[data-update-at-field]');
   const newsletterPanel=document.querySelector('[data-newsletter-panel]');
@@ -317,14 +316,9 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     if(sendNewsletter)sendNewsletter.disabled=!canPublish;
     usersPanel.hidden=role!=='admin';
     if(homepageVideoPanel)homepageVideoPanel.hidden=!canPublish;
-    [...statusSelect.options].forEach(option=>{
-      const forbidden=role==='author'&&!['draft','review'].includes(option.value);
-      option.hidden=forbidden;
-      option.disabled=forbidden;
-    });
     workflowHelp.textContent=role==='author'
-      ? 'Twórz szkice i przekazuj je do akceptacji. Publikację wykonuje Redaktor lub Administrator.'
-      : 'Możesz poprawiać teksty, publikować je, oznaczać aktualizacje i wybierać główny artykuł.';
+      ? 'Możesz zapisać artykuł jako szkic albo od razu go opublikować.'
+      : 'Możesz zapisać artykuł jako szkic albo go opublikować.';
     listHelp.textContent=role==='author'?'Widoczne są Twoje teksty.':'Widoczne są wszystkie teksty redakcji.';
     syncUpdateUi();
   };
@@ -335,7 +329,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.id.value='';
     articleForm.elements.published_at.value=fmtLocal();
     articleForm.elements.update_at.value='';
-    articleForm.elements.status.value='draft';
     formTitle.textContent='Nowy artykuł';
     status(formStatus,'');
     configureRoleUi();
@@ -371,7 +364,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.is_updated.checked=!!a.is_updated;
     articleForm.elements.update_at.value=a.update_at?fmtLocal(a.update_at):'';
     articleForm.elements.featured.checked=!!a.featured;
-    articleForm.elements.status.value=currentProfile.role==='author'&&a.status==='published'?'draft':(a.status||'draft');
     formTitle.textContent='Edytuj artykuł';
     configureRoleUi();
     syncUpdateUi();
@@ -725,8 +717,8 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     try{preparedGallery=collectGalleryItems();}
     catch(error){status(formStatus,error.message,true);return;}
 
-    let desiredStatus=String(fd.get('status')||'draft');
-    if(currentProfile.role==='author'&&!['draft','review'].includes(desiredStatus))desiredStatus='review';
+    const requestedSaveStatus=e.submitter?.dataset.saveStatus;
+    const desiredStatus=requestedSaveStatus==='published'?'published':'draft';
     const canPublish=currentProfile.role==='editor'||currentProfile.role==='admin';
     const isUpdated=fd.get('is_updated')==='on';
     const shouldSendNewsletter=canPublish&&fd.get('send_newsletter')==='on';
@@ -811,7 +803,9 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       await loadArticles();
       return;
     }
-    let completion=desiredStatus==='review'?'Przekazano do akceptacji.':(isUpdated?'Zapisano jako aktualizację.':'Zapisano.');
+    let completion=isUpdated
+      ? 'Zapisano jako aktualizację.'
+      : (desiredStatus==='published'?'Artykuł opublikowany.':'Artykuł zapisany jako szkic.');
     let completionError=false;
     if(shouldSendNewsletter){
       status(formStatus,'Artykuł zapisany. Przygotowywanie newslettera…');
