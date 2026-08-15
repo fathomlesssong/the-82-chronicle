@@ -146,8 +146,13 @@
 
     @media(max-width:650px){
       .gate{
-        background-size:contain;
+        background-image:url("/assets/login-entry-mobile.png?v=1");
+        background-size:cover;
         background-position:center;
+      }
+
+      body.is-error .gate{
+        background-image:url("/assets/login-wrong-mobile.png?v=1");
       }
 
       .login-form{
