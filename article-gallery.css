@@ -1,6 +1,6 @@
 .article-gallery{
   max-width:900px;
-  margin:44px auto 0;
+  margin:44px 0 0;
   padding-top:22px;
   border-top:3px double var(--line);
 }
