@@ -75,6 +75,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   const inviteForm=document.querySelector('[data-invite-form]');
   const inviteStatus=document.querySelector('[data-invite-status]');
   const featuredField=document.querySelector('[data-featured-field]');
+  const videoHomepageField=document.querySelector('[data-video-homepage-field]');
   const publishedAtField=document.querySelector('[data-published-at-field]');
   const statusSelect=document.querySelector('[data-status-select]');
   const updateToggle=document.querySelector('[data-update-toggle]');
@@ -307,6 +308,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     const role=currentProfile?.role;
     const canPublish=role==='editor'||role==='admin';
     featuredField.hidden=!canPublish;
+    if(videoHomepageField)videoHomepageField.hidden=!canPublish;
     publishedAtField.hidden=!canPublish;
     newsletterPanel.hidden=!canPublish;
     if(sendNewsletter)sendNewsletter.disabled=!canPublish;
@@ -360,6 +362,8 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.image_credit.value=a.image_credit||'';
     articleForm.elements.video_url.value=a.video_url||'';
     articleForm.elements.video_caption.value=a.video_caption||'';
+    articleForm.elements.video_show_in_article.checked=!!a.video_show_in_article;
+    articleForm.elements.video_homepage.checked=!!a.video_homepage;
     articleForm.elements.published_at.value=fmtLocal(a.published_at||new Date());
     articleForm.elements.is_updated.checked=!!a.is_updated;
     articleForm.elements.update_at.value=a.update_at?fmtLocal(a.update_at):'';
@@ -605,6 +609,13 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       return;
     }
 
+    const videoShowInArticle=!!videoUrl&&fd.get('video_show_in_article')==='on';
+    const videoHomepage=
+      canPublish&&
+      desiredStatus==='published'&&
+      !!videoUrl&&
+      fd.get('video_homepage')==='on';
+
     const title=String(fd.get('title')).trim();
     const payload={
       title,
@@ -620,6 +631,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       image_credit:String(fd.get('image_credit')||'').trim()||null,
       video_url:videoUrl||null,
       video_caption:String(fd.get('video_caption')||'').trim()||null,
+      video_show_in_article:videoShowInArticle,
       status:desiredStatus,
       is_updated:isUpdated,
       update_at:isUpdated?(fd.get('update_at')?new Date(fd.get('update_at')).toISOString():new Date().toISOString()):null,
@@ -628,12 +640,24 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       created_by:id?undefined:currentSession.user.id
     };
     if(imageUrl)payload.image_url=imageUrl;
+    if(canPublish)payload.video_homepage=videoHomepage;
     if(canPublish&&desiredStatus==='published'&&fd.get('published_at'))payload.published_at=new Date(fd.get('published_at')).toISOString();
     Object.keys(payload).forEach(k=>payload[k]===undefined&&delete payload[k]);
 
     if(payload.featured){
       const clear=await db.from('articles').update({featured:false}).eq('featured',true);
       if(clear.error){status(formStatus,clear.error.message,true);return;}
+    }
+
+    if(payload.video_homepage){
+      const clearVideo=await db.from('articles')
+        .update({video_homepage:false})
+        .eq('video_homepage',true);
+
+      if(clearVideo.error){
+        status(formStatus,clearVideo.error.message,true);
+        return;
+      }
     }
 
     const q=id?db.from('articles').update(payload).eq('id',id):db.from('articles').insert(payload);

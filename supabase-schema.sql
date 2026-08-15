@@ -104,6 +104,8 @@ create table if not exists public.articles (
   image_alt text,
   video_url text,
   video_caption text,
+  video_show_in_article boolean not null default false,
+  video_homepage boolean not null default false,
   published_at timestamptz,
   featured boolean not null default false,
   status text not null default 'draft',
@@ -127,6 +129,8 @@ alter table public.articles add column if not exists is_updated boolean not null
 alter table public.articles add column if not exists update_at timestamptz;
 alter table public.articles add column if not exists video_url text;
 alter table public.articles add column if not exists video_caption text;
+alter table public.articles add column if not exists video_show_in_article boolean not null default false;
+alter table public.articles add column if not exists video_homepage boolean not null default false;
 alter table public.articles alter column published_at drop not null;
 alter table public.articles alter column published_at drop default;
 
@@ -146,6 +150,10 @@ alter table public.articles add constraint featured_only_when_published check (f
 create unique index if not exists one_published_featured_article
 on public.articles ((featured))
 where featured = true and status = 'published';
+
+create unique index if not exists one_homepage_video
+on public.articles (video_homepage)
+where video_homepage = true;
 
 drop trigger if exists articles_set_updated_at on public.articles;
 create trigger articles_set_updated_at

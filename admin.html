@@ -85,6 +85,14 @@
                 <label>Podpis pod wideo
                   <input type="text" name="video_caption" maxlength="300" placeholder="Opcjonalny podpis pod filmem">
                 </label>
+                <label class="check-row">
+                  <input type="checkbox" name="video_show_in_article">
+                  Pokaż wideo w artykule
+                </label>
+                <label class="check-row" data-video-homepage-field>
+                  <input type="checkbox" name="video_homepage">
+                  Pokaż to wideo na stronie głównej
+                </label>
                 <p class="admin-help">Film umieść na YouTube, najlepiej jako niepubliczny. Kronika 82 przechowuje tylko link do filmu.</p>
               </fieldset>
               <fieldset class="admin-fieldset" data-gallery-panel>
@@ -147,6 +155,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=10"></script>
+  <script src="/admin.js?v=11"></script>
 </body>
 </html>
