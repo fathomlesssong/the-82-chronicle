@@ -16,6 +16,12 @@
     return '';
   };
 
+  const targetVisibleInViewport=target=>{
+    if(target.classList.contains('home-ad-desktop'))return matchMedia('(min-width:901px)').matches;
+    if(target.classList.contains('home-ad-mobile'))return matchMedia('(max-width:900.98px)').matches;
+    return true;
+  };
+
   const loadBanners=async()=>{
     if(bannersPromise)return bannersPromise;
     bannersPromise=(async()=>{
@@ -50,7 +56,7 @@
   };
 
   const renderTarget=async target=>{
-    if(rendered.has(target))return;
+    if(!targetVisibleInViewport(target)||rendered.has(target))return;
     rendered.add(target);
     const slot=slotForTarget(target);
     if(!slot)return;
