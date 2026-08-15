@@ -27,18 +27,40 @@
 - [x] bezpieczne endpointy zapisu, wypisu i wysyłki
 - [x] szablon HTML/tekst oraz tryb `AKTUALIZACJA`
 
-## B. Supabase — do wykonania przy dostępie do panelu
 
-- [ ] wybrać/utworzyć projekt Supabase
-- [ ] wykonać `supabase-schema.sql`
-- [ ] wykonać `supabase-seed.sql`
+## A2. Zmiany potwierdzone 14–15.08.2026
+
+- [x] galeria wielu zdjęć w artykule
+- [x] publiczny odczyt galerii
+- [x] lightbox galerii
+- [x] nawigacja poprzednie / następne
+- [x] obsługa klawiatury i swipe
+- [x] maksymalnie 20 zdjęć galerii
+- [x] limit 8 MB na zdjęcie
+- [x] automatyczne zmniejszanie dużych zdjęć do maks. 2400 px
+- [x] link „Redakcja” na stronie głównej, w działach, archiwum i artykułach
+- [x] artykuły w działach mają równą hierarchię i kolejność chronologiczną
+- [x] poprawiona orientacja miniaturek
+- [x] usunięte ramki i sztuczne tło miniaturek w działach
+- [x] powiększone zdjęcie głównego artykułu na homepage
+- [x] poprawiony desktopowy układ artykułu
+- [x] branding zmieniony z „The 82 Chronicle” na „Kronika 82”
+- [x] dodany `commit-ok.sh` z testami i kolorowymi komunikatami
+
+## B. Supabase — stan aktualny
+
+Potwierdzone działanie CMS, artykułów i galerii na podłączonym Supabase.
+
+- [x] wybrać/utworzyć projekt Supabase
+- [x] wykonać `supabase-schema.sql`
+- [x] wykonać `supabase-seed.sql`
 - [ ] wykonać `migrations/20260812_newsletter.sql`
-- [ ] wykonać `migrations/20260814_article_images.sql`
-- [ ] utworzyć pierwsze konto redakcyjne
-- [ ] nadać pierwszemu kontu rolę `admin`
+- [x] wykonać `migrations/20260814_article_images.sql`
+- [x] utworzyć pierwsze konto redakcyjne
+- [x] nadać pierwszemu kontu rolę `admin`
 - [ ] wyłączyć publiczny signup
-- [ ] wpisać Project URL i anon key do `supabase-config.js`
-- [ ] sprawdzić bucket `article-images`
+- [x] wpisać Project URL i anon key do `supabase-config.js`
+- [x] sprawdzić bucket `article-images`
 
 ## C. Vercel — sekrety
 
@@ -165,3 +187,14 @@ Po merge:
 - [ ] artykuły działają
 - [ ] CMS działa
 - [ ] WhatsApp preview działa
+
+## K. Wideo — do wykonania
+
+- [ ] dodać opcjonalne wideo do CMS
+- [ ] umożliwić przypisanie wideo do artykułu
+- [ ] dodać moduł wideo na stronie głównej
+- [ ] dodać miniaturę / poster
+- [ ] odtwarzanie dopiero po kliknięciu
+- [ ] responsywny player mobile / desktop
+- [ ] ustalić miejsce przechowywania plików wideo
+- [ ] ustalić limit rozmiaru i obsługiwane formaty
