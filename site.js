@@ -78,7 +78,7 @@
     setCanonical(`https://the82chronicle.vercel.app/section.html?section=${encodeURIComponent(requestedSection)}`);
     sectionList.setAttribute('aria-label',`Artykuły w dziale ${sectionInfo.name}`);
     navCurrent(requestedSection);
-    sectionList.innerHTML=filtered.length?filtered.map((a,i)=>`<article class="archive-entry${i===0?' section-lead':''}">${storyMedia(a,i===0?'high':'lazy')}${storyText(a,true)}</article>`).join(''):`<p class="empty-state">W dziale ${esc(sectionInfo.name)} nie ma jeszcze artykułów.</p>`;
+    sectionList.innerHTML=filtered.length?filtered.map((a,i)=>`<article class="archive-entry">${storyMedia(a,i===0?'high':'lazy')}${storyText(a,true)}</article>`).join(''):`<p class="empty-state">W dziale ${esc(sectionInfo.name)} nie ma jeszcze artykułów.</p>`;
   }
 
   const archive=document.querySelector('[data-archive-list]');
