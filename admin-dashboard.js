@@ -36,6 +36,7 @@
   const userRole=document.querySelector('[data-user-role]');
 
   const videoAction=document.querySelector('[data-video-action]');
+  const bannersAction=document.querySelector('[data-banners-action]');
   const usersAction=document.querySelector('[data-users-action]');
 
   const prevButton=document.querySelector('[data-page-prev]');
@@ -182,7 +183,7 @@
       roleNames[profile.role]||profile.role;
 
     videoAction.hidden=profile.role!=='admin';
-
+    bannersAction.hidden=profile.role!=='admin';
     usersAction.hidden=profile.role!=='admin';
 
     page=1;
