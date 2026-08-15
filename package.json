@@ -1,0 +1,7 @@
+{
+  "name": "kronika-82",
+  "private": true,
+  "dependencies": {
+    "@vercel/functions": "^3.9.3"
+  }
+}
