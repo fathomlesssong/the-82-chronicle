@@ -12,12 +12,12 @@
   .latest-story .story-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center;background:transparent}
   .latest-story .story-title{font-size:clamp(31px,2.6vw,42px)}
   .latest-story .story-summary{max-width:680px;font-size:16px}
-  .featured-story{padding:30px 0 32px}
-  .featured-story .story-title{max-width:1050px;font-size:clamp(52px,5.2vw,76px)}
-  .featured-grid{grid-template-columns:240px minmax(0,1fr);gap:24px;align-items:start}
-  .featured-grid .media{width:240px;min-height:0;max-height:clamp(300px,30vw,360px);aspect-ratio:auto;display:flex;align-items:flex-start;justify-content:flex-start}
-  .featured-grid .story-image{width:auto;height:auto;max-width:100%;max-height:clamp(300px,30vw,360px);object-fit:contain;object-position:top left}
-  .featured-grid .story-summary{font-size:20px}
+  .featured-story{padding:26px 0 28px}
+  .featured-story .story-title{max-width:950px;font-size:clamp(46px,4vw,58px)}
+  .featured-grid{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:28px;align-items:start}
+  .featured-grid .media{width:100%;min-height:0;max-height:360px;aspect-ratio:4/3;display:block}
+  .featured-grid .story-image{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center}
+  .featured-grid .story-summary{font-size:19px}
   .stories-grid{grid-template-columns:1fr 1fr}
   .story-card{grid-template-columns:clamp(180px,20vw,220px) minmax(0,1fr);gap:18px}
   .story-card .media{height:auto;min-height:0;aspect-ratio:4/3}
