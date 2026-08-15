@@ -87,3 +87,31 @@
     flex-wrap:wrap;
   }
 }
+
+
+/* ===== WYRÓWNANIE DASHBOARDU REDAKCJI ===== */
+.admin-dashboard-grid{
+  align-items:start;
+}
+
+.admin-dashboard-actions,
+.admin-dashboard-articles{
+  align-self:start;
+  margin-top:0;
+}
+
+.admin-dashboard-actions{
+  padding-top:0;
+}
+
+.admin-dashboard-articles{
+  margin-top:0;
+}
+
+.admin-dashboard-articles .admin-dashboard-heading{
+  margin-top:0;
+}
+
+.admin-dashboard-actions .admin-dashboard-action:first-child{
+  margin-top:0;
+}
