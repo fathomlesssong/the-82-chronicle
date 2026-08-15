@@ -44,7 +44,7 @@
 - [x] usunięte ramki i sztuczne tło miniaturek w działach
 - [x] powiększone zdjęcie głównego artykułu na homepage
 - [x] poprawiony desktopowy układ artykułu
-- [x] branding zmieniony z „The 82 Chronicle” na „Kronika 82”
+- [x] branding zmieniony z „Kronika 82” na „Kronika 82”
 - [x] dodany `commit-ok.sh` z testami i kolorowymi komunikatami
 
 ## B. Supabase — stan aktualny

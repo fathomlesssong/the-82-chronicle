@@ -10,9 +10,9 @@
   "lang": "pl",
   "icons": [
     {
-      "src": "/assets/favicon.png?v=4",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "/assets/favicon.svg?v=1",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any"
     }
   ]
