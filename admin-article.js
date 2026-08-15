@@ -746,17 +746,23 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
 
       await loadArticles();
 
+      const deleteSuccessMessage='Artykuł został usunięty.';
+      const deleteSuccessDetails='Usunięto artykuł oraz jego zdjęcia.';
+
       if(storageWarning){
         status(
           formStatus,
-          storageWarning.trim(),
+          `${deleteSuccessMessage} ${storageWarning.trim()}`,
           true
         );
+        window.alert(`${deleteSuccessMessage}\n\n${storageWarning.trim()}`);
       }else{
         status(
           formStatus,
-          'Artykuł oraz jego zdjęcia zostały usunięte.'
+          deleteSuccessDetails
         );
+        formStatus?.scrollIntoView({behavior:'smooth',block:'center'});
+        window.alert(deleteSuccessDetails);
       }
 
     }catch(error){
