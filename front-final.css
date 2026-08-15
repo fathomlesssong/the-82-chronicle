@@ -40,14 +40,14 @@
 @media(min-width:701px) and (max-width:900.98px){
   .home-layout{display:block}
   .latest-story{max-width:none;margin:0;grid-template-columns:clamp(220px,32vw,260px) minmax(0,1fr);gap:20px;align-items:start;padding:18px 0 20px}
-  .latest-story .media{width:100%;height:auto;min-height:0;max-height:none;aspect-ratio:1122/1402;display:flex;align-items:flex-start;background:transparent}
-  .latest-story .story-image{width:100%;height:100%;object-fit:contain;object-position:top left;background:transparent}
+  .latest-story .media{width:100%;height:auto;min-height:0;max-height:none;aspect-ratio:4/3;display:block;background:transparent}
+  .latest-story .story-image{width:100%;height:100%;object-fit:cover;object-position:center;background:transparent}
   .featured-grid{grid-template-columns:clamp(210px,31vw,240px) minmax(0,1fr);gap:24px;align-items:start}
-  .featured-grid .media{width:100%;min-height:0;max-height:340px;aspect-ratio:auto;display:flex;align-items:flex-start;justify-content:flex-start}
-  .featured-grid .story-image{width:auto;height:auto;max-width:100%;max-height:340px;object-fit:contain;object-position:top left}
+  .featured-grid .media{width:100%;min-height:0;max-height:none;aspect-ratio:4/3;display:block}
+  .featured-grid .story-image{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center}
   .stories-grid{grid-template-columns:1fr}
   .story-card,.story-card:nth-child(odd),.story-card:nth-child(even){grid-template-columns:clamp(170px,26vw,210px) minmax(0,1fr);gap:18px;padding:20px 0;border-left:0}
-  .story-card .media{height:170px;min-height:0}
+  .story-card .media{height:auto;min-height:0;aspect-ratio:4/3}
   .home-ad-desktop{display:none}
   .home-ad-mobile{display:block;width:100%;max-width:none;margin:20px 0;padding:18px 0;border-top:1px solid var(--soft-line);border-bottom:1px solid var(--soft-line)}
   .home-ad-mobile .ad-art{display:block;width:100%;height:220px;max-height:220px;overflow:hidden;border:1px solid var(--line);background:#17130c}
@@ -121,28 +121,6 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
     object-fit:contain;
     object-position:center;
     image-orientation:from-image;
-  }
-}
-
-@media(min-width:701px) and (max-width:900.98px){
-  .featured-grid{
-    grid-template-columns:1fr;
-    gap:18px;
-  }
-
-  .featured-grid .media{
-    width:100%;
-    height:380px;
-    max-height:none;
-  }
-
-  .featured-grid .story-image{
-    width:100%;
-    height:100%;
-    max-width:none;
-    max-height:none;
-    object-fit:cover;
-    object-position:center;
   }
 }
 
