@@ -1,6 +1,6 @@
 (()=>{
   const cfg=window.CH82_SUPABASE||{};
-  const selector='[data-banner-slot]';
+  const selector='[data-banner-slot],.home-ad-desktop,.home-ad-mobile,.article-ad';
   const rendered=new WeakSet();
   let bannersPromise=null;
 
@@ -8,11 +8,19 @@
     '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
   }[char]));
 
+  const slotForTarget=target=>{
+    const explicit=String(target.dataset.bannerSlot||'').trim();
+    if(explicit)return explicit;
+    if(target.classList.contains('home-ad-desktop'))return 'vertical';
+    if(target.classList.contains('home-ad-mobile')||target.classList.contains('article-ad'))return 'horizontal';
+    return '';
+  };
+
   const loadBanners=async()=>{
     if(bannersPromise)return bannersPromise;
     bannersPromise=(async()=>{
       if(window.CH82_SUPABASE_READY)await window.CH82_SUPABASE_READY;
-      if(!cfg.url||!cfg.anonKey||!window.supabase)return [];
+      if(!cfg.url||!cfg.anonKey||!window.supabase)return null;
       const db=window.supabase.createClient(cfg.url,cfg.anonKey);
       const {data,error}=await db
         .from('banners')
@@ -23,7 +31,7 @@
         .order('created_at',{ascending:true});
       if(error){
         console.warn('Nie udało się wczytać bannerów:',error.message);
-        return [];
+        return null;
       }
       return data||[];
     })();
@@ -44,9 +52,10 @@
   const renderTarget=async target=>{
     if(rendered.has(target))return;
     rendered.add(target);
-    const slot=String(target.dataset.bannerSlot||'').trim();
+    const slot=slotForTarget(target);
     if(!slot)return;
     const all=await loadBanners();
+    if(all===null)return;
     const item=chooseNext(slot,all.filter(banner=>banner.slot===slot));
     if(!item){target.hidden=true;return;}
 
