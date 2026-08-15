@@ -179,3 +179,8 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 [data-section-list] .story-image{
   border:0;
 }
+
+/* Działy: zdjęcia bez sztucznego tła */
+[data-section-list] .story-image{
+  background:transparent;
+}
