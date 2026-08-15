@@ -28,7 +28,7 @@
   const normalizeSection=(name,slug)=>{let sectionSlug=slug||slugify(name);sectionSlug=legacy[sectionSlug]||sectionSlug;const info=sections[sectionSlug];return {section:info?.name||name,sectionSlug};};
   const normalizeArticle=a=>({...a,...normalizeSection(a.section,a.sectionSlug)});
   const fallback=[...(window.CH82_ARTICLES||[])].map(normalizeArticle);
-  const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/a/${encodeURIComponent(a.slug)}`,featured:!!a.featured,updated:!!a.is_updated,updateDate:fmtDate(a.update_at),sort:new Date(a.published_at||a.created_at).getTime(),date:fmtDate(a.published_at||a.created_at),videoUrl:a.video_url||'',videoCaption:a.video_caption||'',videoHomepage:!!a.video_homepage});
+  const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/a/${encodeURIComponent(a.slug)}`,featured:!!a.featured,updated:!!a.is_updated,updateDate:fmtDate(a.update_at),sort:new Date(a.published_at||a.created_at).getTime(),date:fmtDate(a.published_at||a.created_at)});
   const setCanonical=url=>{
     let link=document.querySelector('link[rel="canonical"]');
     if(!link){link=document.createElement('link');link.rel='canonical';document.head.appendChild(link);}
@@ -62,23 +62,64 @@
     return fallback;
   };
   const articles=(await loadArticles()).sort((a,b)=>b.sort-a.sort);
+
+  const loadHomepageVideo=async()=>{
+    if(!db)return null;
+
+    try{
+      const {data,error}=await db
+        .from('homepage_videos')
+        .select('id,title,video_url,caption')
+        .eq('active',true)
+        .maybeSingle();
+
+      if(error||!data)return null;
+
+      return {
+        id:data.id,
+        title:data.title||'Wideo Kroniki 82',
+        videoUrl:data.video_url||'',
+        caption:data.caption||''
+      };
+    }catch(_error){
+      return null;
+    }
+  };
+
+  const homepageVideo=await loadHomepageVideo();
   const updateBadge=a=>a.updated?`<span class="update-badge">Aktualizacja</span>`:'';
   const metaText=a=>a.updated&&a.updateDate?`Aktualizacja: ${a.updateDate} • Kronika 82`:`${a.date} • Kronika 82`;
   const storyMedia=(a,priority='lazy')=>`<a class="media" href="${esc(a.href)}" aria-label="Czytaj: ${esc(a.title)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}" loading="${priority==='lazy'?'lazy':'eager'}" decoding="async"${priority==='high'?' fetchpriority="high"':''}></a>`;
   const storyText=(a,summary=true,label=a.section)=>`<div class="story-copy"><span class="section-label">${esc(label)}</span>${updateBadge(a)}<h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:''}<div class="story-meta">${esc(metaText(a))}</div></div>`;
-  const homeVideo=a=>{
-    const id=youtubeVideoId(a.videoUrl);
+  const homeVideo=v=>{
+    const id=youtubeVideoId(v.videoUrl);
     if(!id)return '';
+
     return `<section class="home-video" aria-label="Wideo">
-      <div class="stories-heading"><span class="section-label">Wideo</span></div>
+      <div class="stories-heading">
+        <span class="section-label">Wideo</span>
+      </div>
+
       <div class="home-video-card">
-        <button class="video-launch" type="button" data-video-launch data-video-id="${esc(id)}" aria-label="Odtwórz film">
-          <img src="https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+        <button
+          class="video-launch"
+          type="button"
+          data-video-launch
+          data-video-id="${esc(id)}"
+          aria-label="Odtwórz film: ${esc(v.title)}"
+        >
+          <img
+            src="https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          >
           <span class="video-play" aria-hidden="true">▶</span>
         </button>
+
         <div class="home-video-copy">
-          <h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>
-          ${a.videoCaption?`<p class="story-summary">${esc(a.videoCaption)}</p>`:''}
+          <h2 class="story-title">${esc(v.title)}</h2>
+          ${v.caption?`<p class="story-summary">${esc(v.caption)}</p>`:''}
         </div>
       </div>
     </section>`;
@@ -94,8 +135,7 @@
     const latest=articles.find(a=>!featured||a.id!==featured.id)||featured||top[0];
     const main=featured||articles.find(a=>a.id!==latest.id)||latest;
     const rest=top.filter(a=>a.id!==latest.id&&a.id!==main.id).slice(0,4);
-    const videoArticle=articles.find(a=>a.videoHomepage&&a.videoUrl&&youtubeVideoId(a.videoUrl))||null;
-    home.innerHTML=`<section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section><section class="featured-story" aria-label="Główny artykuł"><div class="featured-heading"><span class="section-label">Główny artykuł</span></div>${updateBadge(main)}<h2 class="story-title"><a href="${esc(main.href)}">${esc(main.title)}</a></h2><div class="featured-grid">${storyMedia(main,'eager')}<div><p class="story-summary">${esc(main.summary)}</p><div class="story-meta">${esc(metaText(main))}</div></div></div></section>${videoArticle?homeVideo(videoArticle):''}<aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
+    home.innerHTML=`<section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section><section class="featured-story" aria-label="Główny artykuł"><div class="featured-heading"><span class="section-label">Główny artykuł</span></div>${updateBadge(main)}<h2 class="story-title"><a href="${esc(main.href)}">${esc(main.title)}</a></h2><div class="featured-grid">${storyMedia(main,'eager')}<div><p class="story-summary">${esc(main.summary)}</p><div class="story-meta">${esc(metaText(main))}</div></div></div></section>${homepageVideo?homeVideo(homepageVideo):''}<aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
   }
 
   if(home){

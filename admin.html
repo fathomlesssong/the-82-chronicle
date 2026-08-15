@@ -78,7 +78,7 @@
               <label>Podpis pod zdjęciem<input type="text" name="image_caption" maxlength="300" placeholder="Opcjonalny podpis widoczny pod zdjęciem"></label>
               <label>Autor / źródło zdjęcia<input type="text" name="image_credit" maxlength="160" placeholder="np. fot. Michał lub Archiwum Kroniki 82"></label>
               <fieldset class="admin-fieldset" data-video-panel>
-                <legend>Wideo artykułu</legend>
+                <legend>Wideo w artykule</legend>
                 <label>Link do filmu YouTube
                   <input type="url" name="video_url" placeholder="https://youtu.be/...">
                 </label>
@@ -88,10 +88,6 @@
                 <label class="check-row">
                   <input type="checkbox" name="video_show_in_article">
                   Pokaż wideo w artykule
-                </label>
-                <label class="check-row" data-video-homepage-field>
-                  <input type="checkbox" name="video_homepage">
-                  Pokaż to wideo na stronie głównej
                 </label>
                 <p class="admin-help">Film umieść na YouTube, najlepiej jako niepubliczny. Kronika 82 przechowuje tylko link do filmu.</p>
               </fieldset>
@@ -131,6 +127,39 @@
           </section>
         </div>
 
+        <section class="admin-card" data-homepage-video-panel hidden>
+          <h2>Wideo strony głównej</h2>
+          <p class="admin-help">Ten film jest niezależny od artykułów. Na stronie głównej może być aktywny tylko jeden materiał.</p>
+
+          <form class="admin-form" data-homepage-video-form>
+            <input type="hidden" name="id">
+
+            <label>Tytuł filmu
+              <input type="text" name="title" maxlength="180" required>
+            </label>
+
+            <label>Link do filmu YouTube
+              <input type="url" name="video_url" placeholder="https://youtu.be/..." required>
+            </label>
+
+            <label>Podpis / opis
+              <textarea name="caption" rows="4" maxlength="500" placeholder="Opcjonalny opis filmu"></textarea>
+            </label>
+
+            <label class="check-row">
+              <input type="checkbox" name="active">
+              Pokaż film na stronie głównej
+            </label>
+
+            <div class="admin-actions">
+              <button type="submit">Zapisz wideo</button>
+              <button type="button" class="button-secondary" data-homepage-video-clear>Nowe wideo</button>
+            </div>
+
+            <p class="admin-status" data-homepage-video-status></p>
+          </form>
+        </section>
+
         <section class="admin-card" data-users-panel hidden>
           <h2>Redakcja</h2>
           <p class="admin-help">Zapraszaj autorów i redaktorów. Publiczna rejestracja nie jest częścią projektu.</p>
@@ -155,6 +184,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
-  <script src="/admin.js?v=11"></script>
+  <script src="/admin.js?v=12"></script>
 </body>
 </html>

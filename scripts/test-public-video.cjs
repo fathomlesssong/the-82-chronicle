@@ -5,8 +5,9 @@ const site=fs.readFileSync('site.js','utf8');
 const article=fs.readFileSync('api/article.js','utf8');
 const css=fs.readFileSync('front-final.css','utf8');
 
-assert.match(site,/videoHomepage/);
-assert.match(site,/videoArticle=articles\.find/);
+assert.match(site,/from\('homepage_videos'\)/);
+assert.match(site,/homepageVideo=await loadHomepageVideo/);
+assert.doesNotMatch(site,/videoArticle=articles\.find/);
 assert.match(site,/data-video-launch/);
 assert.match(site,/youtube-nocookie\.com\/embed/);
 

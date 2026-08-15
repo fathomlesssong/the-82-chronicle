@@ -75,7 +75,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   const inviteForm=document.querySelector('[data-invite-form]');
   const inviteStatus=document.querySelector('[data-invite-status]');
   const featuredField=document.querySelector('[data-featured-field]');
-  const videoHomepageField=document.querySelector('[data-video-homepage-field]');
   const publishedAtField=document.querySelector('[data-published-at-field]');
   const statusSelect=document.querySelector('[data-status-select]');
   const updateToggle=document.querySelector('[data-update-toggle]');
@@ -87,6 +86,10 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   const generateNewsletter=document.querySelector('[data-generate-newsletter]');
   const galleryInput=document.querySelector('[data-gallery-input]');
   const galleryList=document.querySelector('[data-gallery-list]');
+  const homepageVideoPanel=document.querySelector('[data-homepage-video-panel]');
+  const homepageVideoForm=document.querySelector('[data-homepage-video-form]');
+  const homepageVideoStatus=document.querySelector('[data-homepage-video-status]');
+  const homepageVideoClear=document.querySelector('[data-homepage-video-clear]');
 
   let db=null;
   let currentSession=null;
@@ -308,11 +311,11 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     const role=currentProfile?.role;
     const canPublish=role==='editor'||role==='admin';
     featuredField.hidden=!canPublish;
-    if(videoHomepageField)videoHomepageField.hidden=!canPublish;
     publishedAtField.hidden=!canPublish;
     newsletterPanel.hidden=!canPublish;
     if(sendNewsletter)sendNewsletter.disabled=!canPublish;
     usersPanel.hidden=role!=='admin';
+    if(homepageVideoPanel)homepageVideoPanel.hidden=!canPublish;
     [...statusSelect.options].forEach(option=>{
       const forbidden=role==='author'&&!['draft','review'].includes(option.value);
       option.hidden=forbidden;
@@ -363,7 +366,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.video_url.value=a.video_url||'';
     articleForm.elements.video_caption.value=a.video_caption||'';
     articleForm.elements.video_show_in_article.checked=!!a.video_show_in_article;
-    articleForm.elements.video_homepage.checked=!!a.video_homepage;
     articleForm.elements.published_at.value=fmtLocal(a.published_at||new Date());
     articleForm.elements.is_updated.checked=!!a.is_updated;
     articleForm.elements.update_at.value=a.update_at?fmtLocal(a.update_at):'';
@@ -380,6 +382,123 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     }catch(error){
       if(articleForm.elements.id.value===String(a.id))status(formStatus,`Nie udało się wczytać dodatkowych zdjęć: ${error.message}`,true);
     }
+  };
+
+  const resetHomepageVideoForm=()=>{
+    if(!homepageVideoForm)return;
+    homepageVideoForm.reset();
+    homepageVideoForm.elements.id.value='';
+    status(homepageVideoStatus,'');
+  };
+
+  const loadHomepageVideo=async()=>{
+    if(!homepageVideoForm)return;
+    if(!['editor','admin'].includes(currentProfile?.role))return;
+
+    status(homepageVideoStatus,'Wczytywanie…');
+
+    const {data,error}=await db
+      .from('homepage_videos')
+      .select('id,title,video_url,caption,active,updated_at')
+      .eq('active',true)
+      .maybeSingle();
+
+    if(error){
+      status(homepageVideoStatus,error.message,true);
+      return;
+    }
+
+    resetHomepageVideoForm();
+
+    if(!data){
+      status(homepageVideoStatus,'Brak aktywnego filmu na stronie głównej.');
+      return;
+    }
+
+    homepageVideoForm.elements.id.value=data.id;
+    homepageVideoForm.elements.title.value=data.title||'';
+    homepageVideoForm.elements.video_url.value=data.video_url||'';
+    homepageVideoForm.elements.caption.value=data.caption||'';
+    homepageVideoForm.elements.active.checked=!!data.active;
+
+    status(homepageVideoStatus,'Aktywny film wczytany.');
+  };
+
+  const saveHomepageVideo=async event=>{
+    event.preventDefault();
+
+    if(!['editor','admin'].includes(currentProfile?.role))return;
+
+    const fd=new FormData(homepageVideoForm);
+    const id=String(fd.get('id')||'').trim();
+    const title=String(fd.get('title')||'').trim();
+    const videoUrl=String(fd.get('video_url')||'').trim();
+    const caption=String(fd.get('caption')||'').trim();
+    const active=fd.get('active')==='on';
+
+    if(!title){
+      status(homepageVideoStatus,'Podaj tytuł filmu.',true);
+      return;
+    }
+
+    if(!youtubeVideoId(videoUrl)){
+      status(homepageVideoStatus,'Podaj poprawny link do filmu YouTube.',true);
+      return;
+    }
+
+    status(homepageVideoStatus,'Zapisywanie…');
+
+    if(active){
+      let clear=db.from('homepage_videos').update({active:false}).eq('active',true);
+      if(id)clear=clear.neq('id',id);
+
+      const {error:clearError}=await clear;
+      if(clearError){
+        status(homepageVideoStatus,clearError.message,true);
+        return;
+      }
+    }
+
+    const payload={
+      title,
+      video_url:videoUrl,
+      caption:caption||null,
+      active,
+      updated_at:new Date().toISOString()
+    };
+
+    let result;
+
+    if(id){
+      result=await db
+        .from('homepage_videos')
+        .update(payload)
+        .eq('id',id)
+        .select('id')
+        .single();
+    }else{
+      result=await db
+        .from('homepage_videos')
+        .insert({
+          ...payload,
+          created_by:currentSession.user.id
+        })
+        .select('id')
+        .single();
+    }
+
+    if(result.error){
+      status(homepageVideoStatus,result.error.message,true);
+      return;
+    }
+
+    homepageVideoForm.elements.id.value=result.data.id;
+    status(
+      homepageVideoStatus,
+      active
+        ? 'Wideo zapisane i ustawione na stronie głównej.'
+        : 'Wideo zapisane jako nieaktywne.'
+    );
   };
 
   const loadUsers=async()=>{
@@ -479,6 +598,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     configureRoleUi();
     resetForm();
     await loadArticles();
+    if(['editor','admin'].includes(profile.role))await loadHomepageVideo();
     if(profile.role==='admin')await loadUsers();
   };
 
@@ -557,6 +677,9 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     status(formStatus,message);
   });
 
+  homepageVideoForm?.addEventListener('submit',saveHomepageVideo);
+  homepageVideoClear?.addEventListener('click',resetHomepageVideoForm);
+
   articleForm.addEventListener('submit',async e=>{
     e.preventDefault();status(formStatus,'Zapisywanie…');
     const fd=new FormData(articleForm);
@@ -610,12 +733,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     }
 
     const videoShowInArticle=!!videoUrl&&fd.get('video_show_in_article')==='on';
-    const videoHomepage=
-      canPublish&&
-      desiredStatus==='published'&&
-      !!videoUrl&&
-      fd.get('video_homepage')==='on';
-
     const title=String(fd.get('title')).trim();
     const payload={
       title,
@@ -647,17 +764,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     if(payload.featured){
       const clear=await db.from('articles').update({featured:false}).eq('featured',true);
       if(clear.error){status(formStatus,clear.error.message,true);return;}
-    }
-
-    if(payload.video_homepage){
-      const clearVideo=await db.from('articles')
-        .update({video_homepage:false})
-        .eq('video_homepage',true);
-
-      if(clearVideo.error){
-        status(formStatus,clearVideo.error.message,true);
-        return;
-      }
     }
 
     const q=id?db.from('articles').update(payload).eq('id',id):db.from('articles').insert(payload);
