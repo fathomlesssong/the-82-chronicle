@@ -265,10 +265,10 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
           ${item.id?'<span class="admin-help">Zapisane</span>':`<button type="button" class="button-secondary" data-gallery-remove="${esc(item.key)}">Usuń wybór</button>`}
         </div>
         <div class="admin-gallery-fields">
-          <label>Opis alternatywny (ALT)
+          <label>Opis zdjęcia dla dostępności (ALT)
             <input type="text" maxlength="240" required value="${esc(item.alt)}" data-gallery-alt>
           </label>
-          <label>Podpis
+          <label>Podpis widoczny pod zdjęciem
             <input type="text" maxlength="300" value="${esc(item.caption)}" data-gallery-caption>
           </label>
           <label>Autor / źródło
