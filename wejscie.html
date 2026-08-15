@@ -10,94 +10,124 @@
     name="robots"
     content="noindex,nofollow,noarchive"
   >
+
   <title>Dostęp • Kronika 82</title>
 
   <style>
-    :root{
-      --bg:#050505;
-      --panel:#0b0b0bcc;
-      --line:#ffffff55;
-      --line-strong:#ffffffaa;
-      --text:#f4f4f4;
-      --muted:#b8b8b8;
-      --accent:#e0b100;
-      --danger:#c2271d;
-      --danger-dark:#8e160f;
-    }
-
     *{
       box-sizing:border-box;
     }
 
     html,
     body{
+      width:100%;
       min-height:100%;
       margin:0;
+      background:#000;
     }
 
     body{
-      position:relative;
+      min-height:100vh;
       overflow:hidden;
-      background:var(--bg);
-      color:var(--text);
       font-family:Arial,sans-serif;
     }
 
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:
-        linear-gradient(to right, rgba(0,0,0,.42), rgba(0,0,0,.18)),
-        url("/assets/login-gate.png?v=1") center center / cover no-repeat;
-      transform:scale(1.02);
-      transition:background-position .28s ease, filter .28s ease;
-      z-index:0;
-    }
-
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:
-        linear-gradient(
-          to bottom,
-          rgba(0,0,0,.28),
-          rgba(0,0,0,.40)
-        );
-      z-index:0;
-      pointer-events:none;
-    }
-
-    body.is-error::before{
-      background:
-        linear-gradient(to right, rgba(0,0,0,.46), rgba(0,0,0,.22)),
-        url("/assets/login-gate.png?v=1") right center / cover no-repeat;
-      filter:saturate(1.05);
-    }
-
-    .screen{
+    .gate{
       position:relative;
-      z-index:1;
-      min-height:100vh;
+      width:100%;
+      height:100vh;
+
+      background-image:url("/assets/login-entry.png?v=2");
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+    }
+
+    body.is-error .gate{
+      background-image:url("/assets/login-wrong.png?v=2");
+    }
+
+    .login-form{
+      position:absolute;
+      left:50%;
+      bottom:7vh;
+
+      width:min(520px,calc(100% - 32px));
+
       display:flex;
-      align-items:flex-end;
-      justify-content:flex-start;
-      padding:40px;
+      gap:12px;
+
+      transform:translateX(-50%);
     }
 
-    .login-box{
-      width:min(100%, 440px);
-      padding:22px;
-      border:1px solid var(--line);
-      background:var(--panel);
-      backdrop-filter:blur(4px);
-      box-shadow:0 18px 50px rgba(0,0,0,.38);
+    .login-form input{
+      flex:1;
+      min-width:0;
+      height:58px;
+
+      padding:0 18px;
+
+      border:1px solid rgba(255,255,255,.65);
+      border-radius:4px;
+
+      background:rgba(0,0,0,.78);
+      color:#fff;
+
+      font-size:18px;
+
+      outline:none;
+
+      backdrop-filter:blur(6px);
     }
 
-    form{
-      display:grid;
-      gap:14px;
+    .login-form input::placeholder{
+      color:#aaa;
+    }
+
+    .login-form input:focus{
+      border-color:#fff;
+      box-shadow:0 0 0 2px rgba(255,255,255,.15);
+    }
+
+    .login-form button{
+      height:58px;
+      min-width:120px;
+
+      padding:0 22px;
+
+      border:1px solid #fff;
+      border-radius:4px;
+
+      background:#111;
+      color:#fff;
+
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:.08em;
+
+      cursor:pointer;
+    }
+
+    .login-form button:hover{
+      background:#262626;
+    }
+
+    body.is-error .login-form input{
+      border-color:#c3261d;
+    }
+
+    body.is-error .login-form input:focus{
+      border-color:#ff3b30;
+      box-shadow:0 0 0 2px rgba(255,59,48,.18);
+    }
+
+    body.is-error .login-form button{
+      border-color:#c3261d;
+      background:#8f1812;
+    }
+
+    body.is-error .login-form button:hover{
+      background:#b22018;
     }
 
     .sr-only{
@@ -112,198 +142,77 @@
       border:0;
     }
 
-    .password-input{
-      width:100%;
-      min-height:58px;
-      padding:16px 18px;
-      border:1px solid var(--line-strong);
-      background:rgba(0,0,0,.55);
-      color:#fff;
-      font-size:20px;
-      outline:none;
-      transition:border-color .16s ease, box-shadow .16s ease, background .16s ease;
-    }
-
-    .password-input::placeholder{
-      color:#c7c7c7;
-    }
-
-    .password-input:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 2px rgba(224,177,0,.18);
-    }
-
-    .submit-button{
-      min-height:54px;
-      padding:14px 18px;
-      border:1px solid var(--accent);
-      background:rgba(0,0,0,.42);
-      color:var(--accent);
-      font-size:17px;
-      font-weight:700;
-      letter-spacing:.08em;
-      cursor:pointer;
-      transition:background .16s ease, color .16s ease, border-color .16s ease, transform .16s ease;
-    }
-
-    .submit-button:hover{
-      background:rgba(224,177,0,.12);
-      transform:translateY(-1px);
-    }
-
-    .submit-button:focus-visible{
-      outline:2px solid var(--accent);
-      outline-offset:3px;
-    }
-
-    .error-text{
-      margin:0;
-      color:#ffb1aa;
-      font-size:16px;
-      line-height:1.45;
-      display:none;
-    }
-
-    body.is-error .login-box{
-      border-color:#ffffff33;
-      background:rgba(10,0,0,.72);
-    }
-
-    body.is-error .password-input{
-      border-color:var(--danger);
-      background:rgba(22,0,0,.58);
-    }
-
-    body.is-error .password-input:focus{
-      border-color:#ff6b5d;
-      box-shadow:0 0 0 2px rgba(194,39,29,.24);
-    }
-
-    body.is-error .submit-button{
-      border-color:var(--danger);
-      background:rgba(194,39,29,.16);
-      color:#ff6b5d;
-    }
-
-    body.is-error .submit-button:hover{
-      background:rgba(194,39,29,.28);
-    }
-
-    body.is-error .submit-button:focus-visible{
-      outline-color:var(--danger);
-    }
-
-    body.is-error .error-text{
-      display:block;
-    }
-
-    .note{
-      margin:12px 0 0;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.45;
-    }
-
-    @media(max-width:900px){
-      .screen{
-        justify-content:center;
-        align-items:flex-end;
-        padding:20px;
+    @media(max-width:650px){
+      .gate{
+        background-position:center top;
       }
 
-      .login-box{
-        width:min(100%, 520px);
+      .login-form{
+        bottom:24px;
+        flex-direction:column;
       }
 
-      body::before{
-        background-position:36% center;
-      }
-
-      body.is-error::before{
-        background-position:64% center;
-      }
-    }
-
-    @media(max-width:640px){
-      .screen{
-        padding:14px;
-      }
-
-      .login-box{
-        padding:16px;
-      }
-
-      .password-input{
-        min-height:54px;
-        font-size:18px;
-      }
-
-      .submit-button{
-        min-height:52px;
-        font-size:16px;
-      }
-
-      .error-text{
-        font-size:15px;
+      .login-form input,
+      .login-form button{
+        width:100%;
       }
     }
   </style>
 </head>
+
 <body>
-  <main class="screen">
-    <div class="login-box">
-      <form method="post" action="/api/access">
-        <input
-          type="hidden"
-          name="next"
-          value="/"
-          data-next
-        >
+  <main class="gate">
+    <form
+      class="login-form"
+      method="post"
+      action="/api/access"
+    >
+      <input
+        type="hidden"
+        name="next"
+        value="/"
+        data-next
+      >
 
-        <label class="sr-only" for="password">
-          Hasło
-        </label>
+      <label
+        class="sr-only"
+        for="password"
+      >
+        Hasło
+      </label>
 
-        <input
-          id="password"
-          class="password-input"
-          type="password"
-          name="password"
-          placeholder="Password"
-          autocomplete="current-password"
-          required
-          autofocus
-        >
+      <input
+        id="password"
+        type="password"
+        name="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+        autofocus
+      >
 
-        <button class="submit-button" type="submit">
-          ENTER
-        </button>
-
-        <p class="error-text" data-error-text>
-          Wrong password motherfucker.
-        </p>
-      </form>
-
-      <p class="note">
-        Dostęp zostanie zapamiętany na tym urządzeniu przez około 30 dni.
-      </p>
-    </div>
+      <button type="submit">
+        ENTER
+      </button>
+    </form>
   </main>
 
   <script>
-    const params = new URLSearchParams(location.search);
-    const next = params.get('next');
-    const hasError = params.get('error') === '1';
+    const params=
+      new URLSearchParams(location.search);
+
+    const next=params.get('next');
+    const isError=params.get('error')==='1';
 
     if(
       next &&
       next.startsWith('/') &&
       !next.startsWith('//')
     ){
-      document.querySelector('[data-next]').value = next;
+      document.querySelector('[data-next]').value=next;
     }
 
-    if(hasError){
+    if(isError){
       document.body.classList.add('is-error');
     }
   </script>
