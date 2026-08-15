@@ -20,7 +20,7 @@
   .featured-grid .story-summary{font-size:20px}
   .stories-grid{grid-template-columns:1fr 1fr}
   .story-card{grid-template-columns:180px minmax(0,1fr);gap:18px}
-  .story-card .media{height:155px;min-height:0}
+  .story-card .media{height:auto;min-height:0;aspect-ratio:4/3}
   .story-card .story-title{font-size:clamp(24px,2vw,32px)}
   .home-ad-desktop{top:18px;margin:0}
   .home-ad-desktop .ad-label{height:10px;margin-bottom:7px}
@@ -32,7 +32,7 @@
 @media(min-width:901px) and (max-width:1279.98px){
   .stories-grid{grid-template-columns:1fr}
   .story-card,.story-card:nth-child(odd),.story-card:nth-child(even){grid-template-columns:clamp(170px,20vw,220px) minmax(0,1fr);gap:20px;padding:20px 0;border-left:0}
-  .story-card .media{height:clamp(140px,15vw,170px)}
+  .story-card .media{height:auto;aspect-ratio:4/3}
   .story-card .story-title{font-size:clamp(25px,3vw,34px)}
 }
 
