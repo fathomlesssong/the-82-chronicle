@@ -170,3 +170,12 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
     object-position:center;
   }
 }
+
+/* Działy: zdjęcia bez ramek i osobnego tła */
+[data-section-list] .media{
+  background:transparent;
+}
+
+[data-section-list] .story-image{
+  border:0;
+}
