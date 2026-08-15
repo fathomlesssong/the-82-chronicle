@@ -4,7 +4,7 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text not null,
   display_name text,
-  role text not null default 'author' check (role in ('author','editor','admin')),
+  role text not null default 'author' check (role in ('author','admin')),
   active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -70,7 +70,7 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce(public.current_editor_role() in ('editor','admin'), false);
+  select coalesce(public.current_editor_role() = 'admin', false);
 $$;
 
 create or replace function public.is_admin()
@@ -286,8 +286,9 @@ with check (
   and featured = false
 );
 
-drop policy if exists "editors can update all articles" on public.articles;
-create policy "editors can update all articles" on public.articles for update to authenticated
+drop policy if exists "editors can update all articles";
+drop policy if exists "admins can update all articles" on public.articles;
+create policy "admins can update all articles" on public.articles for update to authenticated
 using ((select public.is_editor_or_admin()))
 with check ((select public.is_editor_or_admin()));
 
@@ -295,8 +296,9 @@ drop policy if exists "authors can delete own drafts" on public.articles;
 create policy "authors can delete own drafts" on public.articles for delete to authenticated
 using (author_id = (select auth.uid()) and (select public.current_editor_role()) = 'author' and status = 'draft');
 
-drop policy if exists "editors can delete articles" on public.articles;
-create policy "editors can delete articles" on public.articles for delete to authenticated
+drop policy if exists "editors can delete articles";
+drop policy if exists "admins can delete articles" on public.articles;
+create policy "admins can delete articles" on public.articles for delete to authenticated
 using ((select public.is_editor_or_admin()));
 
 insert into storage.buckets (id, name, public)
@@ -370,8 +372,9 @@ for select
 to anon, authenticated
 using (active = true);
 
-drop policy if exists "editors manage homepage videos" on public.homepage_videos;
-create policy "editors manage homepage videos"
+drop policy if exists "editors manage homepage videos";
+drop policy if exists "admins manage homepage videos" on public.homepage_videos;
+create policy "admins manage homepage videos"
 on public.homepage_videos
 for all
 to authenticated

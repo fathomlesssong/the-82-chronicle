@@ -126,12 +126,6 @@
               Autor
             </option>
 
-            <option
-              value="editor"
-              ${user.role==='editor'?'selected':''}
-            >
-              Redaktor
-            </option>
 
             <option
               value="admin"
@@ -286,7 +280,7 @@
 
       try{
         await authenticatedPost(
-          '/api/invite-editor',
+          '/api/invite-user',
           {
             email:String(
               form.get('email')

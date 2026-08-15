@@ -2,7 +2,6 @@
   const cfg=window.CH82_SUPABASE||{};
 
   const roleNames={
-    editor:'Redaktor',
     admin:'Administrator'
   };
 
@@ -304,11 +303,11 @@
       error||
       !data||
       !data.active||
-      !['editor','admin'].includes(data.role)
+      data.role!=='admin'
     ){
       status(
         loginStatus,
-        'Ta strona jest dostępna tylko dla Redaktora lub Administratora.',
+        'Ta strona jest dostępna tylko dla Administratora.',
         true
       );
 

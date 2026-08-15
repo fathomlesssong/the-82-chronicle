@@ -10,7 +10,7 @@ module.exports=async(req,res)=>{
     const changes={};
     if(req.body?.role!==undefined){
       const role=String(req.body.role);
-      if(!['author','editor','admin'].includes(role))return res.status(400).json({error:'Nieprawidłowa rola.'});
+      if(!['author','admin'].includes(role))return res.status(400).json({error:'Nieprawidłowa rola.'});
       changes.role=role;
     }
     if(req.body?.active!==undefined)changes.active=Boolean(req.body.active);

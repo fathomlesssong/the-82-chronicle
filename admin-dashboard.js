@@ -5,7 +5,6 @@
 
   const roleNames={
     author:'Autor',
-    editor:'Redaktor',
     admin:'Administrator'
   };
 
@@ -182,8 +181,7 @@
     userRole.textContent=
       roleNames[profile.role]||profile.role;
 
-    videoAction.hidden=
-      !['editor','admin'].includes(profile.role);
+    videoAction.hidden=profile.role!=='admin';
 
     usersAction.hidden=profile.role!=='admin';
 

@@ -1,4 +1,4 @@
-const {requiredEnv,serviceHeaders,requireEditor}=require('../lib/supabase-server');
+const {requiredEnv,serviceHeaders,requireAdmin}=require('../lib/supabase-server');
 const {configured,renderNewsletter,sendWithResend,deliveryKey}=require('../lib/newsletter');
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -9,7 +9,7 @@ module.exports=async(req,res)=>{
     return res.status(405).json({error:'Method not allowed'});
   }
   try{
-    await requireEditor(req);
+    await requireAdmin(req);
     if(!configured())return res.status(503).json({error:'Wysyłka czeka na RESEND_API_KEY, NEWSLETTER_FROM i NEWSLETTER_SIGNING_SECRET. Nic nie zostało wysłane.'});
     const articleId=String(req.body?.article_id||'').trim();
     const mode=req.body?.mode==='update'?'update':'article';

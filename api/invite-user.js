@@ -10,7 +10,7 @@ module.exports=async(req,res)=>{
     const displayName=String(req.body?.display_name||'').trim().slice(0,80);
     const role=String(req.body?.role||'author');
     if(!/^\S+@\S+\.\S+$/.test(email))return res.status(400).json({error:'Podaj prawidłowy adres e-mail.'});
-    if(!['author','editor','admin'].includes(role))return res.status(400).json({error:'Nieprawidłowa rola.'});
+    if(!['author','admin'].includes(role))return res.status(400).json({error:'Nieprawidłowa rola.'});
 
     const redirectBase=(process.env.SITE_URL||'https://the82chronicle.vercel.app').replace(/\/$/,'');
     const invite=await fetch(`${url}/auth/v1/invite?redirect_to=${encodeURIComponent(`${redirectBase}/admin.html`)}`,{

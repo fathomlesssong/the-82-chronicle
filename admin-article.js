@@ -45,7 +45,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     'Kultura':'kultura',
     'Kącik kulinarny':'kacik-kulinarny'
   });
-  const roleNames={author:'Autor',editor:'Redaktor',admin:'Administrator'};
+  const roleNames={author:'Autor',admin:'Administrator'};
   const statusNames={draft:'Szkic',review:'Do akceptacji',published:'Opublikowany',archived:'Archiwalny'};
   const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
   const status=(el,msg,bad=false)=>{if(!el)return;el.textContent=msg;el.classList.toggle('is-error',bad)};
@@ -309,13 +309,13 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
 
   const configureRoleUi=()=>{
     const role=currentProfile?.role;
-    const canPublish=role==='editor'||role==='admin';
-    featuredField.hidden=!canPublish;
-    publishedAtField.hidden=!canPublish;
-    newsletterPanel.hidden=!canPublish;
-    if(sendNewsletter)sendNewsletter.disabled=!canPublish;
+    const canAdmin=role==='admin';
+    featuredField.hidden=!canAdmin;
+    publishedAtField.hidden=!canAdmin;
+    newsletterPanel.hidden=!canAdmin;
+    if(sendNewsletter)sendNewsletter.disabled=!canAdmin;
     usersPanel.hidden=role!=='admin';
-    if(homepageVideoPanel)homepageVideoPanel.hidden=!canPublish;
+    if(homepageVideoPanel)homepageVideoPanel.hidden=!canAdmin;
     workflowHelp.textContent=role==='author'
       ? 'Możesz zapisać artykuł jako szkic albo od razu go opublikować.'
       : 'Możesz zapisać artykuł jako szkic albo go opublikować.';
@@ -387,7 +387,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
 
   const loadHomepageVideo=async()=>{
     if(!homepageVideoForm)return;
-    if(!['editor','admin'].includes(currentProfile?.role))return;
+    if(currentProfile?.role!=='admin')return;
 
     status(homepageVideoStatus,'Wczytywanie…');
 
@@ -422,7 +422,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   const saveHomepageVideo=async event=>{
     event.preventDefault();
 
-    if(!['editor','admin'].includes(currentProfile?.role))return;
+    if(currentProfile?.role!=='admin')return;
 
     const fd=new FormData(homepageVideoForm);
     const id=String(fd.get('id')||'').trim();
@@ -524,7 +524,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     usersList.innerHTML='<p class="admin-help">Wczytywanie redakcji…</p>';
     const {data,error}=await db.from('profiles').select('id,email,display_name,role,active,created_at').order('created_at',{ascending:true});
     if(error){usersList.innerHTML=`<p class="admin-status is-error">${esc(error.message)}</p>`;return;}
-    usersList.innerHTML=data.map(u=>`<article class="admin-list-item"><div><span class="section-label">${u.active?'Aktywny':'Zablokowany'}</span><h3>${esc(u.display_name||u.email)}</h3><p>${esc(u.email)}</p></div><div class="admin-user-actions"><select data-role-user="${esc(u.id)}" aria-label="Rola ${esc(u.email)}"><option value="author"${u.role==='author'?' selected':''}>Autor</option><option value="editor"${u.role==='editor'?' selected':''}>Redaktor</option><option value="admin"${u.role==='admin'?' selected':''}>Administrator</option></select><button type="button" class="button-secondary" data-toggle-user="${esc(u.id)}" data-active="${u.active}">${u.active?'Zablokuj':'Odblokuj'}</button></div></article>`).join('');
+    usersList.innerHTML=data.map(u=>`<article class="admin-list-item"><div><span class="section-label">${u.active?'Aktywny':'Zablokowany'}</span><h3>${esc(u.display_name||u.email)}</h3><p>${esc(u.email)}</p></div><div class="admin-user-actions"><select data-role-user="${esc(u.id)}" aria-label="Rola ${esc(u.email)}"><option value="author"${u.role==='author'?' selected':''}>Autor</option><option value="admin"${u.role==='admin'?' selected':''}>Administrator</option></select><button type="button" class="button-secondary" data-toggle-user="${esc(u.id)}" data-active="${u.active}">${u.active?'Zablokuj':'Odblokuj'}</button></div></article>`).join('');
     usersList.querySelectorAll('[data-role-user]').forEach(select=>select.addEventListener('change',()=>updateUser(select.dataset.roleUser,{role:select.value})));
     usersList.querySelectorAll('[data-toggle-user]').forEach(btn=>btn.addEventListener('click',()=>updateUser(btn.dataset.toggleUser,{active:btn.dataset.active!=='true'})));
   };
@@ -623,7 +623,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       if(editButton)editButton.click();
       else status(formStatus,'Nie znaleziono artykułu do edycji.',true);
     }
-    if(['editor','admin'].includes(profile.role))await loadHomepageVideo();
+    if(profile.role==='admin')await loadHomepageVideo();
     if(profile.role==='admin')await loadUsers();
   };
 
@@ -719,9 +719,9 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
 
     const requestedSaveStatus=e.submitter?.dataset.saveStatus;
     const desiredStatus=requestedSaveStatus==='published'?'published':'draft';
-    const canPublish=currentProfile.role==='editor'||currentProfile.role==='admin';
+    const canAdmin=currentProfile.role==='admin';
     const isUpdated=fd.get('is_updated')==='on';
-    const shouldSendNewsletter=canPublish&&fd.get('send_newsletter')==='on';
+    const shouldSendNewsletter=canAdmin&&fd.get('send_newsletter')==='on';
     let newsletterTeaser=String(fd.get('newsletter_teaser')||'').trim();
     const newsletterUpdateExcerpt=String(fd.get('newsletter_update_excerpt')||'').trim();
     if(!newsletterTeaser)newsletterTeaser=newsletterExcerpt(fd.get('summary'),fd.get('content'));
@@ -778,12 +778,12 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       status:desiredStatus,
       is_updated:isUpdated,
       update_at:isUpdated?(fd.get('update_at')?new Date(fd.get('update_at')).toISOString():new Date().toISOString()):null,
-      featured:canPublish&&desiredStatus==='published'&&fd.get('featured')==='on',
+      featured:canAdmin&&desiredStatus==='published'&&fd.get('featured')==='on',
       author_id:id?undefined:currentSession.user.id,
       created_by:id?undefined:currentSession.user.id
     };
     if(imageUrl)payload.image_url=imageUrl;
-    if(canPublish&&desiredStatus==='published'&&fd.get('published_at'))payload.published_at=new Date(fd.get('published_at')).toISOString();
+    if(canAdmin&&desiredStatus==='published'&&fd.get('published_at'))payload.published_at=new Date(fd.get('published_at')).toISOString();
     Object.keys(payload).forEach(k=>payload[k]===undefined&&delete payload[k]);
 
     if(payload.featured){
@@ -823,7 +823,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     e.preventDefault();status(inviteStatus,'Wysyłanie zaproszenia…');
     const fd=new FormData(inviteForm);
     try{
-      await authenticatedPost('/api/invite-editor',{email:String(fd.get('email')).trim(),display_name:String(fd.get('display_name')||'').trim(),role:String(fd.get('role'))});
+      await authenticatedPost('/api/invite-user',{email:String(fd.get('email')).trim(),display_name:String(fd.get('display_name')||'').trim(),role:String(fd.get('role'))});
       status(inviteStatus,'Zaproszenie wysłane.');
       inviteForm.reset();
       await loadUsers();
