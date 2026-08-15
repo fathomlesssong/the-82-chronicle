@@ -15,14 +15,13 @@ module.exports=async(req,res)=>{
     const mode=req.body?.mode==='update'?'update':'article';
     if(!UUID.test(articleId))return res.status(400).json({error:'Nieprawidłowy identyfikator artykułu.'});
     const {url,serviceKey}=requiredEnv();
-    const articleResponse=await fetch(`${url}/rest/v1/articles?id=eq.${encodeURIComponent(articleId)}&select=id,title,slug,summary,content,image_url,image_alt,status,is_updated,update_at,updated_at,newsletter_teaser,newsletter_update_excerpt,newsletter_sent_at,newsletter_update_sent_at,newsletter_update_sent_for&limit=1`,{headers:serviceHeaders(serviceKey)});
+    const articleResponse=await fetch(`${url}/rest/v1/articles?id=eq.${encodeURIComponent(articleId)}&select=id,title,slug,summary,content,image_url,image_alt,status,is_updated,update_at,updated_at,newsletter_teaser,newsletter_sent_at,newsletter_update_sent_at,newsletter_update_sent_for&limit=1`,{headers:serviceHeaders(serviceKey)});
     if(!articleResponse.ok)return res.status(502).json({error:'Nie udało się odczytać artykułu z Supabase.'});
     const articles=await articleResponse.json();
     const article=articles[0];
     if(!article)return res.status(404).json({error:'Artykułu nie znaleziono.'});
     if(article.status!=='published')return res.status(400).json({error:'Newsletter można wysłać tylko dla opublikowanego artykułu.'});
     if(mode==='update'&&(!article.is_updated||!article.update_at))return res.status(400).json({error:'Najpierw oznacz artykuł jako aktualizację i ustaw jej datę.'});
-    if(mode==='update'&&!String(article.newsletter_update_excerpt||'').trim())return res.status(400).json({error:'Uzupełnij nowy fragment aktualizacji.'});
     if(mode==='article'&&article.newsletter_sent_at)return res.status(409).json({error:'Newsletter dla tego artykułu został już wysłany.'});
     if(mode==='update'&&article.newsletter_update_sent_for&&new Date(article.newsletter_update_sent_for).getTime()===new Date(article.update_at).getTime())return res.status(409).json({error:'Newsletter dla tej wersji aktualizacji został już wysłany.'});
     const subscriberResponse=await fetch(`${url}/rest/v1/subscribers?active=eq.true&select=email&order=created_at.asc`,{headers:serviceHeaders(serviceKey)});

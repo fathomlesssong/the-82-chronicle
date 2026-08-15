@@ -80,7 +80,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   const updateAtField=document.querySelector('[data-update-at-field]');
   const newsletterPanel=document.querySelector('[data-newsletter-panel]');
   const sendNewsletter=document.querySelector('[data-send-newsletter]');
-  const newsletterUpdateField=document.querySelector('[data-newsletter-update-field]');
   const newsletterCount=document.querySelector('[data-newsletter-count]');
   const generateNewsletter=document.querySelector('[data-generate-newsletter]');
   const galleryInput=document.querySelector('[data-gallery-input]');
@@ -111,7 +110,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   };
 
   const syncNewsletterUi=()=>{
-    if(newsletterUpdateField)newsletterUpdateField.hidden=!updateToggle?.checked;
     const length=articleForm?.elements.newsletter_teaser?.value.length||0;
     if(newsletterCount)newsletterCount.textContent=`${length}/500 znaków`;
   };
@@ -355,7 +353,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.summary.value=a.summary||'';
     articleForm.elements.content.value=a.content||'';
     articleForm.elements.newsletter_teaser.value=a.newsletter_teaser||'';
-    articleForm.elements.newsletter_update_excerpt.value=a.newsletter_update_excerpt||'';
     articleForm.elements.image_alt.value=a.image_alt||'';
     articleForm.elements.image_caption.value=a.image_caption||'';
     articleForm.elements.image_credit.value=a.image_credit||'';
@@ -908,14 +905,9 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     const isUpdated=fd.get('is_updated')==='on';
     const shouldSendNewsletter=canAdmin&&fd.get('send_newsletter')==='on';
     let newsletterTeaser=String(fd.get('newsletter_teaser')||'').trim();
-    const newsletterUpdateExcerpt=String(fd.get('newsletter_update_excerpt')||'').trim();
     if(!newsletterTeaser)newsletterTeaser=newsletterExcerpt(fd.get('summary'),fd.get('content'));
     if(shouldSendNewsletter&&desiredStatus!=='published'){
       status(formStatus,'Newsletter można wysłać dopiero dla opublikowanego artykułu.',true);return;
-    }
-    const selectedNewsletterText=isUpdated?newsletterUpdateExcerpt:newsletterTeaser;
-    if(shouldSendNewsletter&&selectedNewsletterText.length<100){
-      status(formStatus,isUpdated?'Dodaj nowy fragment aktualizacji (najlepiej 300–500 znaków).':'Zajawka newslettera jest za krótka; celuj w około 300–500 znaków.',true);return;
     }
 
     let imageUrl=null;
@@ -953,7 +945,6 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       summary:String(fd.get('summary')).trim(),
       content:String(fd.get('content')).trim(),
       newsletter_teaser:newsletterTeaser||null,
-      newsletter_update_excerpt:newsletterUpdateExcerpt||null,
       image_alt:String(fd.get('image_alt')||'').trim(),
       image_caption:String(fd.get('image_caption')||'').trim()||null,
       image_credit:String(fd.get('image_credit')||'').trim()||null,
