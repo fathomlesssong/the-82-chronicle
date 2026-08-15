@@ -1,4 +1,4 @@
-# The 82 Chronicle — checklista przed produkcją
+# Kronika 82 — checklista przed produkcją
 
 ## A. Bez Supabase — wykonane
 

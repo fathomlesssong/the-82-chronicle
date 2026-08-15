@@ -1,4 +1,4 @@
-# The 82 Chronicle
+# Kronika 82
 
 Satyryczna lokalna gazeta spod numeru 82 w Słotwinie.
 
@@ -46,7 +46,7 @@ Główne arkusze:
 
 - `styles.css` — baza projektu
 - `mobile.css` — wspólne zachowanie responsywne i panel admina
-- `front-final.css` — finalny layout publicznej części Chronicle
+- `front-final.css` — finalny layout publicznej części Kroniki 82
 
 Starsze `mobile-home.css`, `mobile-latest-fix.css` i `index.html.bak` zostały usunięte po scaleniu finalnych reguł.
 

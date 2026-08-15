@@ -1,5 +1,5 @@
 -- Uruchom po supabase-schema.sql.
--- Importuje obecne trzy artykuły Chronicle do tabeli articles.
+-- Importuje obecne trzy artykuły Kroniki 82 do tabeli articles.
 
 insert into public.articles
 (title,slug,section,section_slug,summary,content,image_url,image_alt,status,featured,published_at,is_updated,update_at)
@@ -17,13 +17,13 @@ OD MALIN DO ŚLIWEK
 
 Nie wiadomo, czy mamy do czynienia z przemyślaną strategią dywersyfikacji, czy po prostu z wyjątkowo skutecznym apetytem. Wiadomo natomiast, że młodociany wyjadacz nie wykazuje oznak spowolnienia.
 
-Źródła Chronicle nie potwierdzają, by sprawca korzystał z drabiny, koszyka ani zorganizowanej siatki pomocników. Wszystko wskazuje na działalność indywidualną.
+Źródła Kroniki 82 nie potwierdzają, by sprawca korzystał z drabiny, koszyka ani zorganizowanej siatki pomocników. Wszystko wskazuje na działalność indywidualną.
 
 CO BĘDZIE NASTĘPNE?
 
 Właściciele jabłoni, grusz i innych obiektów o charakterze owocowym mają powody, by obserwować rozwój sytuacji. Redakcja nie zamierza siać paniki, ale doświadczenie uczy, że po malinach i śliwkach lista możliwości pozostaje niepokojąco długa.
 
-The 82 Chronicle będzie monitorować sytuację oraz stan lokalnych zapasów owoców.$$
+Kronika 82 będzie monitorować sytuację oraz stan lokalnych zapasów owoców.$$
 ,'/assets/chlopiec.png?v=1','Portret pamięciowy młodocianego wyjadacza owoców','published',false,'2026-08-11T12:00:00+02:00',false,null
 ),
 (
@@ -45,7 +45,7 @@ Po naszej dziennikarskiej interwencji remont ruszył z kopyta. Około godziny 10
 
 Do godziny 14 udało się wmurować kilka cegieł. Prawdziwy szał. Najważniejsze jednak, że coś wreszcie się ruszyło.
 
-The 82 Chronicle będzie monitorować sytuację.$$
+Kronika 82 będzie monitorować sytuację.$$
 ,'/assets/schody.png?v=1','Schody w trakcie naprawy','published',false,'2026-08-11T11:00:00+02:00',true,'2026-08-11T14:00:00+02:00'
 ),
 (
@@ -67,7 +67,7 @@ CZY MIESZKAŃCY SŁOTWINY MOGĄ CZUĆ SIĘ BEZPIECZNIE?
 
 Na razie nic nie wskazuje na to, by w okolicy działała zorganizowana grupa myszy zajmujących instalacje elektryczne. Ale jeszcze wczoraj nic nie wskazywało również na to, że z kontaktu może patrzeć trup gryzonia.
 
-The 82 Chronicle będzie monitorować sytuację.$$
+Kronika 82 będzie monitorować sytuację.$$
 ,'/assets/martwa-mysz.jpeg?v=1','Martwa mysz znaleziona za obudową gniazdka elektrycznego w domu numer 82','published',true,'2026-08-10T12:00:00+02:00',false,null
 )
 on conflict (slug) do update set

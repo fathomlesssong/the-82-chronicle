@@ -97,7 +97,7 @@ async function call(handler,req){
     res=await call(handlers.article,{method:'GET',query:{slug:'test-autora'}});
     assert.equal(res.statusCode,200);
     assert.match(res.body,/Tekst: Michał &amp; Syn/);
-    assert.doesNotMatch(res.body,/Redakcja The 82 Chronicle/);
+    assert.doesNotMatch(res.body,/Redakcja Kronika 82/);
     const profileCall=calls.find(call=>String(call.url).includes('/rest/v1/profiles'));
     assert.ok(profileCall);
     assert.match(String(profileCall.url),/select=display_name/);

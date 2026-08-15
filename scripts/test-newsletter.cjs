@@ -15,18 +15,18 @@ assert.equal(newsletter.validUnsubscribeToken(email,token),true);
 assert.equal(newsletter.validUnsubscribeToken(email,wrongToken),false);
 assert.equal(newsletter.configured(),false,'bez klucza Resend wysyłka musi pozostać wyłączona');
 
-const longText='Chronicle opisuje rodzinne wydarzenia i najnowsze wiadomości spod numeru 82. '.repeat(12);
+const longText='Kronika 82 opisuje rodzinne wydarzenia i najnowsze wiadomości spod numeru 82. '.repeat(12);
 const teaser=newsletter.excerpt('Najważniejszy lead artykułu.',longText);
 assert.ok(teaser.length>=300&&teaser.length<=441,'automatyczna zajawka powinna mieć około 300–500 znaków');
 
 const article={
-  id:'00000000-0000-4000-8000-000000000082',slug:'rodzinna-aktualizacja',title:'Rodzinna aktualizacja Chronicle',
-  summary:'Najważniejszy lead artykułu.',content:longText,image_url:'/assets/og-image.png',image_alt:'The 82 Chronicle',
+  id:'00000000-0000-4000-8000-000000000082',slug:'rodzinna-aktualizacja',title:'Rodzinna aktualizacja Kroniki 82',
+  summary:'Najważniejszy lead artykułu.',content:longText,image_url:'/assets/og-image.png',image_alt:'Kronika 82',
   newsletter_teaser:teaser,newsletter_update_excerpt:'Pojawił się nowy fragment, którego wcześniej w artykule nie było.',update_at:'2026-08-12T12:00:00.000Z'
 };
 const message=newsletter.renderNewsletter({article,recipient:email,mode:'update'});
 assert.match(message.subject,/^AKTUALIZACJA:/);
-assert.match(message.html,/The 82 Chronicle/);
+assert.match(message.html,/Kronika 82/);
 assert.match(message.html,/Czytaj dalej/);
 assert.match(message.html,/Wypisz się z newslettera/);
 assert.match(message.html,/Nowy fragment/);

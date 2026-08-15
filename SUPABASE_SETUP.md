@@ -1,4 +1,4 @@
-# The 82 Chronicle — uruchomienie Supabase CMS
+# Kronika 82 — uruchomienie Supabase CMS
 
 Ten plik opisuje jedyne kroki, których nie da się wykonać bez dostępu do panelu Supabase/Vercel.
 
@@ -29,7 +29,7 @@ Schema tworzy:
 - unikalny główny artykuł
 - jawne granty Data API i blokadę samodzielnej zmiany roli przez użytkownika
 
-Seed importuje obecne trzy artykuły Chronicle.
+Seed importuje obecne trzy artykuły Kroniki 82.
 
 Migracja newslettera tworzy minimalną tabelę `subscribers` oraz pola zajawki i znaczników wysyłki w `articles`. Tabela nie jest dostępna bezpośrednio dla klienta.
 

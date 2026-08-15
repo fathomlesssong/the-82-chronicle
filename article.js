@@ -21,8 +21,8 @@
   const imageCaption=data.image_caption||'';
   const imageCredit=data.image_credit||'';
   const figcaption=imageCaption||imageCredit?`<figcaption>${imageCaption?`<span class="article-caption">${esc(imageCaption)}</span>`:''}${imageCredit?`<span class="article-credit">${esc(imageCredit)}</span>`:''}</figcaption>`:'';
-  document.title=`${data.title} • The 82 Chronicle`;
-  document.querySelector('meta[name="description"]')?.setAttribute('content',data.summary||'Artykuł The 82 Chronicle');
+  document.title=`${data.title} • Kronika 82`;
+  document.querySelector('meta[name="description"]')?.setAttribute('content',data.summary||'Artykuł Kroniki 82');
   document.querySelectorAll('.section-nav a').forEach(link=>{const target=new URL(link.href,location.href).searchParams.get('section');if(target===sectionSlug)link.setAttribute('aria-current','page');});
   root.innerHTML=`<article>
     <header class="article-header">

@@ -4,7 +4,7 @@
     infrastruktura:{name:'Infrastruktura',intro:'Drogi, schody, remonty i inne sprawy, które miały być załatwione już dawno.'},
     sledztwa:{name:'Śledztwa',intro:'Tropy, dowody i pytania, których rozsądniejsi ludzie woleliby nie zadawać.'},
     kultura:{name:'Kultura',intro:'Lokalne wydarzenia, twórczość i życie kulturalne wokół numeru 82.'},
-    'kacik-kulinarny':{name:'Kącik kulinarny',intro:'Smaki, przepisy i kulinarne odkrycia redakcji The 82 Chronicle.'}
+    'kacik-kulinarny':{name:'Kącik kulinarny',intro:'Smaki, przepisy i kulinarne odkrycia redakcji Kroniki 82.'}
   };
   const legacy={'wydarzenia':'aktualnosci','spolecznosc':'aktualnosci','opinie':'aktualnosci','tajemnice':'sledztwa'};
   const esc=s=>String(s??'').replace(/[&<>'\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
@@ -48,7 +48,7 @@
   };
   const articles=(await loadArticles()).sort((a,b)=>b.sort-a.sort);
   const updateBadge=a=>a.updated?`<span class="update-badge">Aktualizacja</span>`:'';
-  const metaText=a=>a.updated&&a.updateDate?`Aktualizacja: ${a.updateDate} • The 82 Chronicle`:`${a.date} • The 82 Chronicle`;
+  const metaText=a=>a.updated&&a.updateDate?`Aktualizacja: ${a.updateDate} • Kronika 82`:`${a.date} • Kronika 82`;
   const storyMedia=(a,priority='lazy')=>`<a class="media" href="${esc(a.href)}" aria-label="Czytaj: ${esc(a.title)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}" loading="${priority==='lazy'?'lazy':'eager'}" decoding="async"${priority==='high'?' fetchpriority="high"':''}></a>`;
   const storyText=(a,summary=true,label=a.section)=>`<div class="story-copy"><span class="section-label">${esc(label)}</span>${updateBadge(a)}<h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:''}<div class="story-meta">${esc(metaText(a))}</div></div>`;
   const navCurrent=section=>document.querySelectorAll('.section-nav a').forEach(link=>{const url=new URL(link.href,location.href);const target=url.searchParams.get('section')||'';if(section&&target===section)link.setAttribute('aria-current','page');if(!section&&location.pathname.endsWith('/archive.html')&&url.pathname.endsWith('/archive.html'))link.setAttribute('aria-current','page');});
@@ -73,8 +73,8 @@
     document.querySelector('[data-section-title]').textContent=sectionInfo.name;
     document.querySelector('[data-section-intro]').textContent=sectionInfo.intro;
     const count=document.querySelector('[data-list-count]');if(count)count.textContent=`${filtered.length} ${filtered.length===1?'artykuł':'artykuły'}`;
-    document.title=`${sectionInfo.name} • The 82 Chronicle`;
-    document.querySelector('meta[name="description"]')?.setAttribute('content',`${sectionInfo.name} — artykuły The 82 Chronicle.`);
+    document.title=`${sectionInfo.name} • Kronika 82`;
+    document.querySelector('meta[name="description"]')?.setAttribute('content',`${sectionInfo.name} — artykuły Kroniki 82.`);
     setCanonical(`https://the82chronicle.vercel.app/section.html?section=${encodeURIComponent(requestedSection)}`);
     sectionList.setAttribute('aria-label',`Artykuły w dziale ${sectionInfo.name}`);
     navCurrent(requestedSection);
