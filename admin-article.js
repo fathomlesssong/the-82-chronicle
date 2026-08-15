@@ -4,6 +4,8 @@ const gallerySortOrder=value=>{const raw=String(value??'').trim();const n=Number
 const MAX_GALLERY_IMAGES=20;
 const MAX_IMAGE_BYTES=8*1024*1024;
 const MAX_IMAGE_EDGE=2400;
+const MAIN_IMAGE_WIDTH=1600;
+const MAIN_IMAGE_HEIGHT=1200;
 const youtubeVideoId=value=>{
   const raw=String(value||'').trim();
   if(!raw)return null;
@@ -149,6 +151,33 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       };
       image.src=url;
     });
+  };
+
+  const prepareMainImageFile=async file=>{
+    if(!file||!file.type?.startsWith("image/"))throw new Error(`Plik „${file?.name||"bez nazwy"}” nie jest obrazem.`);
+    const source=await decodeImage(file);
+    try{
+      const sw=source.width||source.naturalWidth;
+      const sh=source.height||source.naturalHeight;
+      if(!sw||!sh)throw new Error(`Nie udało się odczytać wymiarów zdjęcia „${file.name}”.`);
+      const ratio=MAIN_IMAGE_WIDTH/MAIN_IMAGE_HEIGHT;
+      let sx=0,sy=0,cw=sw,ch=sh;
+      if(sw/sh>ratio){cw=sh*ratio;sx=(sw-cw)/2;}else{ch=sw/ratio;sy=(sh-ch)/2;}
+      const canvas=document.createElement("canvas");
+      canvas.width=MAIN_IMAGE_WIDTH;
+      canvas.height=MAIN_IMAGE_HEIGHT;
+      const ctx=canvas.getContext("2d");
+      if(!ctx)throw new Error("Przeglądarka nie może przetworzyć zdjęcia.");
+      ctx.drawImage(source,sx,sy,cw,ch,0,0,MAIN_IMAGE_WIDTH,MAIN_IMAGE_HEIGHT);
+      let blob=null;
+      for(const quality of [0.88,0.80,0.72,0.64]){
+        blob=await canvasBlob(canvas,"image/webp",quality);
+        if(blob.size<=MAX_IMAGE_BYTES)break;
+      }
+      if(!blob||blob.size>MAX_IMAGE_BYTES)throw new Error(`Zdjęcia „${file.name}” nie udało się zmniejszyć poniżej 8 MB.`);
+      const base=file.name.replace(/\.[^.]+$/,)||"zdjecie";
+      return {file:new File([blob],`${base}-1600x1200.webp`,{type:"image/webp",lastModified:file.lastModified||Date.now()}),changed:true};
+    }finally{source.close?.();}
   };
 
   const prepareImageFile=async file=>{
@@ -915,7 +944,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     if(image&&image.size){
       try{
         status(formStatus,'Przygotowywanie zdjęcia głównego…');
-        image=(await prepareImageFile(image)).file;
+        image=(await prepareMainImageFile(image)).file;
       }catch(error){
         status(formStatus,error.message,true);
         return;
