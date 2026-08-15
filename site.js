@@ -10,10 +10,25 @@
   const esc=s=>String(s??'').replace(/[&<>'\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
   const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const fmtDate=iso=>iso?new Date(iso).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'}):'';
+  const youtubeVideoId=value=>{
+    const raw=String(value||'').trim();
+    if(!raw)return null;
+    try{
+      const url=new URL(raw);
+      const host=url.hostname.replace(/^www\./,'').toLowerCase();
+      if(host==='youtu.be')return url.pathname.split('/').filter(Boolean)[0]||null;
+      if(host==='youtube.com'||host==='m.youtube.com'){
+        if(url.pathname==='/watch')return url.searchParams.get('v')||null;
+        const parts=url.pathname.split('/').filter(Boolean);
+        if(['shorts','embed','live'].includes(parts[0]))return parts[1]||null;
+      }
+    }catch(_e){}
+    return null;
+  };
   const normalizeSection=(name,slug)=>{let sectionSlug=slug||slugify(name);sectionSlug=legacy[sectionSlug]||sectionSlug;const info=sections[sectionSlug];return {section:info?.name||name,sectionSlug};};
   const normalizeArticle=a=>({...a,...normalizeSection(a.section,a.sectionSlug)});
   const fallback=[...(window.CH82_ARTICLES||[])].map(normalizeArticle);
-  const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/a/${encodeURIComponent(a.slug)}`,featured:!!a.featured,updated:!!a.is_updated,updateDate:fmtDate(a.update_at),sort:new Date(a.published_at||a.created_at).getTime(),date:fmtDate(a.published_at||a.created_at)});
+  const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/a/${encodeURIComponent(a.slug)}`,featured:!!a.featured,updated:!!a.is_updated,updateDate:fmtDate(a.update_at),sort:new Date(a.published_at||a.created_at).getTime(),date:fmtDate(a.published_at||a.created_at),videoUrl:a.video_url||'',videoCaption:a.video_caption||'',videoHomepage:!!a.video_homepage});
   const setCanonical=url=>{
     let link=document.querySelector('link[rel="canonical"]');
     if(!link){link=document.createElement('link');link.rel='canonical';document.head.appendChild(link);}
@@ -51,6 +66,24 @@
   const metaText=a=>a.updated&&a.updateDate?`Aktualizacja: ${a.updateDate} • Kronika 82`:`${a.date} • Kronika 82`;
   const storyMedia=(a,priority='lazy')=>`<a class="media" href="${esc(a.href)}" aria-label="Czytaj: ${esc(a.title)}"><img class="story-image" src="${esc(a.image)}" alt="${esc(a.alt)}" loading="${priority==='lazy'?'lazy':'eager'}" decoding="async"${priority==='high'?' fetchpriority="high"':''}></a>`;
   const storyText=(a,summary=true,label=a.section)=>`<div class="story-copy"><span class="section-label">${esc(label)}</span>${updateBadge(a)}<h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>${summary?`<p class="story-summary">${esc(a.summary)}</p>`:''}<div class="story-meta">${esc(metaText(a))}</div></div>`;
+  const homeVideo=a=>{
+    const id=youtubeVideoId(a.videoUrl);
+    if(!id)return '';
+    return `<section class="home-video" aria-label="Wideo">
+      <div class="stories-heading"><span class="section-label">Wideo</span></div>
+      <div class="home-video-card">
+        <button class="video-launch" type="button" data-video-launch data-video-id="${esc(id)}" aria-label="Odtwórz film">
+          <img src="https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+          <span class="video-play" aria-hidden="true">▶</span>
+        </button>
+        <div class="home-video-copy">
+          <h2 class="story-title"><a href="${esc(a.href)}">${esc(a.title)}</a></h2>
+          ${a.videoCaption?`<p class="story-summary">${esc(a.videoCaption)}</p>`:''}
+        </div>
+      </div>
+    </section>`;
+  };
+
   const navCurrent=section=>document.querySelectorAll('.section-nav a').forEach(link=>{const url=new URL(link.href,location.href);const target=url.searchParams.get('section')||'';if(section&&target===section)link.setAttribute('aria-current','page');if(!section&&location.pathname.endsWith('/archive.html')&&url.pathname.endsWith('/archive.html'))link.setAttribute('aria-current','page');});
 
   const home=document.querySelector('[data-home-feed]');
@@ -61,7 +94,27 @@
     const latest=articles.find(a=>!featured||a.id!==featured.id)||featured||top[0];
     const main=featured||articles.find(a=>a.id!==latest.id)||latest;
     const rest=top.filter(a=>a.id!==latest.id&&a.id!==main.id).slice(0,4);
-    home.innerHTML=`<section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section><section class="featured-story" aria-label="Główny artykuł"><div class="featured-heading"><span class="section-label">Główny artykuł</span></div>${updateBadge(main)}<h2 class="story-title"><a href="${esc(main.href)}">${esc(main.title)}</a></h2><div class="featured-grid">${storyMedia(main,'eager')}<div><p class="story-summary">${esc(main.summary)}</p><div class="story-meta">${esc(metaText(main))}</div></div></div></section><aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
+    const videoArticle=articles.find(a=>a.videoHomepage&&a.videoUrl&&youtubeVideoId(a.videoUrl))||null;
+    home.innerHTML=`<section class="latest-story" aria-label="Najnowszy artykuł">${storyMedia(latest,'high')}${storyText(latest,true,`Najnowsze • ${latest.section}`)}</section><section class="featured-story" aria-label="Główny artykuł"><div class="featured-heading"><span class="section-label">Główny artykuł</span></div>${updateBadge(main)}<h2 class="story-title"><a href="${esc(main.href)}">${esc(main.title)}</a></h2><div class="featured-grid">${storyMedia(main,'eager')}<div><p class="story-summary">${esc(main.summary)}</p><div class="story-meta">${esc(metaText(main))}</div></div></div></section>${videoArticle?homeVideo(videoArticle):''}<aside class="home-ad home-ad-mobile" aria-label="Reklama"><p class="ad-label">Reklama</p><picture class="ad-art"><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>${rest.length?`<section class="more-stories" aria-label="Pozostałe wiadomości"><div class="stories-heading"><span class="section-label">Więcej wiadomości</span></div><div class="stories-grid">${rest.map((a,index)=>`<article class="story-card" id="${esc(a.id)}">${storyMedia(a,index===0?'eager':'lazy')}${storyText(a)}</article>`).join('')}</div></section>`:''}`;
+  }
+
+  if(home){
+    home.addEventListener('click',event=>{
+      const button=event.target.closest('[data-video-launch]');
+      if(!button)return;
+      const id=String(button.dataset.videoId||'');
+      if(!id)return;
+
+      const frame=document.createElement('div');
+      frame.className='video-embed';
+      frame.innerHTML=`<iframe
+        src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1"
+        title="Odtwarzacz wideo Kroniki 82"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen
+      ></iframe>`;
+      button.replaceWith(frame);
+    });
   }
 
   const sectionList=document.querySelector('[data-section-list]');
