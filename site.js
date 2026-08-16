@@ -27,7 +27,7 @@
   };
   const normalizeSection=(name,slug)=>{let sectionSlug=slug||slugify(name);sectionSlug=legacy[sectionSlug]||sectionSlug;const info=sections[sectionSlug];return {section:info?.name||name,sectionSlug};};
   const normalizeArticle=a=>({...a,...normalizeSection(a.section,a.sectionSlug)});
-  const fallback=[...(window.CH82_ARTICLES||[])].map(normalizeArticle);
+  const fallback=[];
   const mapDb=a=>normalizeArticle({id:a.id,title:a.title,section:a.section,sectionSlug:a.section_slug,summary:a.summary,image:a.image_url||'/assets/og-image.png',alt:a.image_alt||a.title,href:`/a/${encodeURIComponent(a.slug)}`,featured:!!a.featured,updated:!!a.is_updated,updateDate:fmtDate(a.update_at),sort:new Date(a.published_at||a.created_at).getTime(),date:fmtDate(a.published_at||a.created_at)});
   const setCanonical=url=>{
     let link=document.querySelector('link[rel="canonical"]');
@@ -46,7 +46,7 @@
       const {data:{session}}=await db.auth.getSession();
       if(!session){link.hidden=true;return;}
       const {data:profile,error}=await db.from('profiles').select('role,active').eq('id',session.user.id).maybeSingle();
-      link.hidden=!!error||!profile?.active||!['author','editor','admin'].includes(profile.role);
+      link.hidden=!!error||!profile?.active||!['author','admin'].includes(profile.role);
     }catch(_e){link.hidden=true;}
   };
   await syncEditorLink();

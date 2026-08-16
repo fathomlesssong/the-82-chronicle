@@ -33,7 +33,7 @@
       link.hidden=
         !!error||
         !profile?.active||
-        !['author','editor','admin'].includes(profile.role);
+        !['author','admin'].includes(profile.role);
     }catch(_error){
       link.hidden=true;
     }

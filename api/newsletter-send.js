@@ -15,7 +15,7 @@ module.exports=async(req,res)=>{
     const mode=req.body?.mode==='update'?'update':'article';
     if(!UUID.test(articleId))return res.status(400).json({error:'Nieprawidłowy identyfikator artykułu.'});
     const {url,serviceKey}=requiredEnv();
-    const articleResponse=await fetch(`${url}/rest/v1/articles?id=eq.${encodeURIComponent(articleId)}&select=id,title,slug,summary,content,image_url,image_alt,status,is_updated,update_at,updated_at,newsletter_teaser,newsletter_sent_at,newsletter_update_sent_at,newsletter_update_sent_for&limit=1`,{headers:serviceHeaders(serviceKey)});
+    const articleResponse=await fetch(`${url}/rest/v1/articles?id=eq.${encodeURIComponent(articleId)}&select=id,title,slug,summary,content,image_url,image_alt,status,is_updated,update_at,updated_at,newsletter_teaser,newsletter_update_excerpt,newsletter_sent_at,newsletter_update_sent_at,newsletter_update_sent_for&limit=1`,{headers:serviceHeaders(serviceKey)});
     if(!articleResponse.ok)return res.status(502).json({error:'Nie udało się odczytać artykułu z Supabase.'});
     const articles=await articleResponse.json();
     const article=articles[0];

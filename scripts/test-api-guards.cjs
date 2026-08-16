@@ -2,7 +2,7 @@ const assert=require('node:assert/strict');
 
 const handlers={
   article:require('../api/article'),
-  invite:require('../api/invite-editor'),
+  invite:require('../api/invite-user'),
   send:require('../api/newsletter-send'),
   subscribe:require('../api/newsletter-subscribe'),
   updateUser:require('../api/update-user')
@@ -50,7 +50,7 @@ async function call(handler,req){
     res=await call(handlers.invite,{method:'POST',body:{email:'author@example.test'}});
     assert.equal(res.statusCode,503);
 
-    res=await call(handlers.updateUser,{method:'POST',body:{id:'00000000-0000-0000-0000-000000000001',role:'editor'}});
+    res=await call(handlers.updateUser,{method:'POST',body:{id:'00000000-0000-0000-0000-000000000001',role:'author'}});
     assert.equal(res.statusCode,503);
 
     let captured;
