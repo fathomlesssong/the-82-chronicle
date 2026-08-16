@@ -6,6 +6,7 @@ const MAX_IMAGE_BYTES=8*1024*1024;
 const MAX_IMAGE_EDGE=2400;
 const MAIN_IMAGE_WIDTH=1600;
 const MAIN_IMAGE_HEIGHT=1200;
+const prepareMainImageFileName=(name)=>(name||'').replace(/\.[^.]+$/, '')||'zdjecie';
 const youtubeVideoId=value=>{
   const raw=String(value||'').trim();
   if(!raw)return null;
@@ -33,7 +34,7 @@ const youtubeVideoId=value=>{
 
   return null;
 };
-const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave,gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE,youtubeVideoId});
+const CH82_ADMIN_SLUGS=Object.freeze({slugify,slugForSave,gallerySortOrder,MAX_GALLERY_IMAGES,MAX_IMAGE_BYTES,MAX_IMAGE_EDGE,youtubeVideoId,prepareMainImageFileName});
 
 if(typeof module==='object'&&module.exports)module.exports=CH82_ADMIN_SLUGS;
 
@@ -175,7 +176,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
         if(blob.size<=MAX_IMAGE_BYTES)break;
       }
       if(!blob||blob.size>MAX_IMAGE_BYTES)throw new Error(`Zdjęcia „${file.name}” nie udało się zmniejszyć poniżej 8 MB.`);
-      const base=file.name.replace(/\.[^.]+$/,)||"zdjecie";
+      const base=file.name.replace(/\.[^.]+$/, '')||"zdjecie";
       return {file:new File([blob],`${base}-1600x1200.webp`,{type:"image/webp",lastModified:file.lastModified||Date.now()}),changed:true};
     }finally{source.close?.();}
   };
