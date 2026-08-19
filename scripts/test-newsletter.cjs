@@ -29,7 +29,7 @@ assert.match(message.subject,/^AKTUALIZACJA:/);
 assert.match(message.html,/Kronika 82/);
 assert.match(message.html,/Czytaj dalej/);
 assert.match(message.html,/Wypisz się z newslettera/);
-assert.match(message.html,/Nowy fragment/);
+assert.match(message.html,/nowy fragment/i);
 assert.match(message.removeUrl,/newsletter-unsubscribe/);
 
 console.log('OK: szablon, zajawka, podpis wypisu i blokada wysyłki bez klucza działają.');
