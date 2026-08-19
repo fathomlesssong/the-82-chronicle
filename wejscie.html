@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+  <meta
+    name="robots"
+    content="noindex,nofollow,noarchive"
+  >
+
+  <title>Dostęp • Kronika 82</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+    }
+
+    html,
+    body{
+      width:100%;
+      min-height:100%;
+      margin:0;
+      background:#000;
+    }
+
+    body{
+      min-height:100vh;
+      overflow:hidden;
+      font-family:Arial,sans-serif;
+    }
+
+    .gate{
+      position:relative;
+      width:100%;
+      height:100vh;
+      height:100dvh;
+
+      background-color:#000;
+      background-image:url("/assets/login-entry.png?v=2");
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+    }
+
+    body.is-error .gate{
+      background-image:url("/assets/login-wrong.png?v=2");
+    }
+
+    .login-form{
+      position:absolute;
+      left:50%;
+      bottom:7vh;
+
+      width:min(520px,calc(100% - 32px));
+
+      display:flex;
+      gap:12px;
+
+      transform:translateX(-50%);
+    }
+
+    .login-form input{
+      flex:1;
+      min-width:0;
+      height:58px;
+
+      padding:0 18px;
+
+      border:1px solid rgba(255,255,255,.65);
+      border-radius:4px;
+
+      background:rgba(0,0,0,.78);
+      color:#fff;
+
+      font-size:18px;
+
+      outline:none;
+
+      backdrop-filter:blur(6px);
+    }
+
+    .login-form input::placeholder{
+      color:#aaa;
+    }
+
+    .login-form input:focus{
+      border-color:#fff;
+      box-shadow:0 0 0 2px rgba(255,255,255,.15);
+    }
+
+    .login-form button{
+      height:58px;
+      min-width:120px;
+
+      padding:0 22px;
+
+      border:1px solid #fff;
+      border-radius:4px;
+
+      background:#111;
+      color:#fff;
+
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:.08em;
+
+      cursor:pointer;
+    }
+
+    .login-form button:hover{
+      background:#262626;
+    }
+
+    body.is-error .login-form input{
+      border-color:#c3261d;
+    }
+
+    body.is-error .login-form input:focus{
+      border-color:#ff3b30;
+      box-shadow:0 0 0 2px rgba(255,59,48,.18);
+    }
+
+    body.is-error .login-form button{
+      border-color:#c3261d;
+      background:#8f1812;
+    }
+
+    body.is-error .login-form button:hover{
+      background:#b22018;
+    }
+
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border:0;
+    }
+
+    @media(max-width:650px){
+      .gate{
+        background-image:url("/assets/login-entry-mobile.png?v=1");
+        background-size:cover;
+        background-position:center;
+      }
+
+      body.is-error .gate{
+        background-image:url("/assets/login-wrong-mobile.png?v=1");
+      }
+
+      .login-form{
+        bottom:24px;
+        flex-direction:column;
+      }
+
+      .login-form input,
+      .login-form button{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="gate">
+    <form
+      class="login-form"
+      method="post"
+      action="/api/access"
+    >
+      <input
+        type="hidden"
+        name="next"
+        value="/"
+        data-next
+      >
+
+      <label
+        class="sr-only"
+        for="password"
+      >
+        Hasło
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        name="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+        autofocus
+      >
+
+      <button type="submit">
+        ENTER
+      </button>
+    </form>
+  </main>
+
+  <script>
+    const params=
+      new URLSearchParams(location.search);
+
+    const next=params.get('next');
+    const isError=params.get('error')==='1';
+
+    if(
+      next &&
+      next.startsWith('/') &&
+      !next.startsWith('//')
+    ){
+      document.querySelector('[data-next]').value=next;
+    }
+
+    if(isError){
+      document.body.classList.add('is-error');
+    }
+  </script>
+</body>
+</html>

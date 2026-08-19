@@ -1,0 +1,36 @@
+name: Site audit
+
+on:
+  push:
+    branches: [main, redesign/times-layout]
+  pull_request:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: JavaScript syntax
+        run: |
+          node --check site.js
+          node --check article.js
+          node --check admin.js
+          node --check newsletter.js
+          node --check supabase-loader.js
+          for f in api/*.js; do node --check "$f"; done
+          for f in lib/*.js; do node --check "$f"; done
+      - name: Static links and required files
+        run: node scripts/audit-site.mjs
+      - name: Stable article slug
+        run: node scripts/test-stable-slug.cjs
+      - name: Article gallery foundation
+        run: node scripts/test-article-gallery.cjs
+      - name: Newsletter skeleton
+        run: node scripts/test-newsletter.cjs
+      - name: Supabase server configuration
+        run: node scripts/test-supabase-server.cjs
+      - name: API safety guards
+        run: node scripts/test-api-guards.cjs

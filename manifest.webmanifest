@@ -1,0 +1,19 @@
+{
+  "name": "Kronika 82",
+  "short_name": "Kronika 82",
+  "description": "Lokalna gazeta spod numeru 82.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f0e6",
+  "theme_color": "#f4f0e6",
+  "lang": "pl",
+  "icons": [
+    {
+      "src": "/assets/favicon.svg?v=1",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

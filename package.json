@@ -1,0 +1,11 @@
+{
+  "name": "kronika-82",
+  "private": true,
+  "dependencies": {
+    "@vercel/functions": "^3.9.3"
+  },
+  "scripts": {
+    "test": "node scripts/test-*.cjs",
+    "check": "npm run test && node scripts/audit-site.mjs"
+  }
+}

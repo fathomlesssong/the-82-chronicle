@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+
+  <title>Redakcja i użytkownicy • Kronika 82</title>
+
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=1">
+  <link rel="stylesheet" href="/styles.css?v=4">
+  <link rel="stylesheet" href="/mobile.css?v=5">
+  <link rel="stylesheet" href="/front-final.css?v=18">
+  <link rel="stylesheet" href="/admin-dashboard.css?v=2">
+</head>
+
+<body>
+<div class="page admin-page">
+
+  <header class="masthead-wrap admin-masthead">
+    <a class="admin-back" href="/admin.html">← Redakcja</a>
+    <h1 class="masthead">Zespół</h1>
+    <p class="tagline">Redakcja Kroniki 82</p>
+  </header>
+
+  <main>
+
+    <section class="admin-card" data-login-panel>
+      <h2>Logowanie</h2>
+
+      <form class="admin-form" data-login-form>
+        <label>
+          E-mail
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+
+        <label>
+          Hasło
+          <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+
+        <button type="submit">Zaloguj</button>
+      </form>
+
+      <p class="admin-status" data-login-status></p>
+    </section>
+
+    <section data-admin-shell hidden>
+
+      <div class="admin-toolbar">
+        <div>
+          <strong>Zarządzanie Redakcją</strong>
+          <span>
+            <span data-user-email></span>
+            • Administrator
+          </span>
+        </div>
+
+        <button
+          type="button"
+          class="button-secondary"
+          data-logout
+        >
+          Wyloguj
+        </button>
+      </div>
+
+      <div class="admin-dashboard-grid">
+
+        <section class="admin-card">
+          <h2>Zaproś osobę</h2>
+
+          <p class="admin-help">
+            Nowa osoba otrzyma dostęp zgodny z wybraną rolą.
+          </p>
+
+          <form class="admin-form" data-invite-form>
+
+            <label>
+              E-mail
+              <input type="email" name="email" required>
+            </label>
+
+            <label>
+              Nazwa wyświetlana
+              <input
+                type="text"
+                name="display_name"
+                maxlength="80"
+              >
+            </label>
+
+            <label>
+              Rola
+              <select name="role" required>
+                <option value="author">Autor</option>
+
+                <option value="admin">Administrator</option>
+              </select>
+            </label>
+
+            <button type="submit">
+              Wyślij zaproszenie
+            </button>
+
+            <p
+              class="admin-status"
+              data-invite-status
+            ></p>
+
+          </form>
+        </section>
+
+        <section class="admin-card">
+          <h2>Osoby w Redakcji</h2>
+
+          <div
+            class="admin-list"
+            data-users-list
+          ></div>
+        </section>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-config.js?v=1"></script>
+<script src="/admin-users.js?v=2"></script>
+</body>
+</html>
