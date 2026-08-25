@@ -635,3 +635,15 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 }
 
 /* ===== /KRONIKA 82: SEPARATOR PRZED BANNEREM ===== */
+
+/* ===== KRONIKA 82: FEATURED SEPARATOR FINAL ===== */
+
+/*
+  Główny artykuł zawsze kończy się pojedynczą linią.
+  Niezależnie od viewportu i obecności bannera.
+*/
+.featured-story{
+  border-bottom:1px solid var(--line);
+}
+
+/* ===== /KRONIKA 82: FEATURED SEPARATOR FINAL ===== */
