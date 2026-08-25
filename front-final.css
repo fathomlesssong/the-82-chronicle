@@ -313,3 +313,70 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
     margin-top:10px;
   }
 }
+
+/* ===== KRONIKA 82: BANNER FORMAT START ===== */
+
+/*
+  Pionowy: 800 × 1200 px, proporcje 2:3
+  Poziomy: 1500 × 750 px, proporcje 2:1
+*/
+
+/* Pionowy slot w bocznej kolumnie strony głównej */
+@media(min-width:901px){
+  .home-ad-desktop .ad-art{
+    display:block;
+    width:100%;
+    aspect-ratio:2 / 3;
+    overflow:hidden;
+  }
+
+  .home-ad-desktop img{
+    display:block;
+    width:100%;
+    height:100%;
+    max-height:none;
+    object-fit:contain;
+    object-position:center;
+  }
+}
+
+/* Poziomy slot strony głównej */
+@media(max-width:900.98px){
+  .home-ad-mobile .ad-art{
+    display:block;
+    width:100%;
+    height:auto;
+    max-height:none;
+    aspect-ratio:2 / 1;
+    overflow:hidden;
+  }
+
+  .home-ad-mobile img{
+    display:block;
+    width:100%;
+    height:100%;
+    max-height:none;
+    object-fit:contain;
+    object-position:center;
+  }
+}
+
+/* Poziomy slot wewnątrz artykułu */
+.article-ad .ad-art,
+.article-ad picture{
+  display:block;
+  width:100%;
+  aspect-ratio:2 / 1;
+  overflow:hidden;
+}
+
+.article-ad img{
+  display:block;
+  width:100%;
+  height:100%;
+  max-height:none;
+  object-fit:contain;
+  object-position:center;
+}
+
+/* ===== KRONIKA 82: BANNER FORMAT END ===== */
