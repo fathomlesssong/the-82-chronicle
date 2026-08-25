@@ -5,7 +5,7 @@
     "@vercel/functions": "^3.9.3"
   },
   "scripts": {
-    "test": "node scripts/test-*.cjs",
+    "test": "node scripts/run-tests.mjs",
     "check": "npm run test && node scripts/audit-site.mjs"
   }
 }

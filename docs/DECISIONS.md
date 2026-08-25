@@ -11,3 +11,9 @@
 - State: `DONE`
 - Decision: Supabase privileged keys, newsletter credentials, and the reader access password remain server-side environment values and are never embedded in public assets.
 - Rationale: Browser-delivered files are public and cannot safely contain privileged credentials.
+
+## DEC-003 — Explicit test-file runner
+
+- State: `DONE`
+- Decision: `npm test` discovers sorted `scripts/test-*.cjs` files and runs each one in a separate Node process through `scripts/run-tests.mjs`.
+- Rationale: Passing a shell-expanded list of test files directly to Node executes only the first file and treats the remaining paths as arguments.
