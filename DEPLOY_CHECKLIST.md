@@ -69,7 +69,7 @@ Ustawić dla Preview i Production:
 - [ ] `SUPABASE_URL`
 - [ ] `SUPABASE_ANON_KEY`
 - [ ] `SUPABASE_SERVICE_ROLE_KEY`
-- [ ] `SITE_URL=https://the82chronicle.vercel.app`
+- [ ] `SITE_URL=https://kronika82.vercel.app`
 - [ ] `RESEND_API_KEY`
 - [ ] `NEWSLETTER_FROM`
 - [ ] `NEWSLETTER_SIGNING_SECRET`

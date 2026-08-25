@@ -63,7 +63,7 @@ W projekcie Vercel ustaw:
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY` — wartość publishable albo starszy `anon`
 - `SUPABASE_SERVICE_ROLE_KEY` — wartość secret albo starszy `service_role`
-- `SITE_URL=https://the82chronicle.vercel.app`
+- `SITE_URL=https://kronika82.vercel.app`
 - `RESEND_API_KEY` (pozostaw puste do czasu prawdziwej wysyłki)
 - `NEWSLETTER_FROM`
 - `NEWSLETTER_SIGNING_SECRET`

@@ -12,7 +12,7 @@ module.exports=async(req,res)=>{
     if(!/^\S+@\S+\.\S+$/.test(email))return res.status(400).json({error:'Podaj prawidłowy adres e-mail.'});
     if(!['author','admin'].includes(role))return res.status(400).json({error:'Nieprawidłowa rola.'});
 
-    const redirectBase=(process.env.SITE_URL||'https://the82chronicle.vercel.app').replace(/\/$/,'');
+    const redirectBase=(process.env.SITE_URL||'https://kronika82.vercel.app').replace(/\/$/,'');
     const invite=await fetch(`${url}/auth/v1/invite?redirect_to=${encodeURIComponent(`${redirectBase}/admin.html`)}`,{
       method:'POST',
       headers:serviceHeaders(serviceKey),

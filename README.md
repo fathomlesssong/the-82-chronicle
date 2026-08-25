@@ -4,7 +4,7 @@ Satyryczna lokalna gazeta spod numeru 82 w Słotwinie.
 
 ## Produkcja
 
-- Produkcja: `https://the82chronicle.vercel.app`
+- Produkcja: `https://kronika82.vercel.app`
 - Gałąź produkcyjna: `main`
 - Redesign: `redesign/times-layout`
 - PR redesignu: #1

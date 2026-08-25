@@ -153,7 +153,7 @@ module.exports=async(req,res)=>{
       return res.end('<!doctype html><meta charset="utf-8"><title>Nie znaleziono • Kronika 82</title><p>Artykułu nie znaleziono.</p>');
     }
 
-    const production='https://the82chronicle.vercel.app';
+    const production='https://kronika82.vercel.app';
     const canonical=`${production}/a/${encodeURIComponent(article.slug)}`;
     const image=article.image_url?(/^https?:\/\//.test(article.image_url)?article.image_url:`${production}${article.image_url}`):`${production}/assets/og-image.png`;
     const date=article.published_at?new Date(article.published_at).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'}):'';

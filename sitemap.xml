@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://the82chronicle.vercel.app/</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/archive.html</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/section.html?section=aktualnosci</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/section.html?section=infrastruktura</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/section.html?section=sledztwa</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/section.html?section=kultura</loc><lastmod>2026-08-12</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/section.html?section=na-stole</loc><lastmod>2026-08-12</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/a/mlodociany-wyjadacz-owocow</loc><lastmod>2026-08-11</lastmod><priority>0.7</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/a/schody-w-naprawie</loc><lastmod>2026-08-11</lastmod><priority>0.7</priority></url>
-  <url><loc>https://the82chronicle.vercel.app/a/horror-w-slotwinie</loc><lastmod>2026-08-10</lastmod><priority>0.7</priority></url>
+  <url><loc>https://kronika82.vercel.app/</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://kronika82.vercel.app/archive.html</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kronika82.vercel.app/section.html?section=aktualnosci</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kronika82.vercel.app/section.html?section=infrastruktura</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kronika82.vercel.app/section.html?section=sledztwa</loc><lastmod>2026-08-12</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kronika82.vercel.app/section.html?section=kultura</loc><lastmod>2026-08-12</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kronika82.vercel.app/section.html?section=na-stole</loc><lastmod>2026-08-12</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kronika82.vercel.app/a/mlodociany-wyjadacz-owocow</loc><lastmod>2026-08-11</lastmod><priority>0.7</priority></url>
+  <url><loc>https://kronika82.vercel.app/a/schody-w-naprawie</loc><lastmod>2026-08-11</lastmod><priority>0.7</priority></url>
+  <url><loc>https://kronika82.vercel.app/a/horror-w-slotwinie</loc><lastmod>2026-08-10</lastmod><priority>0.7</priority></url>
 </urlset>

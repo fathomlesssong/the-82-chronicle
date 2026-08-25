@@ -168,7 +168,7 @@
     const count=document.querySelector('[data-list-count]');if(count)count.textContent=`${filtered.length} ${filtered.length===1?'artykuł':'artykuły'}`;
     document.title=`${sectionInfo.name} • Kronika 82`;
     document.querySelector('meta[name="description"]')?.setAttribute('content',`${sectionInfo.name} — artykuły Kroniki 82.`);
-    setCanonical(`https://the82chronicle.vercel.app/section.html?section=${encodeURIComponent(requestedSection)}`);
+    setCanonical(`https://kronika82.vercel.app/section.html?section=${encodeURIComponent(requestedSection)}`);
     sectionList.setAttribute('aria-label',`Artykuły w dziale ${sectionInfo.name}`);
     navCurrent(requestedSection);
     sectionList.innerHTML=filtered.length?filtered.map((a,i)=>`<article class="archive-entry">${storyMedia(a,i===0?'high':'lazy')}${storyText(a,true)}</article>`).join(''):`<p class="empty-state">W dziale ${esc(sectionInfo.name)} nie ma jeszcze artykułów.</p>`;
@@ -176,7 +176,7 @@
 
   const archive=document.querySelector('[data-archive-list]');
   if(archive){
-    setCanonical('https://the82chronicle.vercel.app/archive.html');
+    setCanonical('https://kronika82.vercel.app/archive.html');
     navCurrent('');
     const count=document.querySelector('[data-list-count]');if(count)count.textContent=`${articles.length} ${articles.length===1?'artykuł':'artykuły'}`;
     archive.innerHTML=articles.length?articles.map(a=>`<article class="archive-entry">${storyMedia(a)}${storyText(a,true)}</article>`).join(''):'<p class="empty-state">Archiwum jest jeszcze puste.</p>';
