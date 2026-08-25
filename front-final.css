@@ -143,7 +143,7 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 .home-video{
   margin:32px 0 6px;
   padding:24px 0 30px;
-  border-top:3px double var(--line);
+  border-top:0;
   border-bottom:1px solid var(--soft-line);
 }
 
@@ -571,13 +571,6 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
     background:transparent;
   }
 
-  /*
-    Podwójna linia widoczna nad bannerem pochodzi
-    z końca sekcji głównego artykułu, nie z reklamy.
-  */
-  .featured-story:has(~ .home-ad-mobile:not([hidden])){
-    border-bottom:0;
-  }
 }
 
 /* Banner poziomy wewnątrz artykułu */
@@ -615,35 +608,32 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 
 /* ===== /KRONIKA 82: NATURAL HORIZONTAL BANNER SIZE ===== */
 
-/* ===== KRONIKA 82: SEPARATOR PRZED BANNEREM ===== */
+/* ===== KRONIKA 82: HOMEPAGE SEPARATOR SYSTEM ===== */
 
-/*
-  Banner pozostaje całkowicie bez ramki.
-  Linia należy do sekcji artykułu i wizualnie oddziela
-  treść redakcyjną od reklamy.
-*/
+/* Jedno lekkie domknięcie treści, niezależne od stanu bannera. */
+.featured-story{
+  border-bottom:1px solid var(--soft-line);
+}
+
+/* Linia nagłówka domyka sekcję; druga ciężka linia jest zbędna. */
+.more-stories{
+  border-bottom:0;
+}
+
+/* Stopkę strony głównej oddziela jedna linia zamiast dawnej podwójnej. */
+.home-layout ~ footer{
+  border-top:1px solid var(--soft-line);
+}
 
 @media(max-width:900.98px){
-  .featured-story{
-    border-bottom:1px solid var(--line);
-  }
-
-  .featured-story:has(~ .home-ad-mobile:not([hidden])){
-    padding-bottom:28px;
-    margin-bottom:28px;
+  /*
+    Przy widocznym bannerze poziomym ostatnia sekcja redakcyjna ma jeden
+    wyraźny separator. Sam banner pozostaje całkowicie bez ramki.
+  */
+  .featured-story:has(+ .home-ad-mobile:not([hidden])),
+  .home-video:has(+ .home-ad-mobile:not([hidden])){
+    border-bottom-color:var(--line);
   }
 }
 
-/* ===== /KRONIKA 82: SEPARATOR PRZED BANNEREM ===== */
-
-/* ===== KRONIKA 82: FEATURED SEPARATOR FINAL ===== */
-
-/*
-  Główny artykuł zawsze kończy się pojedynczą linią.
-  Niezależnie od viewportu i obecności bannera.
-*/
-.featured-story{
-  border-bottom:1px solid var(--line);
-}
-
-/* ===== /KRONIKA 82: FEATURED SEPARATOR FINAL ===== */
+/* ===== /KRONIKA 82: HOMEPAGE SEPARATOR SYSTEM ===== */
