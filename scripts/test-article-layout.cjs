@@ -82,13 +82,101 @@ assert.throws(()=>assertCompactArticleLayout(compactOutsideRequiredMedia),/compa
 assert.throws(()=>assertCompactArticleLayout(compactInWrongMedia),/compact article rules must be inside/);
 
 const client=read('article.js');
+const clientHtml=read('article.html');
 const classifier=read('article-layout.js');
 const css=read('front-final.css');
+const layout=require('../article-layout.js');
 
 assert.match(client,/class="article-content/);
 assert.match(client,/class="article-caption"/);
 assert.match(client,/class="article-credit"/);
-assert.match(classifier,/naturalWidth<=img\.naturalHeight/);
+assert.match(client,/data\.image_url\?'':' article-content--no-image'/,
+  'client renderer must keep the no-image layout marker');
+assert.doesNotMatch(client,/data\.image_url\?' article-content--compact'/,
+  'client renderer must not assume that every article image is compact');
+const sharedScriptIndex=clientHtml.indexOf('src="/article-layout.js?v=2"');
+const clientScriptIndex=clientHtml.indexOf('src="/article.js?v=4"');
+assert.ok(sharedScriptIndex!==-1&&clientScriptIndex!==-1&&sharedScriptIndex<clientScriptIndex,
+  'article.html must load the shared classifier before article.js');
+assert.match(classifier,/classifyImageDimensions\(img\.naturalWidth,img\.naturalHeight\)/);
+
+const expectedLayouts=[
+  {label:'landscape',width:1600,height:900,layout:'wide',compact:false},
+  {label:'portrait',width:900,height:1600,layout:'compact',compact:true},
+  {label:'square',width:1000,height:1000,layout:'compact',compact:true},
+  {label:'invalid dimensions',width:0,height:0,layout:null,compact:false}
+];
+
+const createLayoutFixture=(width,height,complete=true)=>{
+  const contentClasses=new Set();
+  const figureClasses=new Set();
+  const listeners={load:new Set(),error:new Set()};
+  const classList=classes=>({
+    toggle(name,enabled){
+      if(enabled)classes.add(name);
+      else classes.delete(name);
+    }
+  });
+  const content={classList:classList(contentClasses)};
+  const figure={
+    classList:classList(figureClasses),
+    dataset:{},
+    closest:selector=>selector==='.article-content'?content:null
+  };
+  const image={
+    naturalWidth:width,
+    naturalHeight:height,
+    complete,
+    dataset:{},
+    closest:selector=>selector==='.article-hero'?figure:null,
+    addEventListener(type,listener){listeners[type].add(listener);},
+    removeEventListener(type,listener){listeners[type].delete(listener);}
+  };
+  return {contentClasses,figure,image,listeners};
+};
+
+const applyClientLayout=(width,height)=>{
+  const fixture=createLayoutFixture(width,height);
+  const {contentClasses,figure,image}=fixture;
+  const result=layout.applyImageLayout(image);
+  return {result,compact:contentClasses.has('article-content--compact'),figure};
+};
+
+for(const sample of expectedLayouts){
+  const sharedResult=layout.classifyImageDimensions(sample.width,sample.height);
+  const clientResult=applyClientLayout(sample.width,sample.height);
+  assert.equal(sharedResult,sample.layout,`${sample.label}: unexpected shared classification`);
+  assert.equal(clientResult.result,sharedResult,`${sample.label}: client must use shared classification`);
+  assert.equal(clientResult.compact,sample.compact,`${sample.label}: unexpected client compact class`);
+}
+
+assert.equal(layout.classifyImageDimensions(undefined,undefined),null);
+
+const cachedFixture=createLayoutFixture(1600,900,true);
+layout.bindImage(cachedFixture.image);
+assert.equal(cachedFixture.figure.dataset.imageLayout,'wide','cached image must be classified immediately');
+assert.equal(cachedFixture.listeners.load.size+cachedFixture.listeners.error.size,0,
+  'cached image must not retain event listeners');
+
+const loadingFixture=createLayoutFixture(900,1600,false);
+layout.bindImage(loadingFixture.image);
+assert.equal(loadingFixture.listeners.load.size,1,'loading image must have one load listener');
+assert.equal(loadingFixture.listeners.error.size,1,'loading image must have one error listener');
+[...loadingFixture.listeners.load][0]();
+assert.equal(loadingFixture.figure.dataset.imageLayout,'compact','loaded image must use natural dimensions');
+assert.equal(loadingFixture.listeners.load.size+loadingFixture.listeners.error.size,0,
+  'image listeners must be removed after classification');
+layout.bindImage(loadingFixture.image);
+assert.equal(loadingFixture.listeners.load.size+loadingFixture.listeners.error.size,0,
+  'bound image must not receive duplicate listeners');
+
+const invalidFixture=createLayoutFixture(0,0,false);
+layout.bindImage(invalidFixture.image);
+[...invalidFixture.listeners.error][0]();
+assert.equal(invalidFixture.contentClasses.has('article-content--compact'),false,
+  'failed image without dimensions must not become compact');
+assert.equal(invalidFixture.listeners.load.size+invalidFixture.listeners.error.size,0,
+  'failed image must not retain event listeners');
 assertCompactArticleLayout(css);
 assert.ok(mediaContents(css,'(max-width:700px)')
   .some(content=>/\.article-content\s*\{\s*margin-top:17px\}/.test(content)),
@@ -135,7 +223,9 @@ require('../api/article')(req,res).then(()=>{
   assert.match(body,/class="article-content"/);
   assert.match(body,/class="article-caption">Podpis<\/span>/);
   assert.match(body,/class="article-credit">Fot\. Redakcja<\/span>/);
-  assert.match(body,/src="\/article-layout\.js\?v=1"/);
+  assert.match(body,/src="\/article-layout\.js\?v=2"/);
+  assert.doesNotMatch(body,/article-content--compact/,
+    'SSR markup must leave image layout classification to the shared classifier');
   assert.ok(body.indexOf('class="article-lead"')<body.indexOf('class="article-hero"'));
   assert.ok(body.indexOf('class="article-hero"')<body.indexOf('class="article-body"'));
   console.log('OK: oba widoki artykułu rozpoznają proporcje zdjęcia i zachowują kolejność mobile.');

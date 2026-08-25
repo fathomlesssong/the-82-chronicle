@@ -17,3 +17,9 @@
 - State: `DONE`
 - Decision: `npm test` discovers sorted `scripts/test-*.cjs` files and runs each one in a separate Node process through `scripts/run-tests.mjs`.
 - Rationale: Passing a shell-expanded list of test files directly to Node executes only the first file and treats the remaining paths as arguments.
+
+## DEC-004 — Shared article image layout classifier
+
+- State: `DONE`
+- Decision: Use `article-layout.js` as the single classifier for SSR-emitted and client-rendered article markup, based on the loaded image's natural width and height.
+- Rationale: Both delivery paths must assign identical layout classes for identical image dimensions without duplicating ratio logic or assuming that every article image is compact.

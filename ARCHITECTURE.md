@@ -10,6 +10,7 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 
 - `index.html`, `archive.html`, `section.html`, and `site.js` render public navigation and article lists.
 - `api/article.js` renders server-side article pages under `/a/<slug>` with canonical and Open Graph metadata.
+- `article-layout.js` is the shared article-image classifier for SSR-emitted and client-rendered article markup; it derives layout only from the loaded image's natural dimensions.
 - `admin*.html` and `admin*.js` provide authenticated editorial workflows.
 - `supabase-config.js` contains public browser configuration; `lib/supabase-server.js` and server functions handle privileged Supabase access.
 - `middleware.ts` and `vercel.json` define access and routing behavior.
@@ -28,4 +29,5 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 - Service-role keys, secret keys, newsletter credentials, and access passwords remain server-only and uncommitted.
 - The production origin is the only canonical/public origin emitted by application code and production documentation.
 - Preview URLs remain usable for verification but are not rewritten or promoted to canonical URLs.
+- SSR-emitted and client-rendered articles use the same `article-layout.js` classifier: images at least as tall as wide are compact, landscape images are wide, and missing or invalid dimensions never imply compact layout.
 - Security headers, password gating, indexing policy, and newsletter behavior change only under explicitly scoped work.

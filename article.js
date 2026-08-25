@@ -34,7 +34,7 @@
       <div class="article-byline">Tekst: ${esc(author)} • ${esc(date)}</div>
       ${updateDate?`<div class="article-update-meta">Aktualizacja: ${esc(updateDate)}</div>`:''}
     </header>
-    <div class="article-content${data.image_url?' article-content--compact':' article-content--no-image'}">
+    <div class="article-content${data.image_url?'':' article-content--no-image'}">
       ${data.image_url?`<figure class="article-hero"><img src="${esc(data.image_url)}" alt="${esc(data.image_alt||data.title)}" fetchpriority="high" decoding="async">${figcaption}</figure>`:''}
       <div class="article-body">${paras(data.content)}</div>
     </div>
