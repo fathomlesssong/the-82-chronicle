@@ -13,6 +13,7 @@ const ADMIN_API_PATHS=new Set([
 function isAdminPath(pathname){
   return (
     pathname==='/admin.html' ||
+    pathname==='/reset-password.html' ||
     pathname.startsWith('/admin-') ||
     pathname==='/redakcja' ||
     pathname.startsWith('/redakcja/')

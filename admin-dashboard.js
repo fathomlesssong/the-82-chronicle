@@ -29,6 +29,7 @@
   const loginPanel=document.querySelector('[data-login-panel]');
   const loginForm=document.querySelector('[data-login-form]');
   const loginStatus=document.querySelector('[data-login-status]');
+  const passwordResetButton=document.querySelector('[data-password-reset]');
   const shell=document.querySelector('[data-admin-shell]');
   const list=document.querySelector('[data-admin-list]');
 
@@ -206,6 +207,57 @@
       status(loginStatus,error.message,true);
     }
   });
+
+  passwordResetButton?.addEventListener('click',async()=>{
+    const email=String(
+      loginForm.querySelector('input[name="email"]')?.value||''
+    ).trim();
+
+    if(!/^\S+@\S+\.\S+$/.test(email)){
+      status(
+        loginStatus,
+        'Najpierw wpisz adres e-mail konta redakcyjnego.',
+        true
+      );
+      return;
+    }
+
+    passwordResetButton.disabled=true;
+    status(loginStatus,'Wysyłanie linku do zmiany hasła…');
+
+    const redirectTo=
+      `${window.location.origin}/reset-password.html`;
+
+    const {error}=await db.auth.resetPasswordForEmail(
+      email,
+      {redirectTo}
+    );
+
+    passwordResetButton.disabled=false;
+
+    if(error){
+      status(
+        loginStatus,
+        'Nie udało się wysłać linku. Spróbuj ponownie później.',
+        true
+      );
+      return;
+    }
+
+    status(
+      loginStatus,
+      'Jeśli konto istnieje, link do ustawienia nowego hasła został wysłany.'
+    );
+  });
+
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('password_reset')==='1'){
+    status(
+      loginStatus,
+      'Hasło zostało zmienione. Zaloguj się nowym hasłem.'
+    );
+    history.replaceState({},'',window.location.pathname);
+  }
 
   document
     .querySelector('[data-logout]')
