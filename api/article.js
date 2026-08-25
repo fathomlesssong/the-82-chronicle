@@ -176,7 +176,7 @@ module.exports=async(req,res)=>{
 <meta property="og:type" content="article"><meta property="og:site_name" content="Kronika 82"><meta property="og:locale" content="pl_PL">
 <meta property="og:url" content="${esc(canonical)}"><meta property="og:title" content="${esc(article.title)}"><meta property="og:description" content="${esc(article.summary)}"><meta property="og:image" content="${esc(image)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(article.title)}"><meta name="twitter:description" content="${esc(article.summary)}"><meta name="twitter:image" content="${esc(image)}">
-<link rel="stylesheet" href="/styles.css?v=4"><link rel="stylesheet" href="/mobile.css?v=5"><link rel="stylesheet" href="/front-final.css?v=18"><link rel="stylesheet" href="/article-gallery.css?v=3">
+<link rel="stylesheet" href="/styles.css?v=4"><link rel="stylesheet" href="/mobile.css?v=5"><link rel="stylesheet" href="/front-final.css?v=23"><link rel="stylesheet" href="/article-gallery.css?v=3">
 </head><body><div class="page">
 <header class="masthead-wrap"><a href="/" style="color:inherit;text-decoration:none"><h1 class="masthead">Kronika 82</h1></a><p class="tagline">Wiadomości spod numeru 82 • Założono w 2026</p></header>
 <nav class="section-nav" aria-label="Działy gazety"><a href="/">Strona główna</a><a href="/section.html?section=aktualnosci">Aktualności</a><a href="/section.html?section=infrastruktura">Infrastruktura</a><a href="/section.html?section=sledztwa">Śledztwa</a><a href="/section.html?section=kultura">Kultura</a><a href="/section.html?section=na-stole">Na Stole</a><a href="/archive.html">Archiwum</a><a href="/admin.html" data-editor-link hidden>Redakcja</a></nav>
