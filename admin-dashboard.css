@@ -115,3 +115,17 @@
 .admin-dashboard-actions .admin-dashboard-action:first-child{
   margin-top:0;
 }
+
+/* ===== KOMPAKTOWE LOGOWANIE REDAKCJI ===== */
+.admin-card[data-login-panel]{
+  width:100%;
+  max-width:620px;
+  margin:28px auto 0;
+}
+
+@media(max-width:700px){
+  .admin-card[data-login-panel]{
+    max-width:none;
+    margin-top:18px;
+  }
+}
