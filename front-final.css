@@ -380,3 +380,104 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 }
 
 /* ===== KRONIKA 82: BANNER FORMAT END ===== */
+
+/* ===== KRONIKA 82: RESPONSIVE BANNER FIT START ===== */
+
+/*
+  Zasady:
+  - małej grafiki nie powiększamy,
+  - dużą zmniejszamy proporcjonalnie,
+  - bez ramek i sztucznego ciemnego tła,
+  - pionowy zachowuje dawny rozmiar,
+  - poziomy zachowuje slot 2:1.
+*/
+
+/* Wspólne: żadnej ramki na grafice */
+.home-ad-desktop .ad-art,
+.home-ad-mobile .ad-art,
+.article-ad .ad-art,
+.article-ad picture{
+  border:0;
+  background:transparent;
+}
+
+.home-ad-desktop img,
+.home-ad-mobile img,
+.article-ad img{
+  border:0;
+}
+
+/* PIONOWY DESKTOP: stare zachowanie */
+@media(min-width:901px){
+  .home-ad-desktop .ad-art{
+    display:flex;
+    width:100%;
+    height:auto;
+    max-height:none;
+    aspect-ratio:auto;
+    overflow:visible;
+    justify-content:center;
+    align-items:flex-start;
+  }
+
+  .home-ad-desktop img{
+    display:block;
+    width:auto;
+    height:auto;
+    max-width:100%;
+    max-height:520px;
+    object-fit:contain;
+    object-position:center;
+    margin:0 auto;
+  }
+}
+
+/* POZIOMY: zostaje 2:1 */
+@media(max-width:900.98px){
+  .home-ad-mobile .ad-art{
+    display:flex;
+    width:100%;
+    height:auto;
+    max-height:none;
+    aspect-ratio:2 / 1;
+    overflow:hidden;
+    justify-content:center;
+    align-items:center;
+  }
+
+  .home-ad-mobile img{
+    display:block;
+    width:auto;
+    height:auto;
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    object-position:center;
+    margin:auto;
+  }
+}
+
+/* POZIOMY W ARTYKULE: również 2:1 */
+.article-ad .ad-art,
+.article-ad picture{
+  display:flex;
+  width:100%;
+  height:auto;
+  aspect-ratio:2 / 1;
+  overflow:hidden;
+  justify-content:center;
+  align-items:center;
+}
+
+.article-ad img{
+  display:block;
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center;
+  margin:auto;
+}
+
+/* ===== KRONIKA 82: RESPONSIVE BANNER FIT END ===== */
