@@ -481,3 +481,48 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 }
 
 /* ===== KRONIKA 82: RESPONSIVE BANNER FIT END ===== */
+
+/* ===== KRONIKA 82: BANNER FRAME CLEANUP ===== */
+
+/*
+  Kontener reklamy nie tworzy ramki ani pustego pola.
+  Sam banner zachowuje swoje proporcje i jest tylko zmniejszany,
+  jeśli nie mieści się w dostępnym miejscu.
+*/
+
+.home-ad-desktop,
+.home-ad-mobile,
+.article-ad{
+  border:0;
+  background:transparent;
+}
+
+.home-ad-desktop .ad-art,
+.home-ad-mobile .ad-art,
+.article-ad .ad-art,
+.article-ad picture{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+}
+
+/* Poziomy banner nie potrzebuje wewnętrznej "ramy". */
+.home-ad-mobile{
+  padding-top:0;
+  padding-bottom:0;
+}
+
+/* Tak samo reklama w artykule. */
+.article-ad{
+  padding-top:0;
+  padding-bottom:0;
+}
+
+/* Grafika również bez obramowania niezależnie od starszych reguł. */
+.home-ad-desktop img,
+.home-ad-mobile img,
+.article-ad img{
+  border:0;
+  box-shadow:none;
+  background:transparent;
+}
