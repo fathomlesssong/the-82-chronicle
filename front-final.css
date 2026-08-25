@@ -620,11 +620,6 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
   border-bottom:0;
 }
 
-/* Stopkę strony głównej oddziela taka sama linia jak nagłówek sekcji. */
-.home-layout ~ footer{
-  border-top:1px solid var(--line);
-}
-
 @media(max-width:900.98px){
   /*
     Przy widocznym bannerze poziomym ostatnia sekcja redakcyjna ma jeden
