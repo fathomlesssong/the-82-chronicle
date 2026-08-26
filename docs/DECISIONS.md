@@ -29,3 +29,9 @@
 - State: `DONE`
 - Decision: Keep confirmed CMS and auth-recovery selectors in `admin-dashboard.css`, loaded last by admin/auth-recovery pages and never by public pages.
 - Rationale: A single admin owner removes unused CSS from the public payload while preserving the established cascade, responsive behavior, and computed styles.
+
+## DEC-006 — Homepage shell and banner CSS ownership
+
+- State: `DONE`
+- Decision: Keep `.home-layout`, its feed boundary, and `.home-ad*` layout, visibility, sticky, and natural-size rules exclusively in `front-final.css`, preserving the `900.98px`/`901px` switch.
+- Rationale: A single late-loaded owner removes legacy crop and fixed-height overrides while preserving the established homepage geometry and banner behavior.
