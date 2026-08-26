@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#f4f0e6">
+  <title>Wyszukiwanie • Kronika 82</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=1">
+  <link rel="stylesheet" href="/styles.css?v=7">
+  <link rel="stylesheet" href="/mobile.css?v=8">
+  <link rel="stylesheet" href="/front-final.css?v=26">
+  <link rel="stylesheet" href="/search.css?v=1">
+  <script src="/search.js?v=1" defer></script>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead-wrap">
+      <a href="/" style="color:inherit;text-decoration:none"><h1 class="masthead">Kronika 82</h1></a>
+      <p class="tagline">Wiadomości spod numeru 82 • Założono w 2026</p>
+    </header>
+    <nav class="section-nav" aria-label="Działy gazety">
+      <a href="/">Strona główna</a>
+      <a href="/section.html?section=aktualnosci">Aktualności</a>
+      <a href="/section.html?section=infrastruktura">Infrastruktura</a>
+      <a href="/section.html?section=sledztwa">Śledztwa</a>
+      <a href="/section.html?section=kultura">Kultura</a>
+      <a href="/section.html?section=na-stole">Na Stole</a>
+      <a href="/archive.html">Archiwum</a>
+      <a href="/search.html" aria-current="page">Szukaj</a>
+      <a href="/admin.html" data-editor-link hidden>Redakcja</a>
+    </nav>
+    <main class="search-page">
+      <header class="search-heading">
+        <span class="section-label">Kronika 82</span>
+        <h2>Wyszukiwanie</h2>
+        <p>Przeszukaj tytuły i treść opublikowanych artykułów.</p>
+      </header>
+      <form class="search-form" action="/search.html" method="get">
+        <label for="search-query">Słowo lub fraza</label>
+        <div class="search-form-row">
+          <input id="search-query" name="q" type="search" maxlength="120" autocomplete="off" data-search-input>
+          <button type="submit">Szukaj</button>
+        </div>
+      </form>
+      <p class="search-status" data-search-status role="status" aria-live="polite"></p>
+      <section class="search-results" data-search-results aria-label="Wyniki wyszukiwania"></section>
+    </main>
+    <footer><a href="/" style="color:inherit">Strona główna</a> • <a href="/archive.html" style="color:inherit">Archiwum</a> • Kronika 82 • Założono w 2026 • <a href="/admin.html" style="color:inherit">Redakcja</a></footer>
+  </div>
+</body>
+</html>

@@ -9,6 +9,7 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 ## Components
 
 - `index.html`, `archive.html`, `section.html`, and `site.js` render public navigation and article lists.
+- `search.html` and `search.js` provide the reader-gated search UI; `api/search.js` reads the published article corpus through the anon/publishable Supabase configuration and returns at most 40 ranked results without full article content.
 - `api/article.js` renders server-side article pages under `/a/<slug>` with canonical and Open Graph metadata.
 - `article-layout.js` is the shared article-image classifier for SSR-emitted and client-rendered article markup; it derives layout only from the loaded image's natural dimensions.
 - `front-final.css` is the single owner of the homepage shell (`.home-layout`) and homepage banner (`.home-ad*`) layout, visibility, sticky positioning, and natural-size behavior.
@@ -23,12 +24,14 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 
 1. Public pages load published content from Supabase and fall back safely when data is unavailable.
 2. `/a/<slug>` is rewritten to `api/article.js`, which emits production canonical and Open Graph URLs.
-3. Editorial authentication runs in the browser against Supabase. Password-reset links return to `/reset-password.html` on the requesting origin, which must be allow-listed in Supabase.
-4. Operations requiring service credentials run only in Vercel Functions.
+3. `/api/search` pages through published articles, normalizes Polish text accent-insensitively, ranks title/summary/content matches, and fails closed when the corpus exceeds 2,000 records; a future larger corpus should move to database full-text search.
+4. Editorial authentication runs in the browser against Supabase. Password-reset links return to `/reset-password.html` on the requesting origin, which must be allow-listed in Supabase.
+5. Operations requiring service credentials run only in Vercel Functions.
 
 ## Invariants
 
 - Service-role keys, secret keys, newsletter credentials, and access passwords remain server-only and uncommitted.
+- Public search uses only the anon/publishable Supabase key, filters `status=published` and non-null `published_at` in PostgREST, and repeats those eligibility checks fail-closed before emitting a result.
 - The production origin is the only canonical/public origin emitted by application code and production documentation.
 - Preview URLs remain usable for verification but are not rewritten or promoted to canonical URLs.
 - SSR-emitted and client-rendered articles use the same `article-layout.js` classifier: images at least as tall as wide are compact, landscape images are wide, and missing or invalid dimensions never imply compact layout.

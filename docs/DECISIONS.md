@@ -35,3 +35,9 @@
 - State: `DONE`
 - Decision: Keep `.home-layout`, its feed boundary, and `.home-ad*` layout, visibility, sticky, and natural-size rules exclusively in `front-final.css`, preserving the `900.98px`/`901px` switch.
 - Rationale: A single late-loaded owner removes legacy crop and fixed-height overrides while preserving the established homepage geometry and banner behavior.
+
+## DEC-007 — Reader-gated published article search
+
+- State: `DONE`
+- Decision: Serve `/api/search` through the existing reader password gate using only anon/publishable Supabase access, accent-insensitive Polish normalization, and a fail-closed 2,000-record corpus guard; do not expose full article content or use service-role access.
+- Rationale: Search must preserve the publication and RLS boundary while remaining deterministic at the current small scale. A larger corpus should replace in-function scanning with database full-text search.

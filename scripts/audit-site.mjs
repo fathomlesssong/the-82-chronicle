@@ -50,9 +50,9 @@ for(const file of htmlFiles){
   if(!/<title>[^<]+<\/title>/i.test(text))warnings.push(`${source}: brak title`);
 }
 
-const publicPages=['index.html','archive.html','section.html','404.html'];
+const publicPages=['index.html','archive.html','section.html','search.html','404.html'];
 for(const p of publicPages)if(!existing.has(p))errors.push(`Brak wymaganej strony: ${p}`);
-const required=['robots.txt','sitemap.xml','manifest.webmanifest','styles.css','front-final.css','newsletter.css','site.js','article-layout.js','newsletter.js','api/article.js','api/newsletter-subscribe.js','api/newsletter-unsubscribe.js','api/newsletter-send.js','lib/newsletter.js','lib/supabase-server.js','migrations/20260812_newsletter.sql','migrations/20260814_article_images.sql','scripts/test-stable-slug.cjs','scripts/test-article-gallery.cjs','scripts/test-article-layout.cjs','scripts/test-newsletter.cjs','scripts/test-supabase-server.cjs','scripts/test-api-guards.cjs'];
+const required=['robots.txt','sitemap.xml','manifest.webmanifest','styles.css','front-final.css','newsletter.css','search.css','site.js','article-layout.js','newsletter.js','search.js','api/article.js','api/search.js','api/newsletter-subscribe.js','api/newsletter-unsubscribe.js','api/newsletter-send.js','lib/newsletter.js','lib/supabase-server.js','migrations/20260812_newsletter.sql','migrations/20260814_article_images.sql','scripts/test-stable-slug.cjs','scripts/test-article-gallery.cjs','scripts/test-article-layout.cjs','scripts/test-newsletter.cjs','scripts/test-search.cjs','scripts/test-supabase-server.cjs','scripts/test-api-guards.cjs'];
 for(const p of required)if(!existing.has(p))errors.push(`Brak wymaganego pliku: ${p}`);
 
 const homepage=fs.readFileSync(path.join(root,'index.html'),'utf8');
