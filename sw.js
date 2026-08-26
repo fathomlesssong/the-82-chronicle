@@ -1,11 +1,11 @@
-const CACHE='chronicle-shell-v16';
+const CACHE='chronicle-shell-v17';
 const SHELL=[
   '/',
   '/index.html',
   '/archive.html',
-  '/styles.css?v=5',
-  '/mobile.css?v=6',
-  '/front-final.css?v=24',
+  '/styles.css?v=6',
+  '/mobile.css?v=7',
+  '/front-final.css?v=25',
   '/article-layout.js?v=2',
   '/manifest.webmanifest',
   '/assets/favicon.png?v=4'

@@ -281,32 +281,6 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 }
 
 
-/* ===== Redakcja: wyróżniony przycisk usuwania artykułu ===== */
-.admin-actions .button-secondary.admin-delete-article{
-  margin-left:auto;
-  background:#b42318 !important;
-  border:1px solid #b42318 !important;
-  color:#fff !important;
-}
-
-.admin-actions .button-secondary.admin-delete-article:hover{
-  background:#8f1c13 !important;
-  border-color:#8f1c13 !important;
-  color:#fff !important;
-}
-
-.admin-actions .button-secondary.admin-delete-article:focus-visible{
-  outline:2px solid #b42318;
-  outline-offset:3px;
-}
-
-@media(max-width:700px){
-  .admin-actions .button-secondary.admin-delete-article{
-    margin-left:0;
-    margin-top:10px;
-  }
-}
-
 /* ===== KRONIKA 82: BANNER SYSTEM ===== */
 
 /*

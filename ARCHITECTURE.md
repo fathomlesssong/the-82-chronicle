@@ -12,6 +12,7 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 - `api/article.js` renders server-side article pages under `/a/<slug>` with canonical and Open Graph metadata.
 - `article-layout.js` is the shared article-image classifier for SSR-emitted and client-rendered article markup; it derives layout only from the loaded image's natural dimensions.
 - `admin*.html` and `admin*.js` provide authenticated editorial workflows.
+- `admin-dashboard.css` owns shared CMS/auth-recovery styling extracted from public sheets, including admin primitives, responsive rules, editorial gallery controls, and destructive-action states. Page-specific admin rules may remain beside their page markup; public stylesheets contain no confirmed admin-only selectors.
 - `supabase-config.js` contains public browser configuration; `lib/supabase-server.js` and server functions handle privileged Supabase access.
 - `middleware.ts` and `vercel.json` define access and routing behavior.
 - `manifest.webmanifest`, `pwa.js`, and `sw.js` provide the production PWA shell.
@@ -30,4 +31,5 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 - The production origin is the only canonical/public origin emitted by application code and production documentation.
 - Preview URLs remain usable for verification but are not rewritten or promoted to canonical URLs.
 - SSR-emitted and client-rendered articles use the same `article-layout.js` classifier: images at least as tall as wide are compact, landscape images are wide, and missing or invalid dimensions never imply compact layout.
+- Public pages never load `admin-dashboard.css`; every admin page loads it last, after shared public primitives, while `reset-password.html` reuses the same auth-recovery components without becoming a CMS page.
 - Security headers, password gating, indexing policy, and newsletter behavior change only under explicitly scoped work.

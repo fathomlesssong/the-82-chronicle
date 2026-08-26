@@ -1,3 +1,108 @@
+/* Shared admin primitives formerly loaded from styles.css. */
+.admin-page{max-width:1180px}
+.admin-masthead{border-bottom:5px double var(--line)}
+.admin-masthead .masthead{font-size:clamp(44px,7vw,78px)}
+.admin-back{display:inline-block;margin-bottom:18px;color:var(--ink);font:700 11px/1 Arial,sans-serif;letter-spacing:.08em;text-decoration:none;text-transform:uppercase}
+.admin-shell{margin-top:24px}
+.admin-toolbar{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:18px;padding:12px 0;border-bottom:1px solid var(--line);font-family:Arial,sans-serif}
+.admin-toolbar span{display:block;margin-top:4px;color:var(--muted);font-size:12px}
+.admin-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:28px}
+.admin-card{margin:28px auto 0;padding:22px;border:1px solid var(--line);background:rgba(255,255,255,.18)}
+.admin-card h2{margin:0 0 16px;font-size:32px}
+.admin-help{color:var(--muted);line-height:1.5}
+.admin-form{display:grid;gap:14px}
+.admin-form label{display:grid;gap:6px;font:700 12px/1.3 Arial,sans-serif;letter-spacing:.04em}
+.admin-form input,.admin-form textarea,.admin-form select{width:100%;padding:10px 11px;border:1px solid #777064;background:#fffdf7;color:var(--ink);font:15px/1.4 Georgia,"Times New Roman",serif}
+.admin-form textarea{resize:vertical}
+.admin-form .check-row{display:flex;align-items:center;gap:8px}
+.admin-form .check-row input{width:auto}
+.admin-form button,.admin-toolbar button,.admin-list-item button{padding:10px 14px;border:1px solid var(--line);background:var(--ink);color:var(--paper);font:700 11px/1 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.button-secondary{background:transparent!important;color:var(--ink)!important}
+.admin-actions{display:flex;gap:10px;flex-wrap:wrap}
+.admin-status{min-height:1.4em;margin:0;color:var(--muted);font:12px/1.4 Arial,sans-serif}
+.admin-status.is-error{color:var(--accent)}
+.admin-list{display:grid}
+.admin-list-item{display:flex;justify-content:space-between;gap:16px;align-items:start;padding:15px 0;border-bottom:1px solid var(--soft-line)}
+.admin-list-item h3{margin:0;font-size:20px;line-height:1.1}
+.admin-list-item p{margin:5px 0 0;color:var(--muted);font-size:12px}
+.admin-list-item button{flex:0 0 auto}
+
+@media(max-width:860px){
+  .admin-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:640px){
+  .admin-card{margin-top:18px;padding:14px}
+  .admin-card h2{font-size:28px}
+  .admin-toolbar{align-items:flex-start;flex-direction:column}
+  .admin-toolbar button{width:100%}
+  .admin-actions{display:grid;grid-template-columns:1fr}
+  .admin-actions button{width:100%}
+  .admin-list-item{display:block}
+  .admin-list-item button{width:100%;margin-top:10px}
+}
+
+/* Responsive admin rules formerly loaded from mobile.css. */
+@media(max-width:700px){
+  .admin-page{width:min(100% - 14px,1180px)}
+  .admin-masthead{padding-top:12px}
+  .admin-back{min-height:44px;display:inline-flex;align-items:center;margin-bottom:8px}
+  .admin-card{margin-top:18px;padding:14px}
+  .admin-card h2{font-size:28px}
+  .admin-grid{grid-template-columns:1fr;gap:16px}
+  .admin-form{gap:12px}
+  .admin-form input,.admin-form textarea,.admin-form select{font-size:16px}
+  .admin-form input,.admin-form select,.admin-form button,.admin-toolbar button,.admin-list-item button{min-height:44px}
+  .admin-toolbar{align-items:flex-start;flex-wrap:wrap}
+  .admin-list-item{gap:10px}
+  .admin-list-item h3{font-size:18px}
+}
+
+/* Article deletion treatment formerly loaded from front-final.css. */
+.admin-actions .button-secondary.admin-delete-article{
+  margin-left:auto;
+  background:#b42318 !important;
+  border:1px solid #b42318 !important;
+  color:#fff !important;
+}
+
+.admin-actions .button-secondary.admin-delete-article:hover{
+  background:#8f1c13 !important;
+  border-color:#8f1c13 !important;
+  color:#fff !important;
+}
+
+.admin-actions .button-secondary.admin-delete-article:focus-visible{
+  outline:2px solid #b42318;
+  outline-offset:3px;
+}
+
+@media(max-width:700px){
+  .admin-actions .button-secondary.admin-delete-article{
+    margin-left:0;
+    margin-top:10px;
+  }
+}
+
+/* Editorial newsletter/gallery controls formerly loaded from newsletter.css. */
+.admin-fieldset{display:grid;gap:12px;margin:3px 0;padding:15px;border:1px solid var(--soft-line)}
+.admin-fieldset legend{padding:0 7px;color:var(--accent);font:800 11px/1 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.admin-inline-help{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--muted);font:11px/1.35 Arial,sans-serif}
+.admin-inline-help .button-link{min-height:0;padding:0;border:0;background:transparent;color:var(--accent);font-size:10px;letter-spacing:0;text-decoration:underline;text-transform:none}
+.admin-gallery-list{display:grid;gap:12px}
+.admin-gallery-item{display:grid;gap:10px;padding:13px;border:1px solid var(--soft-line);background:rgba(255,255,255,.24)}
+.admin-gallery-item-head{display:flex;justify-content:space-between;gap:12px;align-items:center;font:12px/1.35 Arial,sans-serif}
+.admin-gallery-item-head strong{min-width:0;overflow-wrap:anywhere}
+.admin-gallery-item-head button{padding:7px 9px}
+.admin-gallery-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 110px;gap:10px}
+.admin-gallery-fields label:first-child{grid-column:1/-1}
+
+@media(max-width:640px){
+  .admin-inline-help{align-items:flex-start;flex-direction:column}
+  .admin-gallery-fields{grid-template-columns:1fr}
+  .admin-gallery-fields label:first-child{grid-column:auto}
+}
+
 .admin-dashboard-grid{
   display:grid;
   grid-template-columns:minmax(220px,.65fr) minmax(0,2fr);
@@ -127,5 +232,25 @@
   .admin-card[data-login-panel]{
     max-width:none;
     margin-top:18px;
+  }
+}
+
+/* Loading this sheet must not compact the editor's legacy login layout. */
+.admin-article-page .admin-card[data-login-panel]{
+  max-width:none;
+}
+
+/* Preserve public primitive winners after moving admin rules to the last sheet. */
+.page.admin-page{
+  max-width:1440px;
+}
+
+@media(max-width:700.98px){
+  .page.admin-page{
+    width:calc(100% - 18px);
+  }
+
+  .masthead-wrap.admin-masthead{
+    padding-top:10px;
   }
 }

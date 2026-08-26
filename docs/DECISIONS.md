@@ -23,3 +23,9 @@
 - State: `DONE`
 - Decision: Use `article-layout.js` as the single classifier for SSR-emitted and client-rendered article markup, based on the loaded image's natural width and height.
 - Rationale: Both delivery paths must assign identical layout classes for identical image dimensions without duplicating ratio logic or assuming that every article image is compact.
+
+## DEC-005 — Admin CSS ownership boundary
+
+- State: `DONE`
+- Decision: Keep confirmed CMS and auth-recovery selectors in `admin-dashboard.css`, loaded last by admin/auth-recovery pages and never by public pages.
+- Rationale: A single admin owner removes unused CSS from the public payload while preserving the established cascade, responsive behavior, and computed styles.
