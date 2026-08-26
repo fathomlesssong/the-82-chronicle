@@ -41,3 +41,9 @@
 - State: `DONE`
 - Decision: Serve `/api/search` through the existing reader password gate using only anon/publishable Supabase access, accent-insensitive Polish normalization, and a fail-closed 2,000-record corpus guard; do not expose full article content or use service-role access.
 - Rationale: Search must preserve the publication and RLS boundary while remaining deterministic at the current small scale. A larger corpus should replace in-function scanning with database full-text search.
+
+## DEC-008 — Latest-story CSS ownership
+
+- State: `DONE`
+- Decision: Keep all `.latest-story*` layout and responsive declarations exclusively in `front-final.css`, preserving the existing computed styles and the distinct `700px`/`700.98px`/`701px` and `900px`/`900.98px`/`901px` boundaries.
+- Rationale: One late-loaded owner removes cross-sheet cascade dependencies without changing the rendered homepage component.

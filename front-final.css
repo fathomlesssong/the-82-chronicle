@@ -2,6 +2,10 @@
 /* Global front polish */
 .page{max-width:1440px}.section-nav{scrollbar-width:none}.section-nav::-webkit-scrollbar{display:none}.section-nav a{min-height:40px;display:flex;align-items:center}.section-nav a:last-child{border-right:1px solid var(--soft-line)}
 .story-copy{min-width:0}.story-title{overflow-wrap:normal;word-break:normal;hyphens:auto}.media{min-width:0;overflow:hidden}.story-image{object-position:center}
+.latest-story{display:grid;max-width:1180px;margin:0 auto;border-bottom:1px solid var(--line)}
+.latest-story .story-title{font-size:clamp(28px,3vw,40px)}
+.latest-story .story-summary{font-size:15px;line-height:1.45}
+.latest-story .story-meta{margin-top:10px}
 .update-badge{display:inline-block;margin:5px 0 8px;padding:5px 9px;border:1.5px solid currentColor;color:#7d1e24;font:700 11px/1 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase}.section-label+.update-badge{margin-left:9px}.featured-story>.update-badge,.article-header>.update-badge{margin-left:0}.article-header>.update-badge{font-size:13px;padding:6px 11px;margin:8px 0 10px;border-width:2px}.article-update-meta{margin-top:8px;color:#7d1e24;font:700 11px/1.35 Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}
 /* Homepage shell and banners: the single owner for layout, visibility and sizing. */
 .home-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,300px);gap:32px;align-items:start}
@@ -66,6 +70,10 @@
 }
 
 /* Tablet */
+@media(min-width:701px) and (max-width:900px){
+  .latest-story .story-title{font-size:clamp(28px,4.2vw,36px)}
+}
+
 @media(min-width:701px) and (max-width:900.98px){
   .latest-story{max-width:none;margin:0;grid-template-columns:clamp(220px,32vw,260px) minmax(0,1fr);gap:20px;align-items:start;padding:18px 0 20px}
   .latest-story .media{width:100%;height:auto;min-height:0;max-height:none;aspect-ratio:4/3;display:block;background:transparent}
@@ -79,6 +87,10 @@
 }
 
 /* Homepage mobile */
+@media(max-width:700px){
+  .latest-story .story-summary{-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:7px;font-size:14px;line-height:1.35}
+}
+
 @media(max-width:700.98px){
   .page{width:calc(100% - 18px)}
   .masthead-wrap{padding:10px 2px 7px}
