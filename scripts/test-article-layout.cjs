@@ -68,13 +68,13 @@ const assertCompactArticleLayout=source=>{
     'compact article rules must be inside @media(min-width:901px)');
   assert.ok(contents.some(content=>/\.article-content--compact \.article-hero\s*\{\s*float:left/.test(content)),
     'compact article float must be inside @media(min-width:901px)');
-  assert.ok(contents.some(content=>/\.article-content--compact \.article-hero img\s*\{[^}]*max-height:600px/.test(content)),
-    'compact article image limit must be inside @media(min-width:901px)');
+  assert.ok(contents.some(content=>/\.article-content--compact \.article-hero img\s*\{[^}]*width:100%[^}]*height:auto[^}]*object-fit:contain/.test(content)),
+    'compact article image must preserve full proportions inside desktop media query');
 };
 
-const validCompactCss='@media(min-width:901px){.article-content--compact{display:flow-root}.article-content--compact .article-hero{float:left}.article-content--compact .article-hero img{max-height:600px}}';
-const compactOutsideRequiredMedia='@media(min-width:901px){.unrelated{display:block}}.article-content--compact{display:flow-root}.article-content--compact .article-hero{float:left}.article-content--compact .article-hero img{max-height:600px}';
-const compactInWrongMedia='@media(min-width:901px){.unrelated{display:block}}@media(min-width:701px){.article-content--compact{display:flow-root}.article-content--compact .article-hero{float:left}.article-content--compact .article-hero img{max-height:600px}}';
+const validCompactCss='@media(min-width:901px){.article-content--compact{display:flow-root}.article-content--compact .article-hero{float:left}.article-content--compact .article-hero img{width:100%;height:auto;object-fit:contain}}';
+const compactOutsideRequiredMedia='@media(min-width:901px){.unrelated{display:block}}.article-content--compact{display:flow-root}.article-content--compact .article-hero{float:left}.article-content--compact .article-hero img{width:100%;height:auto;object-fit:contain}';
+const compactInWrongMedia='@media(min-width:901px){.unrelated{display:block}}@media(min-width:701px){.article-content--compact{display:flow-root}.article-content--compact .article-hero{float:left}.article-content--compact .article-hero img{width:100%;height:auto;object-fit:contain}}';
 
 assert.doesNotThrow(()=>assertCompactArticleLayout(validCompactCss));
 assert.match(compactOutsideRequiredMedia,/@media\(min-width:901px\).*?\.article-content--compact/s);
@@ -179,13 +179,31 @@ assert.equal(invalidFixture.listeners.load.size+invalidFixture.listeners.error.s
   'failed image must not retain event listeners');
 assertCompactArticleLayout(css);
 
-const responsiveHeroMarker='/* Article responsive hero + zoom v29 */';
+assert.match(
+  css,
+  /\.article-hero img\s*\{[^}]*background:var\(--paper\)[^}]*border:0[^}]*box-shadow:none/,
+  'main article images must use page background and no decorative borders'
+);
+
+assert.match(
+  css,
+  /\.article-content--compact \.article-hero\{[^}]*width:clamp\(270px,28vw,340px\)[^}]*max-width:38%/,
+  'compact article image column must stay deliberately reduced'
+);
+
+assert.match(
+  css,
+  /\.article-content--compact \.article-hero img\{[^}]*width:100%[^}]*height:auto[^}]*max-height:none[^}]*object-fit:contain/,
+  'compact images must show the full image without cropping'
+);
+
+const responsiveHeroMarker='/* Article responsive hero + zoom v30 */';
 const responsiveHeroIndex=css.indexOf(responsiveHeroMarker);
 
 assert.notEqual(
   responsiveHeroIndex,
   -1,
-  'responsive article hero v29 block must exist'
+  'responsive article hero v30 block must exist'
 );
 
 const responsiveHeroCss=css.slice(responsiveHeroIndex);
