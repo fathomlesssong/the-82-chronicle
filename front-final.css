@@ -397,3 +397,97 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 }
 
 /* ===== /KRONIKA 82: HOMEPAGE SEPARATOR SYSTEM ===== */
+
+
+/* Article responsive hero + zoom v28 */
+.article-hero-link{
+  display:block;
+  color:inherit;
+  cursor:zoom-in;
+  text-decoration:none;
+}
+
+.article-hero-link:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:4px;
+}
+
+@media(min-width:901px){
+  .article-content:not(.article-content--no-image){
+    display:flow-root;
+    max-width:900px;
+    margin:28px 0 0;
+  }
+
+  .article-content:not(.article-content--no-image) .article-hero{
+    float:left;
+    width:clamp(300px,32vw,420px);
+    max-width:46%;
+    margin:0 clamp(32px,3vw,44px) 20px 0;
+  }
+
+  .article-content:not(.article-content--no-image) .article-hero img{
+    display:block;
+    width:100%;
+    height:auto;
+    max-width:100%;
+    max-height:560px;
+    object-fit:contain;
+    object-position:top left;
+    background:transparent;
+  }
+
+  .article-content:not(.article-content--no-image) .article-body{
+    max-width:none;
+    margin:0;
+  }
+
+  .article-content:not(.article-content--no-image) .article-body > p:first-child{
+    margin-top:0;
+  }
+
+  /*
+   * Pierwsze trzy akapity mogą opływać zdjęcie.
+   * Czwarty zaczyna już normalny blok pełnej szerokości.
+   */
+  .article-content:not(.article-content--no-image) .article-body > p:nth-of-type(4){
+    clear:both;
+    padding-top:4px;
+  }
+}
+
+@media(min-width:701px) and (max-width:900px){
+  .article-hero{
+    width:min(82%,620px);
+    margin:0 auto;
+  }
+
+  .article-hero img{
+    display:block;
+    width:100%;
+    height:auto;
+    max-width:100%;
+    margin:0 auto;
+  }
+}
+
+@media(max-width:700px){
+  .article-hero{
+    width:min(92%,520px);
+    margin:0 auto;
+  }
+
+  .article-hero img{
+    display:block;
+    width:100%;
+    height:auto;
+    max-width:100%;
+    margin:0 auto;
+    border-left:0;
+    border-right:0;
+  }
+
+  .article-hero figcaption{
+    padding-inline:0;
+  }
+}

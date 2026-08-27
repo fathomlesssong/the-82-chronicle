@@ -21,6 +21,46 @@
   const imageCaption=data.image_caption||'';
   const imageCredit=data.image_credit||'';
   const figcaption=imageCaption||imageCredit?`<figcaption>${imageCaption?`<span class="article-caption">${esc(imageCaption)}</span>`:''}${imageCredit?`<span class="article-credit">${esc(imageCredit)}</span>`:''}</figcaption>`:'';
+
+  const {data:galleryRows,error:galleryError}=await db
+    .from('article_images')
+    .select('image_url,image_alt,image_caption,image_credit,sort_order')
+    .eq('article_id',data.id)
+    .order('sort_order',{ascending:true});
+
+  const gallery=galleryError||!Array.isArray(galleryRows)?[]:galleryRows;
+
+  const galleryHtml=gallery.length?`<section class="article-gallery" aria-labelledby="article-gallery-title">
+    <div class="article-gallery-heading">
+      <span class="section-label">Galeria</span>
+      <h2 id="article-gallery-title">Zdjęcia</h2>
+    </div>
+    <div class="article-gallery-grid">
+      ${gallery.map((image,index)=>{
+        const caption=String(image.image_caption||'').trim();
+        const credit=String(image.image_credit||'').trim();
+        const alt=String(image.image_alt||`Zdjęcie ${index+1}`).trim();
+
+        const itemCaption=caption||credit
+          ?`<figcaption>${caption?`<span class="article-gallery-caption">${esc(caption)}</span>`:''}${credit?`<span class="article-gallery-credit">${esc(credit)}</span>`:''}</figcaption>`
+          :'';
+
+        return `<figure class="article-gallery-item">
+          <a
+            href="${esc(image.image_url)}"
+            class="article-gallery-link"
+            data-gallery-image
+            data-gallery-alt="${esc(alt)}"
+            data-gallery-caption="${esc(caption)}"
+            data-gallery-credit="${esc(credit)}"
+          >
+            <img src="${esc(image.image_url)}" alt="${esc(alt)}" loading="lazy" decoding="async">
+          </a>
+          ${itemCaption}
+        </figure>`;
+      }).join('')}
+    </div>
+  </section>`:'';
   document.title=`${data.title} • Kronika 82`;
   document.querySelector('meta[name="description"]')?.setAttribute('content',data.summary||'Artykuł Kroniki 82');
   document.querySelectorAll('.section-nav a').forEach(link=>{const target=new URL(link.href,location.href).searchParams.get('section');if(target===sectionSlug)link.setAttribute('aria-current','page');});
@@ -35,10 +75,10 @@
       ${updateDate?`<div class="article-update-meta">Aktualizacja: ${esc(updateDate)}</div>`:''}
     </header>
     <div class="article-content${data.image_url?'':' article-content--no-image'}">
-      ${data.image_url?`<figure class="article-hero"><img src="${esc(data.image_url)}" alt="${esc(data.image_alt||data.title)}" fetchpriority="high" decoding="async">${figcaption}</figure>`:''}
+      ${data.image_url?`<figure class="article-hero"><a href="${esc(data.image_url)}" class="article-hero-link article-gallery-link" data-gallery-image data-gallery-alt="${esc(data.image_alt||data.title)}" data-gallery-caption="${esc(imageCaption)}" data-gallery-credit="${esc(imageCredit)}" aria-label="Powiększ zdjęcie"><img src="${esc(data.image_url)}" alt="${esc(data.image_alt||data.title)}" fetchpriority="high" decoding="async"></a>${figcaption}</figure>`:''}
       <div class="article-body">${paras(data.content)}</div>
     </div>
-    <aside class="article-ad" aria-label="Reklama"><p class="ad-label">Reklama</p><picture><source media="(max-width:700px)" srcset="/assets/ad-myslecki-compact.webp"><img src="/assets/ad-myslecki-landscape.webp" alt="Myślecki Archeologia — badania, nadzory, ekspertyzy i dokumentacja archeologiczna" loading="lazy" decoding="async"></picture></aside>
+    ${galleryHtml}
     <div class="article-return"><a href="/section.html?section=${encodeURIComponent(sectionSlug)}">← Wróć do działu ${esc(section)}</a></div>
   </article>`;
 })();

@@ -1,7 +1,7 @@
 (()=>{
-  const links=[...document.querySelectorAll('[data-gallery-image]')];
-  if(!links.length||typeof HTMLDialogElement==='undefined')return;
+  if(typeof HTMLDialogElement==='undefined')return;
 
+  let links=[];
   let currentIndex=0;
   let touchStartX=null;
 
@@ -10,7 +10,6 @@
 
   dialog.innerHTML=`
     <div class="article-gallery-dialog-inner">
-
       <button
         type="button"
         class="article-gallery-dialog-close"
@@ -42,7 +41,6 @@
           data-dialog-counter
         ></div>
       </div>
-
     </div>`;
 
   document.body.appendChild(dialog);
@@ -55,7 +53,15 @@
   const prev=dialog.querySelector('.article-gallery-dialog-prev');
   const next=dialog.querySelector('.article-gallery-dialog-next');
 
+  const refreshLinks=()=>{
+    links=[...document.querySelectorAll('[data-gallery-image]')];
+    return links;
+  };
+
   const render=index=>{
+    refreshLinks();
+    if(!links.length)return;
+
     currentIndex=(index+links.length)%links.length;
 
     const link=links[currentIndex];
@@ -75,8 +81,13 @@
     next.hidden=hideNavigation;
   };
 
-  const show=index=>{
+  const showLink=link=>{
+    refreshLinks();
+    const index=links.indexOf(link);
+    if(index<0)return;
+
     render(index);
+
     if(!dialog.open)dialog.showModal();
   };
 
@@ -87,11 +98,12 @@
   const previous=()=>render(currentIndex-1);
   const nextImage=()=>render(currentIndex+1);
 
-  links.forEach((link,index)=>{
-    link.addEventListener('click',event=>{
-      event.preventDefault();
-      show(index);
-    });
+  document.addEventListener('click',event=>{
+    const link=event.target.closest?.('[data-gallery-image]');
+    if(!link)return;
+
+    event.preventDefault();
+    showLink(link);
   });
 
   prev.addEventListener('click',event=>{
