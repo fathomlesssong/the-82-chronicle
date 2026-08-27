@@ -178,6 +178,35 @@ assert.equal(invalidFixture.contentClasses.has('article-content--compact'),false
 assert.equal(invalidFixture.listeners.load.size+invalidFixture.listeners.error.size,0,
   'failed image must not retain event listeners');
 assertCompactArticleLayout(css);
+
+const responsiveHeroMarker='/* Article responsive hero + zoom v29 */';
+const responsiveHeroIndex=css.indexOf(responsiveHeroMarker);
+
+assert.notEqual(
+  responsiveHeroIndex,
+  -1,
+  'responsive article hero v29 block must exist'
+);
+
+const responsiveHeroCss=css.slice(responsiveHeroIndex);
+const responsiveHeroDesktop=mediaContents(
+  responsiveHeroCss,
+  '(min-width:901px)'
+).join('\n');
+
+const wideOnlySelector='.article-content:not(.article-content--no-image):not(.article-content--compact)';
+
+assert.equal(
+  responsiveHeroDesktop.split(wideOnlySelector).length-1,
+  6,
+  'new desktop hero layout must target wide articles only'
+);
+
+assert.doesNotMatch(
+  responsiveHeroDesktop,
+  /\.article-content:not\(\.article-content--no-image\)\s+\.article-body\s*>\s*p:nth-of-type\(4\)\s*\{/,
+  'fourth-paragraph clear must not apply broadly to every article with an image'
+);
 assert.ok(mediaContents(css,'(max-width:700px)')
   .some(content=>/\.article-content\s*\{\s*margin-top:17px\}/.test(content)),
   'mobile article spacing must be inside @media(max-width:700px)');

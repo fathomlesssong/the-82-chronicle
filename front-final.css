@@ -399,7 +399,7 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 /* ===== /KRONIKA 82: HOMEPAGE SEPARATOR SYSTEM ===== */
 
 
-/* Article responsive hero + zoom v28 */
+/* Article responsive hero + zoom v29 */
 .article-hero-link{
   display:block;
   color:inherit;
@@ -413,20 +413,20 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 }
 
 @media(min-width:901px){
-  .article-content:not(.article-content--no-image){
+  .article-content:not(.article-content--no-image):not(.article-content--compact){
     display:flow-root;
     max-width:900px;
     margin:28px 0 0;
   }
 
-  .article-content:not(.article-content--no-image) .article-hero{
+  .article-content:not(.article-content--no-image):not(.article-content--compact) .article-hero{
     float:left;
     width:clamp(300px,32vw,420px);
     max-width:46%;
     margin:0 clamp(32px,3vw,44px) 20px 0;
   }
 
-  .article-content:not(.article-content--no-image) .article-hero img{
+  .article-content:not(.article-content--no-image):not(.article-content--compact) .article-hero img{
     display:block;
     width:100%;
     height:auto;
@@ -437,12 +437,12 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
     background:transparent;
   }
 
-  .article-content:not(.article-content--no-image) .article-body{
+  .article-content:not(.article-content--no-image):not(.article-content--compact) .article-body{
     max-width:none;
     margin:0;
   }
 
-  .article-content:not(.article-content--no-image) .article-body > p:first-child{
+  .article-content:not(.article-content--no-image):not(.article-content--compact) .article-body > p:first-child{
     margin-top:0;
   }
 
@@ -450,7 +450,7 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
    * Pierwsze trzy akapity mogą opływać zdjęcie.
    * Czwarty zaczyna już normalny blok pełnej szerokości.
    */
-  .article-content:not(.article-content--no-image) .article-body > p:nth-of-type(4){
+  .article-content:not(.article-content--no-image):not(.article-content--compact) .article-body > p:nth-of-type(4){
     clear:both;
     padding-top:4px;
   }
