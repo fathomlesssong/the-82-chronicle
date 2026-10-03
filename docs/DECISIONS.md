@@ -41,3 +41,9 @@
 - State: `DONE`
 - Decision: Serve `/api/search` through the existing reader password gate using only anon/publishable Supabase access, accent-insensitive Polish normalization, and a fail-closed 2,000-record corpus guard; do not expose full article content or use service-role access.
 - Rationale: Search must preserve the publication and RLS boundary while remaining deterministic at the current small scale. A larger corpus should replace in-function scanning with database full-text search.
+
+## DEC-008 — Safe limited Markdown for article bodies
+
+- State: `DONE`
+- Decision: Render only headings, bullet lists, bold, and italic syntax in article bodies, escaping author text before emitting controlled HTML tags in both client and server renderers.
+- Rationale: Editors get the formatting they need without a WYSIWYG editor, Markdown dependency, or executable author-supplied HTML.
