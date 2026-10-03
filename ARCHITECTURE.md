@@ -11,6 +11,7 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 - `index.html`, `archive.html`, `section.html`, and `site.js` render public navigation and article lists.
 - `search.html` and `search.js` provide the reader-gated search UI; `api/search.js` reads the published article corpus through the anon/publishable Supabase configuration and returns at most 40 ranked results without full article content.
 - `api/article.js` renders server-side article pages under `/a/<slug>` with canonical and Open Graph metadata.
+- Article bodies use the same deliberately limited Markdown subset in `article.js` and `api/article.js`: headings, bullet lists, bold, and italic text only.
 - `article-layout.js` is the shared article-image classifier for SSR-emitted and client-rendered article markup; it derives layout only from the loaded image's natural dimensions.
 - `front-final.css` is the single owner of the homepage shell (`.home-layout`) and homepage banner (`.home-ad*`) layout, visibility, sticky positioning, and natural-size behavior.
 - `admin*.html` and `admin*.js` provide authenticated editorial workflows.
@@ -37,4 +38,5 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 - SSR-emitted and client-rendered articles use the same `article-layout.js` classifier: images at least as tall as wide are compact, landscape images are wide, and missing or invalid dimensions never imply compact layout.
 - Public pages never load `admin-dashboard.css`; every admin page loads it last, after shared public primitives, while `reset-password.html` reuses the same auth-recovery components without becoming a CMS page.
 - Homepage CSS switches from the mobile banner and block layout at `max-width:900.98px` to the sticky desktop banner and sidebar grid at `min-width:901px`; banners retain natural proportions without cropping or upscaling.
+- Article body text is HTML-escaped before the limited Markdown renderer emits its controlled tag set; author-supplied HTML is never executed.
 - Security headers, password gating, indexing policy, and newsletter behavior change only under explicitly scoped work.

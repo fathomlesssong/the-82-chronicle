@@ -6,7 +6,53 @@
   const slugify=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const legacy={'wydarzenia':'aktualnosci','spolecznosc':'aktualnosci','opinie':'aktualnosci','tajemnice':'sledztwa'};
   const sectionName={'aktualnosci':'Aktualności','infrastruktura':'Infrastruktura','sledztwa':'Śledztwa','kultura':'Kultura','na-stole':'Na Stole'};
-  const paras=s=>String(s||'').split(/\n{2,}/).map(p=>`<p>${esc(p).replace(/\n/g,'<br>')}</p>`).join('');
+  const renderInlineMarkdown=s=>String(s||'')
+    .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+  const renderArticleContent=s=>{
+    const safe=esc(s);
+    const hasMarkdown=/(?:^|\n)(?:### |## |- )|\*\*[^*\n]+\*\*|\*[^*\n]+\*/.test(safe);
+    if(!hasMarkdown)return safe.split(/\n{2,}/).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+
+    const lines=safe.replace(/\r\n?/g,'\n').split('\n');
+    const html=[];
+    const isBlockStart=line=>/^(?:### |## |- )/.test(line);
+
+    for(let i=0;i<lines.length;){
+      const line=lines[i];
+      if(!line.trim()){i+=1;continue;}
+
+      let match=line.match(/^### (.+)$/);
+      if(match){html.push(`<h3>${renderInlineMarkdown(match[1])}</h3>`);i+=1;continue;}
+
+      match=line.match(/^## (.+)$/);
+      if(match){html.push(`<h2>${renderInlineMarkdown(match[1])}</h2>`);i+=1;continue;}
+
+      if(/^- (.+)$/.test(line)){
+        const items=[];
+        while(i<lines.length){
+          const item=lines[i].match(/^- (.+)$/);
+          if(!item)break;
+          items.push(`<li>${renderInlineMarkdown(item[1])}</li>`);
+          i+=1;
+        }
+        html.push(`<ul>${items.join('')}</ul>`);
+        continue;
+      }
+
+      const paragraph=[];
+      while(i<lines.length&&lines[i].trim()&&!isBlockStart(lines[i])){
+        paragraph.push(renderInlineMarkdown(lines[i]));
+        i+=1;
+      }
+      if(paragraph.length){html.push(`<p>${paragraph.join('<br>')}</p>`);continue;}
+
+      html.push(`<p>${renderInlineMarkdown(line)}</p>`);
+      i+=1;
+    }
+
+    return html.join('');
+  };
   if(window.CH82_SUPABASE_READY)await window.CH82_SUPABASE_READY;
   if(!slug||!cfg.url||!cfg.anonKey||!window.supabase){root.innerHTML='<p class="empty-state">Nie udało się wczytać artykułu.</p>';return;}
   const db=window.supabase.createClient(cfg.url,cfg.anonKey);
@@ -76,7 +122,7 @@
     </header>
     <div class="article-content${data.image_url?'':' article-content--no-image'}">
       ${data.image_url?`<figure class="article-hero"><a href="${esc(data.image_url)}" class="article-hero-link article-gallery-link" data-gallery-image data-gallery-alt="${esc(data.image_alt||data.title)}" data-gallery-caption="${esc(imageCaption)}" data-gallery-credit="${esc(imageCredit)}" aria-label="Powiększ zdjęcie"><img src="${esc(data.image_url)}" alt="${esc(data.image_alt||data.title)}" fetchpriority="high" decoding="async"></a>${figcaption}</figure>`:''}
-      <div class="article-body">${paras(data.content)}</div>
+      <div class="article-body">${renderArticleContent(data.content)}</div>
     </div>
     ${galleryHtml}
     <div class="article-return"><a href="/section.html?section=${encodeURIComponent(sectionSlug)}">← Wróć do działu ${esc(section)}</a></div>
