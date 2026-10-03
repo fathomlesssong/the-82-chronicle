@@ -1,7 +1,53 @@
 const {serviceHeaders}=require('../lib/supabase-server');
 
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':'&quot;'}[c]));
-const paragraphs=s=>String(s||'').split(/\n{2,}/).filter(Boolean).map(p=>`<p>${esc(p).replace(/\n/g,'<br>')}</p>`).join('');
+const renderInlineMarkdown=s=>String(s||'')
+  .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
+  .replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
+const renderArticleContent=s=>{
+  const safe=esc(s);
+  const hasMarkdown=/(?:^|\n)(?:### |## |- )|\*\*[^*\n]+\*\*|\*[^*\n]+\*/.test(safe);
+  if(!hasMarkdown)return safe.split(/\n{2,}/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+
+  const lines=safe.replace(/\r\n?/g,'\n').split('\n');
+  const html=[];
+  const isBlockStart=line=>/^(?:### |## |- )/.test(line);
+
+  for(let i=0;i<lines.length;){
+    const line=lines[i];
+    if(!line.trim()){i+=1;continue;}
+
+    let match=line.match(/^### (.+)$/);
+    if(match){html.push(`<h3>${renderInlineMarkdown(match[1])}</h3>`);i+=1;continue;}
+
+    match=line.match(/^## (.+)$/);
+    if(match){html.push(`<h2>${renderInlineMarkdown(match[1])}</h2>`);i+=1;continue;}
+
+    if(/^- (.+)$/.test(line)){
+      const items=[];
+      while(i<lines.length){
+        const item=lines[i].match(/^- (.+)$/);
+        if(!item)break;
+        items.push(`<li>${renderInlineMarkdown(item[1])}</li>`);
+        i+=1;
+      }
+      html.push(`<ul>${items.join('')}</ul>`);
+      continue;
+    }
+
+    const paragraph=[];
+    while(i<lines.length&&lines[i].trim()&&!isBlockStart(lines[i])){
+      paragraph.push(renderInlineMarkdown(lines[i]));
+      i+=1;
+    }
+    if(paragraph.length){html.push(`<p>${paragraph.join('<br>')}</p>`);continue;}
+
+    html.push(`<p>${renderInlineMarkdown(line)}</p>`);
+    i+=1;
+  }
+
+  return html.join('');
+};
 const sectionHref=slug=>`/section.html?section=${encodeURIComponent(slug)}`;
 const authorFallback='Redakcja Kroniki 82';
 
@@ -180,7 +226,7 @@ module.exports=async(req,res)=>{
 </head><body><div class="page">
 <header class="masthead-wrap"><a href="/" style="color:inherit;text-decoration:none"><h1 class="masthead">Kronika 82</h1></a><p class="tagline">Wiadomości spod numeru 82 • Założono w 2026</p></header>
 <nav class="section-nav" aria-label="Działy gazety"><a href="/">Strona główna</a><a href="/section.html?section=aktualnosci">Aktualności</a><a href="/section.html?section=infrastruktura">Infrastruktura</a><a href="/section.html?section=sledztwa">Śledztwa</a><a href="/section.html?section=kultura">Kultura</a><a href="/section.html?section=na-stole">Na Stole</a><a href="/archive.html">Archiwum</a><a href="/search.html">Szukaj</a><a href="/admin.html" data-editor-link hidden>Redakcja</a></nav>
-<main class="article-page"><article><header class="article-header"><div class="article-breadcrumb"><a href="/">Strona główna</a> / <a href="${sectionHref(article.section_slug)}">${esc(article.section)}</a></div><span class="section-label">${esc(article.section)}</span>${updateBadge}<h1>${esc(article.title)}</h1><p class="article-lead">${esc(article.summary)}</p><div class="article-byline">Tekst: ${esc(authorName)}${date?` • ${esc(date)}`:''}</div>${updateDate?`<div class="article-update-meta">Aktualizacja: ${esc(updateDate)}</div>`:''}</header><div class="article-content${article.image_url?'':' article-content--no-image'}">${article.image_url?`<figure class="article-hero"><a href="${esc(article.image_url)}" class="article-hero-link article-gallery-link" data-gallery-image data-gallery-alt="${esc(article.image_alt||article.title)}" data-gallery-caption="${esc(imageCaption)}" data-gallery-credit="${esc(imageCredit)}" aria-label="Powiększ zdjęcie"><img src="${esc(article.image_url)}" alt="${esc(article.image_alt||article.title)}" fetchpriority="high" decoding="async"></a>${figcaption}</figure>`:''}<div class="article-body">${paragraphs(article.content)}</div></div>${videoHtml}${galleryHtml}<p class="article-return"><a href="${sectionHref(article.section_slug)}">← Więcej z działu ${esc(article.section)}</a></p></article></main>
+<main class="article-page"><article><header class="article-header"><div class="article-breadcrumb"><a href="/">Strona główna</a> / <a href="${sectionHref(article.section_slug)}">${esc(article.section)}</a></div><span class="section-label">${esc(article.section)}</span>${updateBadge}<h1>${esc(article.title)}</h1><p class="article-lead">${esc(article.summary)}</p><div class="article-byline">Tekst: ${esc(authorName)}${date?` • ${esc(date)}`:''}</div>${updateDate?`<div class="article-update-meta">Aktualizacja: ${esc(updateDate)}</div>`:''}</header><div class="article-content${article.image_url?'':' article-content--no-image'}">${article.image_url?`<figure class="article-hero"><a href="${esc(article.image_url)}" class="article-hero-link article-gallery-link" data-gallery-image data-gallery-alt="${esc(article.image_alt||article.title)}" data-gallery-caption="${esc(imageCaption)}" data-gallery-credit="${esc(imageCredit)}" aria-label="Powiększ zdjęcie"><img src="${esc(article.image_url)}" alt="${esc(article.image_alt||article.title)}" fetchpriority="high" decoding="async"></a>${figcaption}</figure>`:''}<div class="article-body">${renderArticleContent(article.content)}</div></div>${videoHtml}${galleryHtml}<p class="article-return"><a href="${sectionHref(article.section_slug)}">← Więcej z działu ${esc(article.section)}</a></p></article></main>
 <footer><a href="/" style="color:inherit">Strona główna</a> • Kronika 82 • Założono w 2026 • <a href="/admin.html" style="color:inherit">Redakcja</a></footer></div><script src="/supabase-config.js?v=1"></script><script src="/supabase-loader.js?v=1"></script><script src="/editor-link.js?v=1"></script><script src="/article-layout.js?v=2"></script><script src="/article-gallery.js?v=3"></script></body></html>`;
     res.statusCode=200;
     res.setHeader('content-type','text/html; charset=utf-8');
