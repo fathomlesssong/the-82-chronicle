@@ -66,7 +66,8 @@
                 </select>
               </label>
               <label>Lead<textarea name="summary" rows="4" maxlength="600" required></textarea></label>
-              <label>Treść<textarea name="content" rows="14" required></textarea></label>
+              <label>Treść<textarea name="content" rows="14" aria-describedby="content-format-help" required></textarea></label>
+              <p class="admin-help" id="content-format-help">Formatowanie: **pogrubienie**, *kursywa*, ## nagłówek, - lista</p>
               <fieldset class="admin-fieldset" data-newsletter-panel hidden>
                 <legend>Newsletter</legend>
                 <label>Zajawka newslettera
