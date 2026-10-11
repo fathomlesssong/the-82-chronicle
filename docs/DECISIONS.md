@@ -1,5 +1,11 @@
 # Durable decisions
 
+## DEC-009 — Open the article after successful publication
+
+- State: `DONE`
+- Decision: After the editor confirms a published save, gallery persistence, and any requested newsletter send, navigate to `/a/<slug>` using the slug returned by the save. Keep the editor and error message on failure; preserve the existing draft-save behavior.
+- Rationale: Publishing should take the editor directly to the saved article without hiding partial failures or rebuilding an existing slug from its title.
+
 ## DEC-001 — Canonical production origin
 
 - State: `DONE`

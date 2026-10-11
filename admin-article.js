@@ -993,7 +993,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     }
 
     const q=id?db.from('articles').update(payload).eq('id',id):db.from('articles').insert(payload);
-    const {data:saved,error}=await q.select('id').single();
+    const {data:saved,error}=await q.select('id,slug,status').single();
     if(error){status(formStatus,error.message,true);return;}
     articleForm.elements.id.value=saved.id;
     formTitle.textContent='Edytuj artykuł';
@@ -1014,6 +1014,15 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
         const result=await authenticatedPost('/api/newsletter-send',{article_id:saved.id,mode:isUpdated?'update':'article'});
         completion=result.message||`Newsletter wysłany do ${result.sent||0} odbiorców.`;
       }catch(error){completion=`Artykuł zapisany, ale newsletter nie został wysłany: ${error.message}`;completionError=true;}
+    }
+    if(completionError){status(formStatus,completion,true);return;}
+    if(desiredStatus==='published'){
+      if(saved.status!=='published'||!saved.slug){
+        status(formStatus,'Zapisano artykuł, ale nie potwierdzono publikacji lub adresu artykułu.',true);
+        return;
+      }
+      window.location.href=`/a/${encodeURIComponent(saved.slug)}`;
+      return;
     }
     resetForm();
     status(formStatus,completion,completionError);
