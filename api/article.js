@@ -172,6 +172,7 @@ async function resolveAuthorName(url,authorId){
 }
 
 module.exports=async(req,res)=>{
+  res.setHeader('cache-control','private, no-store, max-age=0');
   const slug=String(req.query?.slug||'').trim();
   const url=(process.env.SUPABASE_URL||'').replace(/\/$/,'');
   const anonKey=process.env.SUPABASE_ANON_KEY||'';
@@ -218,11 +219,17 @@ module.exports=async(req,res)=>{
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>${esc(article.title)} • Kronika 82</title>
 <meta name="description" content="${esc(article.summary)}">
+<meta name="theme-color" content="#f4f0e6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kronika 82">
 <link rel="canonical" href="${esc(canonical)}"><link rel="icon" type="image/png" href="/assets/favicon.png?v=4">
+<link rel="manifest" href="/manifest.webmanifest?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
 <meta property="og:type" content="article"><meta property="og:site_name" content="Kronika 82"><meta property="og:locale" content="pl_PL">
 <meta property="og:url" content="${esc(canonical)}"><meta property="og:title" content="${esc(article.title)}"><meta property="og:description" content="${esc(article.summary)}"><meta property="og:image" content="${esc(image)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(article.title)}"><meta name="twitter:description" content="${esc(article.summary)}"><meta name="twitter:image" content="${esc(image)}">
 <link rel="stylesheet" href="/styles.css?v=7"><link rel="stylesheet" href="/mobile.css?v=8"><link rel="stylesheet" href="/front-final.css?v=30"><link rel="stylesheet" href="/article-gallery.css?v=3">
+<script src="/pwa.js?v=2" defer></script>
 </head><body><div class="page">
 <header class="masthead-wrap"><a href="/" style="color:inherit;text-decoration:none"><h1 class="masthead">Kronika 82</h1></a><p class="tagline">Wiadomości spod numeru 82 • Założono w 2026</p></header>
 <nav class="section-nav" aria-label="Działy gazety"><a href="/">Strona główna</a><a href="/section.html?section=aktualnosci">Aktualności</a><a href="/section.html?section=infrastruktura">Infrastruktura</a><a href="/section.html?section=sledztwa">Śledztwa</a><a href="/section.html?section=kultura">Kultura</a><a href="/section.html?section=na-stole">Na Stole</a><a href="/archive.html">Archiwum</a><a href="/search.html">Szukaj</a><a href="/admin.html" data-editor-link hidden>Redakcja</a></nav>
@@ -230,7 +237,7 @@ module.exports=async(req,res)=>{
 <footer><a href="/" style="color:inherit">Strona główna</a> • Kronika 82 • Założono w 2026 • <a href="/admin.html" style="color:inherit">Redakcja</a></footer></div><script src="/supabase-config.js?v=1"></script><script src="/supabase-loader.js?v=1"></script><script src="/editor-link.js?v=1"></script><script src="/article-layout.js?v=2"></script><script src="/article-gallery.js?v=3"></script></body></html>`;
     res.statusCode=200;
     res.setHeader('content-type','text/html; charset=utf-8');
-    res.setHeader('cache-control','public, s-maxage=60, stale-while-revalidate=300');
+
     return res.end(html);
   }catch(error){
     res.statusCode=500;

@@ -100,6 +100,8 @@ export default async function middleware(request){
 
   if(
     pathname==='/wejscie.html' ||
+    pathname==='/offline.html' ||
+    pathname==='/manifest.webmanifest' ||
     pathname==='/api/access' ||
     pathname==='/robots.txt' ||
     isAdminPath(pathname) ||
