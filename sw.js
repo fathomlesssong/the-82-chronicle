@@ -1,55 +1,70 @@
-const CACHE='chronicle-shell-v18';
-const SHELL=[
-  '/',
-  '/index.html',
-  '/archive.html',
-  '/styles.css?v=7',
-  '/mobile.css?v=8',
-  '/front-final.css?v=26',
-  '/article-layout.js?v=2',
-  '/manifest.webmanifest',
-  '/assets/favicon.png?v=4'
-];
+const CACHE = 'chronicle-offline-v19';
+const OFFLINE_PAGE = '/offline.html';
 
-self.addEventListener('install',event=>{
-  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)));
-  self.skipWaiting();
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const response = await fetch(OFFLINE_PAGE, {
+      cache: 'no-store',
+      credentials: 'omit',
+      redirect: 'error'
+    });
+
+    if (
+      !response.ok ||
+      response.redirected ||
+      !/^text\/html\b/i.test(response.headers.get('content-type') || '')
+    ) {
+      throw new Error('Offline fallback unavailable');
+    }
+
+    const cache = await caches.open(CACHE);
+    await cache.put(OFFLINE_PAGE, response);
+    await self.skipWaiting();
+  })());
 });
 
-self.addEventListener('activate',event=>{
-  event.waitUntil(
-    caches.keys()
-      .then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))
-      .then(()=>self.clients.claim())
-  );
-});
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const names = await caches.keys();
 
-self.addEventListener('fetch',event=>{
-  const req=event.request;
-  if(req.method!=='GET')return;
-  const url=new URL(req.url);
-  if(url.origin!==self.location.origin)return;
-
-  if(req.mode==='navigate'){
-    event.respondWith(
-      fetch(req)
-        .then(res=>{
-          const copy=res.clone();
-          caches.open(CACHE).then(cache=>cache.put(req,copy));
-          return res;
-        })
-        .catch(()=>caches.match(req).then(cached=>cached||caches.match('/')))
+    await Promise.all(
+      names
+        .filter(name => name.startsWith('chronicle-') && name !== CACHE)
+        .map(name => caches.delete(name))
     );
+
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+
+  if (request.method !== 'GET' || request.mode !== 'navigate') {
     return;
   }
 
-  if(/\.(?:css|js|png|jpe?g|webp|svg|ico|webmanifest)$/i.test(url.pathname)){
-    event.respondWith(
-      caches.match(req).then(cached=>cached||fetch(req).then(res=>{
-        const copy=res.clone();
-        caches.open(CACHE).then(cache=>cache.put(req,copy));
-        return res;
-      }))
-    );
+  const url = new URL(request.url);
+
+  if (url.origin !== self.location.origin) {
+    return;
   }
+
+  event.respondWith(
+    fetch(request).catch(async () => {
+      const cache = await caches.open(CACHE);
+      const fallback = await cache.match(OFFLINE_PAGE);
+
+      return fallback || new Response(
+        '<!doctype html><html lang="pl"><meta charset="utf-8"><title>Brak połączenia</title><p>Brak połączenia z internetem.</p></html>',
+        {
+          status: 503,
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store'
+          }
+        }
+      );
+    })
+  );
 });
