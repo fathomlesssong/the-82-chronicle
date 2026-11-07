@@ -47,3 +47,5 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 
 ## Public sharing
 Published-only /s/:slug returns server-rendered OG metadata through api/share.js, with no body selection and no-store caching. Browser-only navigation leads to protected /a/:slug. share-meta.js supplies consistent automatic title/lead/public-image selection in server and editor. Reader share/copy controls use /s links. See docs/SHARE-PREVIEWS-20261107.md.
+
+Article sharing uses the shared article-share.js in SSR and legacy dynamic views. The WhatsApp action encodes only the visible title and canonical public /s/ URL in a wa.me link; it does not read the protected body.

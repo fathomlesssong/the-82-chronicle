@@ -66,3 +66,9 @@
 - State: DONE (deployed and verified; see docs/SHARE-PREVIEWS-20261107.md).
 - Decision: Separate /s links serve allowlisted metadata with status verification and no body; /a remains gated for every User-Agent. Automatic editor preview reuses existing fields without changing draft storage.
 - Rationale: Social crawlers need initial HTML while readers still require access. Avoid auth bypass and extra schema risk.
+
+## DEC-012 — Dedicated WhatsApp sharing
+
+- State: DONE (implementation; release verification pending).
+- Decision: Add a visible, keyboard-accessible WhatsApp link with an inline decorative icon alongside existing share/copy actions in both article views, without a new dependency. Encode the title and canonical /s/ URL only.
+- Rationale: Explicit sharing avoids accidentally copying a protected /a/ URL and works through WhatsApp’s app/web entry point.

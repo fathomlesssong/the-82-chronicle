@@ -14,3 +14,5 @@
 - [x] `PLAN-010` `DONE` — Full regression suite and isolated editor release verified on Vercel; production Chromium checks confirm deployed assets and local text/photo recovery. Backend publication operations were mocked to protect real data; see release report.
 
 - [x] PLAN-011 DONE — Public published-only OG links, reader share/copy controls, editor preview and regression/production verification.
+
+- [ ] PLAN-012 IN_PROGRESS — Dedicated WhatsApp action in both article views, Unicode/escaping and browser regression checks, then production release verification.

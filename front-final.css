@@ -502,3 +502,11 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
     padding-inline:0;
   }
 }
+
+/* Shared article actions: SSR and legacy dynamic view. */
+[data-share-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px}
+[data-share-actions] .share-whatsapp{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid #146c38;border-radius:6px;background:#146c38;color:#fff;font:600 15px/1.4 system-ui,sans-serif;text-decoration:none}
+[data-share-actions] .share-whatsapp:hover{background:#10572d}
+[data-share-actions] .share-whatsapp:focus-visible{outline:3px solid #111;outline-offset:3px}
+[data-share-actions] .share-whatsapp svg{flex-shrink:0}
+[data-share-actions] [role="status"]{flex-basis:100%;margin:0}
