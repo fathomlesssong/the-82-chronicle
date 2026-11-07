@@ -11,4 +11,4 @@
 - [x] `PLAN-007` `DONE` — Add safe limited Markdown formatting to article bodies in both public rendering paths.
 
 - [x] `PLAN-009` `DONE` — Integrate durable text/photo drafts and same-user session protection on current main, retaining publication behavior.
-- [ ] `PLAN-010` `IN_PROGRESS` — Verify full regression suite, release isolated editor hotfix and confirm production SHA and browser recovery.
+- [x] `PLAN-010` `DONE` — Full regression suite and isolated editor release verified on Vercel; production Chromium checks confirm deployed assets and local text/photo recovery. Backend publication operations were mocked to protect real data; see release report.

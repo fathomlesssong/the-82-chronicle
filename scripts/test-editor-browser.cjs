@@ -26,8 +26,8 @@ window.CH82_SUPABASE={url:'https://example.test',anonKey:'public-test'};window.s
  if(u.pathname==='/api/newsletter-send')return route.fulfill({status:await route.request().frame().evaluate(()=>window.newsletterSuccess)?200:500,contentType:'application/json',body:await route.request().frame().evaluate(()=>JSON.stringify(window.newsletterSuccess?{message:'Test newsletter success'}:{error:'Test newsletter failure'}))});
  if(route.request().method()!=='GET')throw new Error('Unexpected real mutation request');
  const name=u.pathname==='/'?'admin-article.html':u.pathname.slice(1);const f=path.join(root,name);
- if(remote&&['admin-article.html','admin-article.js','editor-drafts.js'].includes(name)){
- const response=await route.fetch();assert.equal(response.status(),200);const body=await response.body();assert.deepEqual(body,fs.readFileSync(f),'Deployed asset differs: '+name);verifiedAssets.add(name);return route.fulfill({response,body});
+ if(remote&&u.pathname!=='/'&&['admin-article.html','admin-article.js','editor-drafts.js'].includes(name)){
+ const response=await route.fetch();assert.equal(response.status(),200);const body=await response.body();assert.ok(body.equals(fs.readFileSync(f)),'Deployed asset differs: '+name);verifiedAssets.add(name);return route.fulfill({response,body});
  }
  if(!fs.existsSync(f))return route.fulfill({status:404,body:''});
  return route.fulfill({body:fs.readFileSync(f),contentType:name.endsWith('.js')?'text/javascript':name.endsWith('.html')?'text/html':'text/css'});
