@@ -69,6 +69,6 @@
 
 ## DEC-012 — Dedicated WhatsApp sharing
 
-- State: DONE (implementation; release verification pending).
+- State: DONE (deployed and verified; see docs/WHATSAPP-20261107.md).
 - Decision: Add a visible, keyboard-accessible WhatsApp link with an inline decorative icon alongside existing share/copy actions in both article views, without a new dependency. Encode the title and canonical /s/ URL only.
 - Rationale: Explicit sharing avoids accidentally copying a protected /a/ URL and works through WhatsApp’s app/web entry point.

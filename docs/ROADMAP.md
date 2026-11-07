@@ -15,4 +15,4 @@
 
 - [x] PLAN-011 DONE — Public published-only OG links, reader share/copy controls, editor preview and regression/production verification.
 
-- [ ] PLAN-012 IN_PROGRESS — Dedicated WhatsApp action in both article views, Unicode/escaping and browser regression checks, then production release verification.
+- [x] PLAN-012 DONE — Dedicated WhatsApp action in both article views, Unicode/escaping and browser regression checks, then production release verification.
