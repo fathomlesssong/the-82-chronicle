@@ -505,8 +505,17 @@ footer a{border-bottom:1px solid transparent;color:inherit;text-decoration:none;
 
 /* Shared article actions: SSR and legacy dynamic view. */
 [data-share-actions]{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px}
-[data-share-actions] .share-whatsapp{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid #146c38;border-radius:6px;background:#146c38;color:#fff;font:600 15px/1.4 system-ui,sans-serif;text-decoration:none}
+[data-share-actions] .share-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;box-sizing:border-box;padding:10px 16px;border:1px solid transparent;border-radius:8px;color:#fff;font:600 15px/1.4 system-ui,sans-serif;text-decoration:none;cursor:pointer;box-shadow:0 2px 4px #00000014;transition:background-color .15s,box-shadow .15s}
+[data-share-actions] .share-whatsapp{background:#146c38;border-color:#146c38}
 [data-share-actions] .share-whatsapp:hover{background:#10572d}
-[data-share-actions] .share-whatsapp:focus-visible{outline:3px solid #111;outline-offset:3px}
-[data-share-actions] .share-whatsapp svg{flex-shrink:0}
-[data-share-actions] [role="status"]{flex-basis:100%;margin:0}
+[data-share-actions] .share-copy{background:#252b35;border-color:#46505e}
+[data-share-actions] .share-copy:hover{background:#363f4d}
+[data-share-actions] .share-action:active{box-shadow:inset 0 2px 4px #0006}
+[data-share-actions] .share-action:focus-visible{outline:3px solid #111;outline-offset:3px}
+[data-share-actions] .share-action svg{flex-shrink:0}
+[data-share-actions] .share-notice{flex-basis:100%;margin:0;font:14px/1.5 system-ui,sans-serif}
+[data-share-actions] .share-notice:empty{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+[data-share-actions] .share-manual{flex-basis:100%;min-width:0;font:14px/1.5 system-ui,sans-serif}
+[data-share-actions] .share-manual[hidden]{display:none}
+[data-share-actions] .share-manual input{display:block;box-sizing:border-box;width:100%;margin-top:6px;padding:10px;border:1px solid #46505e;border-radius:8px;font:inherit}
+[data-share-actions] .share-manual input:focus-visible{outline:3px solid #111;outline-offset:2px}

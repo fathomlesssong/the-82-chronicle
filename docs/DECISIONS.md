@@ -72,3 +72,9 @@
 - State: DONE (deployed and verified; see docs/WHATSAPP-20261107.md).
 - Decision: Add a visible, keyboard-accessible WhatsApp link with an inline decorative icon alongside existing share/copy actions in both article views, without a new dependency. Encode the title and canonical /s/ URL only.
 - Rationale: Explicit sharing avoids accidentally copying a protected /a/ URL and works through WhatsApp’s app/web entry point.
+
+## DEC-013 — Two article sharing actions
+
+- State: DONE (implemented; deployment verification follows).
+- Decision: Show only WhatsApp and a matching copy button, with feedback after action and a selected read-only URL on clipboard failure. Both views retain title plus canonical /s/ WhatsApp encoding.
+- Rationale: Clear, accessible actions without redundant links or idle feedback space.

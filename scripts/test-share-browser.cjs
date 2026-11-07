@@ -11,10 +11,9 @@ const {chromium}=require('@playwright/test');
    if(url.pathname.startsWith('/s/'))return route.fulfill({contentType:'text/html; charset=utf-8',body:'<a id="read-article" href="/a/stary-slug">Czytaj</a><script src="/share-redirect.js"></script>'});
    return route.fulfill({contentType:'text/html; charset=utf-8',body:'<header class="article-header"><h1>Tytuł testowy</h1></header><script src="/article-share.js"></script>'});
   });
-  await page.addInitScript(()=>{Object.defineProperty(navigator,'clipboard',{value:{writeText:async value=>window.copied=value}});Object.defineProperty(navigator,'share',{value:async value=>window.shared=value});});
+  await page.addInitScript(()=>{Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>window.copied=value}});Object.defineProperty(navigator,'share',{value:async value=>window.shared=value});});
   for(const route of ['/a/stary-slug','/article.html?slug=stary-slug']){
    await page.goto('https://kronika82.vercel.app'+route);await page.getByRole('button',{name:'Kopiuj link'}).click();assert.equal(await page.evaluate(()=>window.copied),'https://kronika82.vercel.app/s/stary-slug');
-   await page.getByRole('button',{name:'Udostępnij',exact:true}).click({timeout:2000});assert.deepEqual(await page.evaluate(()=>window.shared),{title:'Tytuł testowy',url:'https://kronika82.vercel.app/s/stary-slug'});
   }
   const title='Zażółć „koty” & <img src=x onerror=alert(1)> 🐈';
   const slug='żółć & "koty"/100%?';
@@ -33,7 +32,7 @@ const {chromium}=require('@playwright/test');
      const script=document.createElement('script');script.src='/article-share.js';document.body.append(script);
      if(legacy)script.onload=()=>setTimeout(()=>document.body.append(header),20);
     },{title,legacy});
-    const wa=page.getByRole('link',{name:'Udostępnij na WhatsAppie',exact:true});
+    const wa=page.getByRole('link',{name:'WhatsApp',exact:true});
     await wa.waitFor();
     const href=await wa.getAttribute('href');
     assert.equal(href,'https://wa.me/?text='+encodeURIComponent(title+'\n'+publicUrl));
@@ -42,6 +41,11 @@ const {chromium}=require('@playwright/test');
     assert.equal(await wa.locator('svg[aria-hidden="true"]').count(),1);
     assert.equal(await page.locator('[data-share-actions] img').count(),0);
     assert.equal(await page.locator('[data-share-actions]').count(),1);
+    assert.equal(await page.locator('[data-share-actions] a, [data-share-actions] button').count(),2);
+    assert.equal(await page.getByRole('status').textContent(),'');
+    const copy=page.getByRole('button',{name:'Kopiuj link'});
+    await wa.focus();await page.keyboard.press('Tab');assert.equal(await copy.evaluate(el=>el===document.activeElement),true);
+    const copyBox=await copy.boundingBox();assert.ok(copyBox.height>=44&&copyBox.x+copyBox.width<=width);
     await wa.focus();assert.equal(await wa.evaluate(el=>el===document.activeElement),true);
     await page.waitForFunction(()=>['flex','inline-flex'].includes(getComputedStyle(document.querySelector('.share-whatsapp')).display));
     const box=await wa.boundingBox();assert.ok(box.height>=44&&box.x>=0&&box.x+box.width<=width);
@@ -51,8 +55,15 @@ const {chromium}=require('@playwright/test');
     await page.getByRole('button',{name:'Kopiuj link'}).click();assert.equal(await page.evaluate(()=>window.copied),publicUrl);
    }
   }
+  for(const mode of ['missing','denied']){
+   await page.evaluate(mode=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:mode==='missing'?undefined:{writeText:async()=>{throw new Error('denied')}}}),mode);
+   await page.getByRole('button',{name:'Kopiuj link'}).press('Enter');
+   const manual=page.getByRole('textbox',{name:'Link do ręcznego skopiowania'});
+   assert.equal(await manual.inputValue(),publicUrl);
+   assert.equal(await manual.evaluate(el=>el===document.activeElement&&el.selectionEnd===el.value.length),true);
+  }
   await page.goto('https://kronika82.vercel.app/s/stary-slug');await page.waitForURL('**/a/stary-slug');
   const noJS=await browser.newContext({javaScriptEnabled:false});const staticPage=await noJS.newPage();await staticPage.route('**/*',route=>route.fulfill({contentType:'text/html; charset=utf-8',body:'<a id="read-article" href="/a/stary-slug">Czytaj</a><script src="/share-redirect.js"></script>'}));await staticPage.goto('https://kronika82.vercel.app/s/stary-slug');assert.equal(await staticPage.locator('a').getAttribute('href'),'/a/stary-slug');
-  console.log('OK: Chromium native share/copy use /s in both article routes; browser redirect and no-JS link.');
+  console.log('OK: Chromium WhatsApp/copy and manual fallback use /s in both article routes; browser redirect and no-JS link.');
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
