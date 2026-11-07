@@ -9,3 +9,6 @@
 - [x] `PLAN-005` `DONE` — Consolidate homepage shell and banner CSS ownership in `front-final.css` without a visual change.
 - [x] `PLAN-006` `DONE` — Add reader-gated, accent-insensitive search over published articles with anon/publishable Supabase access and an explicit corpus limit.
 - [x] `PLAN-007` `DONE` — Add safe limited Markdown formatting to article bodies in both public rendering paths.
+
+- [x] `PLAN-009` `DONE` — Integrate durable text/photo drafts and same-user session protection on current main, retaining publication behavior.
+- [ ] `PLAN-010` `IN_PROGRESS` — Verify full regression suite, release isolated editor hotfix and confirm production SHA and browser recovery.

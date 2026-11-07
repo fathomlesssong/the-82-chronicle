@@ -53,3 +53,10 @@
 - State: `DONE`
 - Decision: Render only headings, bullet lists, bold, and italic syntax in article bodies, escaping author text before emitting controlled HTML tags in both client and server renderers.
 - Rationale: Editors get the formatting they need without a WYSIWYG editor, Markdown dependency, or executable author-supplied HTML.
+
+## DEC-010 — Durable local editorial drafts
+
+- State: `DONE` (implementation; production verification recorded in release report).
+- Decision: Preserve initialized same-user editor state; persist text, image bytes and metadata in IndexedDB, fork conflicting revisions, and remove only the successfully published revision after every required operation succeeds.
+- Rationale: Authentication notifications and browser restarts must not silently discard editorial work. Existing publication redirect, newsletter and image processing remain authoritative.
+- Scope: Local profile/origin only; no session/token/password storage or cross-device backup.

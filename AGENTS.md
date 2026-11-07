@@ -20,3 +20,7 @@
 
 - Keep `ARCHITECTURE.md`, `docs/DECISIONS.md`, and `docs/ROADMAP.md` aligned with durable architecture and deployment decisions.
 - Do not delete completed roadmap items or superseded decisions; mark their state instead.
+
+## Editor regression tests
+
+Install with `npm ci` and `npm run test:browser:install`. `npm run check` includes real Chromium and IndexedDB tests with mocked backend requests. Keep browser profiles inside ignored node_modules/.cache; never use real editorial data for automated publication tests.

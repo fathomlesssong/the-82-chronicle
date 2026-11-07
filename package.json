@@ -6,6 +6,11 @@
   },
   "scripts": {
     "test": "node scripts/run-tests.mjs",
-    "check": "npm run test && node scripts/audit-site.mjs"
+    "check": "npm run test && node scripts/audit-site.mjs",
+    "test:browser:install": "PLAYWRIGHT_BROWSERS_PATH=node_modules/.cache/ms-playwright playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "fake-indexeddb": "6.2.7"
   }
 }

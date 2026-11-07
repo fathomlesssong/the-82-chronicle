@@ -280,6 +280,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     galleryList.querySelectorAll('[data-gallery-remove]').forEach(button=>button.addEventListener('click',()=>{
       galleryItems=galleryItems.filter(item=>item.key!==button.dataset.galleryRemove);
       renderGallery();
+      drafts.change();
     }));
   };
 
@@ -312,13 +313,14 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   };
 
   const loadArticleGallery=async articleId=>{
+    const generation=editorGeneration;
     const {data,error}=await db.from('article_images')
       .select('id,image_url,image_alt,image_caption,image_credit,sort_order')
       .eq('article_id',articleId)
       .order('sort_order',{ascending:true})
       .order('created_at',{ascending:true});
     if(error)throw error;
-    if(articleForm.elements.id.value!==String(articleId))return false;
+    if(generation!==editorGeneration||articleForm.elements.id.value!==String(articleId))return false;
     galleryItems=(data||[]).map(image=>({
       key:`saved-${image.id}`,
       id:image.id,
@@ -349,6 +351,8 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   };
 
   const resetForm=()=>{
+    recoveredMain=null;
+    document.querySelector('[data-restored-main]').textContent='';
     articleForm.reset();
     resetGallery();
     articleForm.elements.id.value='';
@@ -372,6 +376,12 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
 
   const editArticle=async(id,data)=>{
     const a=data.find(x=>String(x.id)===String(id));if(!a)return;
+    if(editorReady&&articleForm.inert)return;
+    articleForm.inert=true;
+    const generation=++editorGeneration;
+    await drafts.flush();
+    if(drafts.dirty||generation!==editorGeneration){articleForm.inert=false;return;}
+    recoveredMain=null;articleForm.elements.image.value='';
     resetGallery();
     articleForm.elements.id.value=a.id;
     articleForm.elements.title.value=a.title||'';
@@ -396,10 +406,10 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     status(formStatus,'Wczytywanie dodatkowych zdjęć…');
     try{
       const applied=await loadArticleGallery(a.id);
-      if(applied)status(formStatus,'');
+      if(applied&&generation===editorGeneration){status(formStatus,'');await openDraft(a.id);}
     }catch(error){
       if(articleForm.elements.id.value===String(a.id))status(formStatus,`Nie udało się wczytać dodatkowych zdjęć: ${error.message}`,true);
-    }
+    }finally{articleForm.inert=false;}
   };
 
   const resetHomepageVideoForm=()=>{
@@ -805,10 +815,79 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     catch(error){alert(error.message);}
   };
 
+  let recoveredMain=null;
+  let editorReady=false;
+  let sessionGeneration=0;
+  let editorGeneration=0;
+  const draftStatus=document.querySelector('[data-draft-status]');
+  const draftPicker=document.querySelector('[data-draft-picker]');
+  const fieldNames=['id','title','section','summary','content','newsletter_teaser','image_caption','image_credit','video_url','video_caption','video_show_in_article','published_at','is_updated','update_at','featured'];
+  let draftDatabase;
+  try{draftDatabase=window.indexedDB;}catch(_error){}
+  const localDraftStorage=window.CH82Drafts.store(draftDatabase);
+  const drafts=window.CH82Drafts.controller({
+    storage:localDraftStorage,
+    estimate:()=>navigator.storage?.estimate?.()||Promise.resolve({}),
+    persist:()=>navigator.storage?.persist?.()||Promise.resolve(false),
+    notify:(message,bad=false)=>status(draftStatus,message,bad),
+    capture:()=>{
+      const fields={};
+      for(const name of fieldNames){const el=articleForm.elements[name];if(el)fields[name]=el.type==='checkbox'?el.checked:el.value;}
+      const gallery=galleryItems.map(item=>{
+        const row=[...galleryList.querySelectorAll('[data-gallery-key]')].find(row=>row.dataset.galleryKey===item.key);
+        return {...item,file:window.CH82Drafts.fileData(item.file),caption:row?.querySelector('[data-gallery-caption]').value??item.caption,credit:row?.querySelector('[data-gallery-credit]').value??item.credit,sortOrder:row?.querySelector('[data-gallery-sort-order]').value??item.sortOrder};
+      });
+      for(const [i,file] of [...(galleryInput?.files||[])].entries())gallery.push({key:`pending-${i}`,file:window.CH82Drafts.fileData(file),alt:'',caption:'',credit:'',sortOrder:gallery.length});
+      return {fields,main:window.CH82Drafts.fileData(articleForm.elements.image.files?.[0]||recoveredMain),gallery};
+    },
+    apply:snapshot=>{
+      articleForm.reset();
+      for(const name of fieldNames){const el=articleForm.elements[name];if(!el||!(name in snapshot.fields))continue;if(el.type==='checkbox')el.checked=!!snapshot.fields[name];else el.value=snapshot.fields[name];}
+      recoveredMain=window.CH82Drafts.fileFrom(snapshot.main);
+      galleryInput.value='';
+      galleryItems=snapshot.gallery.map((item,i)=>({...item,key:`restored-${++gallerySequence}-${i}`,file:window.CH82Drafts.fileFrom(item.file)}));
+      renderGallery();configureRoleUi();syncNewsletterUi();
+      formTitle.textContent='Odzyskany szkic';
+      if(deleteArticleButton)deleteArticleButton.hidden=!articleForm.elements.id.value;
+      document.querySelector('[data-restored-main]').textContent=recoveredMain?`Odzyskane zdjęcie główne: ${recoveredMain.name}`:'';
+    }
+  });
+  const openDraft=async(id='',key=null)=>{
+    const generation=editorGeneration;
+    const entries=await drafts.start(currentSession.user.id,id,key);
+    if(generation!==editorGeneration)return;
+    const url=new URL(window.location.href);
+    if(articleForm.elements.id.value)url.searchParams.set('id',articleForm.elements.id.value);else url.searchParams.delete('id');
+    window.history.replaceState({},'',url);
+    draftPicker.replaceChildren(new Option('Wybierz zapisany lokalnie szkic…',''));
+    for(const entry of entries)draftPicker.add(new Option(`${entry.snapshot.fields.title||'Bez tytułu'} — ${new Date(entry.updated).toLocaleString('pl-PL')}`,entry.key));
+  };
+  galleryList.addEventListener('input',event=>{
+    const row=event.target.closest('[data-gallery-key]');
+    const item=galleryItems.find(item=>item.key===row?.dataset.galleryKey);
+    if(!item)return;
+    item.caption=row.querySelector('[data-gallery-caption]').value;
+    item.credit=row.querySelector('[data-gallery-credit]').value;
+    item.sortOrder=row.querySelector('[data-gallery-sort-order]').value;
+  });
+  articleForm.addEventListener('input',()=>{if(editorReady)drafts.change();});
+  articleForm.addEventListener('change',()=>{if(editorReady)drafts.change();});
+  articleForm.elements.image.addEventListener('change',()=>{recoveredMain=null;document.querySelector('[data-restored-main]').textContent='';});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')void drafts.flush();});
+  window.addEventListener('pagehide',()=>{void drafts.flush();});
+  window.addEventListener('beforeunload',event=>{if(drafts.dirty){void drafts.flush();event.preventDefault();event.returnValue='';}});
+  document.querySelector('[data-protect-drafts]').addEventListener('click',()=>drafts.protect());
+  document.querySelector('[data-refresh-drafts]').addEventListener('click',async()=>{await drafts.flush();if(drafts.dirty)return;const entries=await localDraftStorage.list(currentSession.user.id);draftPicker.replaceChildren(new Option('Wybierz zapisany lokalnie szkic…',''));for(const entry of entries)draftPicker.add(new Option(`${entry.snapshot.fields.title||'Bez tytułu'} — ${new Date(entry.updated).toLocaleString('pl-PL')}`,entry.key));});
+  draftPicker.addEventListener('change',async()=>{if(!draftPicker.value||articleForm.inert)return;articleForm.inert=true;try{editorGeneration++;await drafts.flush();if(drafts.dirty)return;await openDraft('',draftPicker.value);}finally{articleForm.inert=false;}});
+
   const showSession=async session=>{
+    const generation=++sessionGeneration;
+    const previousUser=currentSession?.user.id;
+    if(previousUser&&previousUser!==session?.user.id){await drafts.stop();editorReady=false;}
     currentSession=session||null;
     if(!session){currentProfile=null;loginPanel.hidden=false;shell.hidden=true;return;}
     const {data:profile,error}=await db.from('profiles').select('id,email,display_name,role,active').eq('id',session.user.id).maybeSingle();
+    if(generation!==sessionGeneration)return;
     if(error||!profile||!profile.active){
       status(loginStatus,'To konto nie ma aktywnego dostępu do redakcji.',true);
       await db.auth.signOut();
@@ -820,15 +899,21 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     userEmail.textContent=profile.display_name||session.user.email||'';
     userRole.textContent=roleNames[profile.role]||profile.role;
     configureRoleUi();
+    if(editorReady&&previousUser===session.user.id)return;
+    articleForm.inert=true;
     resetForm();
     await loadArticles();
+    if(generation!==sessionGeneration)return;
 
     const requestedArticleId=new URLSearchParams(window.location.search).get('id');
     if(requestedArticleId){
       const editButton=list?.querySelector(`[data-edit="${requestedArticleId}"]`);
-      if(editButton)editButton.click();
-      else status(formStatus,'Nie znaleziono artykułu do edycji.',true);
+      if(editButton){const {data}=await db.from('articles').select('*').eq('id',requestedArticleId);if(generation!==sessionGeneration)return;await editArticle(requestedArticleId,data||[]);}
+      else {status(formStatus,'Nie znaleziono artykułu na liście. Sprawdzono lokalny szkic.',true);await openDraft(requestedArticleId);}
     }
+    if(!requestedArticleId)await openDraft();
+    if(generation!==sessionGeneration)return;
+    editorReady=true;articleForm.inert=false;
     if(profile.role==='admin')await loadHomepageVideo();
     if(profile.role==='admin')await loadUsers();
   };
@@ -841,13 +926,15 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   });
 
   document.querySelector('[data-logout]').addEventListener('click',()=>db.auth.signOut());
-  document.querySelector('[data-reset-form]').addEventListener('click',resetForm);
+  document.querySelector('[data-reset-form]').addEventListener('click',async()=>{if(articleForm.inert)return;articleForm.inert=true;try{editorGeneration++;await drafts.flush();if(drafts.dirty)return;resetForm();await openDraft('__fresh__');}finally{articleForm.inert=false;}});
   deleteArticleButton?.addEventListener('click',deleteArticle);
   updateToggle?.addEventListener('change',syncUpdateUi);
   sendNewsletter?.addEventListener('change',()=>{if(sendNewsletter.checked)fillNewsletterTeaser();syncNewsletterUi();});
-  generateNewsletter?.addEventListener('click',()=>{fillNewsletterTeaser(true);syncNewsletterUi();});
+  generateNewsletter?.addEventListener('click',()=>{fillNewsletterTeaser(true);syncNewsletterUi();drafts.change();});
   articleForm.elements.newsletter_teaser?.addEventListener('input',syncNewsletterUi);
   galleryInput?.addEventListener('change',async()=>{
+    const generation=editorGeneration;
+    await drafts.flush();
     const files=[...(galleryInput.files||[])];
     if(!files.length)return;
 
@@ -884,6 +971,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       return;
     }
 
+    if(generation!==editorGeneration)return;
     let order=nextGalleryOrder();
 
     for(const file of prepared){
@@ -907,6 +995,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       :`Dodano ${prepared.length} zdjęć.`;
 
     status(formStatus,message);
+    drafts.change();await drafts.flush();
   });
 
   homepageVideoForm?.addEventListener('submit',saveHomepageVideo);
@@ -914,7 +1003,12 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   homepageVideoDelete?.addEventListener('click',deleteHomepageVideo);
 
   articleForm.addEventListener('submit',async e=>{
-    e.preventDefault();status(formStatus,'Zapisywanie…');
+    e.preventDefault();
+    if(articleForm.inert)return;
+    articleForm.inert=true;
+    try{
+    await drafts.flush();
+    status(formStatus,'Zapisywanie…');
     const fd=new FormData(articleForm);
     const id=fd.get('id')||null;
     const selectedSection=String(fd.get('section')||'');
@@ -937,6 +1031,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
 
     let imageUrl=null;
     let image=fd.get('image');
+    if(!image?.size)image=recoveredMain;
     if(image&&image.size){
       try{
         status(formStatus,'Przygotowywanie zdjęcia głównego…');
@@ -996,11 +1091,15 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     const {data:saved,error}=await q.select('id,slug,status').single();
     if(error){status(formStatus,error.message,true);return;}
     articleForm.elements.id.value=saved.id;
+    const savedUrl=new URL(window.location.href);savedUrl.searchParams.set('id',saved.id);window.history.replaceState({},'',savedUrl);
     formTitle.textContent='Edytuj artykuł';
-    if(imageUrl)articleForm.elements.image.value='';
+    // Checkpoint the server ID before any gallery upload can fail or the tab closes.
+    drafts.change();await drafts.flush();
+
     try{await persistArticleGallery(saved.id,preparedGallery);}
     catch(error){
       status(formStatus,`Artykuł zapisano, ale dodatkowe zdjęcia nie zostały zapisane w całości: ${error.message}`,true);
+      drafts.change();await drafts.flush();
       await loadArticles();
       return;
     }
@@ -1016,17 +1115,26 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       }catch(error){completion=`Artykuł zapisany, ale newsletter nie został wysłany: ${error.message}`;completionError=true;}
     }
     if(completionError){status(formStatus,completion,true);return;}
+    if(desiredStatus==='published'&&(saved.status!=='published'||!saved.slug)){
+      status(formStatus,'Zapisano artykuł, ale nie potwierdzono publikacji lub adresu artykułu.',true);return;
+    }
+    // Only discard local files after every gallery upload/metadata write succeeded.
+    recoveredMain=null;articleForm.elements.image.value='';
+    await loadArticleGallery(saved.id);
+    drafts.change();await drafts.flush();
+    if(drafts.dirty)return;
     if(desiredStatus==='published'){
-      if(saved.status!=='published'||!saved.slug){
-        status(formStatus,'Zapisano artykuł, ale nie potwierdzono publikacji lub adresu artykułu.',true);
-        return;
-      }
+      await drafts.complete();
       window.location.href=`/a/${encodeURIComponent(saved.slug)}`;
       return;
     }
     resetForm();
+    const newUrl=new URL(window.location.href);newUrl.searchParams.delete('id');window.history.replaceState({},'',newUrl);
+    await drafts.start(currentSession.user.id,'__fresh__');
     status(formStatus,completion,completionError);
     await loadArticles();
+    }catch(error){status(formStatus,error.message||'Nie udało się zapisać artykułu.',true);}
+    finally{articleForm.inert=false;}
   });
 
   inviteForm?.addEventListener('submit',async e=>{
@@ -1040,6 +1148,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     }catch(error){status(inviteStatus,error.message,true);}
   });
 
-  db.auth.onAuthStateChange((_event,session)=>showSession(session));
-  db.auth.getSession().then(({data})=>showSession(data.session));
+  // Leave the auth callback synchronously; SDK calls inside it can deadlock.
+  db.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>showSession(session).catch(error=>status(loginStatus,error.message,true)),0);});
+  db.auth.getSession().then(({data})=>showSession(data.session)).catch(error=>status(loginStatus,error.message,true));
 })();

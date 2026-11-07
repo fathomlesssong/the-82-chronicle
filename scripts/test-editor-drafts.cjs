@@ -1,0 +1,22 @@
+const assert=require('node:assert/strict');
+const {indexedDB}=require('fake-indexeddb');
+const {store,controller,fileData,fileFrom}=require('../editor-drafts');
+(async()=>{
+ await assert.rejects(store(undefined).list('u'),/niedostępna/);
+ const storage=store(indexedDB);
+ const snapshot={fields:{id:'a',title:'A',content:'Tekst'},main:fileData(new File(['main'],'main.png',{type:'image/png'})),gallery:[{file:fileData(new File(['photo'],'photo.jpg',{type:'image/jpeg'})),caption:'Podpis',credit:'Autor',sortOrder:2}]};
+ let first=(await storage.save({key:'u:a',owner:'u',revision:0,snapshot})).record;
+ const restored=(await storage.list('u'))[0];assert.equal(await fileFrom(restored.snapshot.main).text(),'main');assert.equal(await fileFrom(restored.snapshot.gallery[0].file).text(),'photo');
+ assert.equal(restored.snapshot.gallery[0].caption,'Podpis');assert.equal((await storage.list('other')).length,0);
+ const second=await storage.save({...first,snapshot:{...snapshot,fields:{...snapshot.fields,content:'Karta 2'}}});
+ const conflict=await storage.save({...first,snapshot});assert.ok(conflict.conflict);assert.notEqual(conflict.record.key,first.key);
+ assert.equal(await storage.complete(first),false);assert.equal(await storage.complete(second.record),true);
+ assert.equal((await storage.list('u')).length,1);assert.equal((await storage.list('u'))[0].key,conflict.record.key);
+ const stale=await storage.save(first);assert.ok(stale.conflict);
+ let message='',fail=false;
+ const ctl=controller({storage:{...storage,save:async r=>{if(fail)throw Object.assign(new Error('quota'),{name:'QuotaExceededError'});return storage.save(r);}},capture:()=>snapshot,apply:()=>{},notify:m=>message=m});
+ await ctl.start('x','a');ctl.change();fail=true;assert.equal(await ctl.flush(),false);assert.ok(ctl.dirty);assert.match(message,/brak miejsca/);
+ fail=false;assert.equal(await ctl.flush(),true);assert.equal(ctl.dirty,false);
+ assert.equal(await ctl.complete(),true);assert.equal((await storage.list('x')).length,0);
+ console.log('OK: IndexedDB File bytes/metadata, owner isolation, atomic conflicts, publication tombstone, quota retry.');
+})().catch(e=>{console.error(e);process.exitCode=1;});
