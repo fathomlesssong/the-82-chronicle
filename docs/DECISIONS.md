@@ -63,6 +63,6 @@
 
 ## DEC-011 — Published-only public share metadata
 
-- State: IN_PROGRESS.
+- State: DONE (deployed and verified; see docs/SHARE-PREVIEWS-20261107.md).
 - Decision: Separate /s links serve allowlisted metadata with status verification and no body; /a remains gated for every User-Agent. Automatic editor preview reuses existing fields without changing draft storage.
 - Rationale: Social crawlers need initial HTML while readers still require access. Avoid auth bypass and extra schema risk.
