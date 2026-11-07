@@ -44,3 +44,6 @@ The canonical production origin is `https://kronika82.vercel.app`. Preview and h
 ## Local editorial recovery
 
 `editor-drafts.js` persists owner-scoped editorial fields and photo bytes in IndexedDB. Atomic revision checks fork concurrent writes. Session notifications revalidate access without resetting an initialized editor. Publication retains local recovery until the server save, gallery and required newsletter succeed and published status/slug are confirmed. Only the matching revision is tombstoned before the existing article redirect. Draft saves retain local recovery. Browser storage is local to the profile/origin and subject to quota or deletion.
+
+## Public sharing
+Published-only /s/:slug returns server-rendered OG metadata through api/share.js, with no body selection and no-store caching. Browser-only navigation leads to protected /a/:slug. share-meta.js supplies consistent automatic title/lead/public-image selection in server and editor. Reader share/copy controls use /s links. See docs/SHARE-PREVIEWS-20261107.md.

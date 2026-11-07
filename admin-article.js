@@ -351,6 +351,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   };
 
   const resetForm=()=>{
+    shareArticle=null;
     recoveredMain=null;
     document.querySelector('[data-restored-main]').textContent='';
     articleForm.reset();
@@ -362,6 +363,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     if(deleteArticleButton)deleteArticleButton.hidden=true;
     status(formStatus,'');
     configureRoleUi();
+    updateSharePreview();
   };
 
   const loadArticles=async()=>{
@@ -382,6 +384,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     await drafts.flush();
     if(drafts.dirty||generation!==editorGeneration){articleForm.inert=false;return;}
     recoveredMain=null;articleForm.elements.image.value='';
+    shareArticle=a;
     resetGallery();
     articleForm.elements.id.value=a.id;
     articleForm.elements.title.value=a.title||'';
@@ -398,6 +401,7 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
     articleForm.elements.is_updated.checked=!!a.is_updated;
     articleForm.elements.update_at.value=a.update_at?fmtLocal(a.update_at):'';
     articleForm.elements.featured.checked=!!a.featured;
+    updateSharePreview();
     formTitle.textContent='Edytuj artykuł';
     if(deleteArticleButton)deleteArticleButton.hidden=false;
     configureRoleUi();
@@ -816,6 +820,10 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
   };
 
   let recoveredMain=null;
+  let shareArticle=null;
+  const updateSharePreview=()=>window.CH82SharePreview?.update(articleForm,articleForm.elements.image.files?.[0]||recoveredMain,shareArticle);
+  articleForm.addEventListener('input',updateSharePreview);
+  articleForm.addEventListener('change',updateSharePreview);
   let editorReady=false;
   let sessionGeneration=0;
   let editorGeneration=0;
@@ -844,6 +852,8 @@ if(typeof window!=='undefined'&&typeof document!=='undefined')(()=>{
       articleForm.reset();
       for(const name of fieldNames){const el=articleForm.elements[name];if(!el||!(name in snapshot.fields))continue;if(el.type==='checkbox')el.checked=!!snapshot.fields[name];else el.value=snapshot.fields[name];}
       recoveredMain=window.CH82Drafts.fileFrom(snapshot.main);
+      if(String(shareArticle?.id||'')!==String(snapshot.fields.id||''))shareArticle=null;
+      updateSharePreview();
       galleryInput.value='';
       galleryItems=snapshot.gallery.map((item,i)=>({...item,key:`restored-${++gallerySequence}-${i}`,file:window.CH82Drafts.fileFrom(item.file)}));
       renderGallery();configureRoleUi();syncNewsletterUi();

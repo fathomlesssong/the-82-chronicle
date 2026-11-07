@@ -60,3 +60,9 @@
 - Decision: Preserve initialized same-user editor state; persist text, image bytes and metadata in IndexedDB, fork conflicting revisions, and remove only the successfully published revision after every required operation succeeds.
 - Rationale: Authentication notifications and browser restarts must not silently discard editorial work. Existing publication redirect, newsletter and image processing remain authoritative.
 - Scope: Local profile/origin only; no session/token/password storage or cross-device backup.
+
+## DEC-011 — Published-only public share metadata
+
+- State: IN_PROGRESS.
+- Decision: Separate /s links serve allowlisted metadata with status verification and no body; /a remains gated for every User-Agent. Automatic editor preview reuses existing fields without changing draft storage.
+- Rationale: Social crawlers need initial HTML while readers still require access. Avoid auth bypass and extra schema risk.

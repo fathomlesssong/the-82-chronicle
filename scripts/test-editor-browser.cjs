@@ -26,7 +26,7 @@ window.CH82_SUPABASE={url:'https://example.test',anonKey:'public-test'};window.s
  if(u.pathname==='/api/newsletter-send')return route.fulfill({status:await route.request().frame().evaluate(()=>window.newsletterSuccess)?200:500,contentType:'application/json',body:await route.request().frame().evaluate(()=>JSON.stringify(window.newsletterSuccess?{message:'Test newsletter success'}:{error:'Test newsletter failure'}))});
  if(route.request().method()!=='GET')throw new Error('Unexpected real mutation request');
  const name=u.pathname==='/'?'admin-article.html':u.pathname.slice(1);const f=path.join(root,name);
- if(remote&&u.pathname!=='/'&&['admin-article.html','admin-article.js','editor-drafts.js'].includes(name)){
+ if(remote&&u.pathname!=='/'&&['admin-article.html','admin-article.js','editor-drafts.js','editor-share-preview.js','share-meta.js'].includes(name)){
  const response=await route.fetch();assert.equal(response.status(),200);const body=await response.body();assert.ok(body.equals(fs.readFileSync(f)),'Deployed asset differs: '+name);verifiedAssets.add(name);return route.fulfill({response,body});
  }
  if(!fs.existsSync(f))return route.fulfill({status:404,body:''});
@@ -41,10 +41,14 @@ window.CH82_SUPABASE={url:'https://example.test',anonKey:'public-test'};window.s
  await page.locator('[name=image]').setInputFiles({name:'main.png',mimeType:'image/png',buffer:png});
  await page.locator('[data-gallery-input]').setInputFiles({name:'gallery.png',mimeType:'image/png',buffer:png});
  await page.locator('[data-gallery-caption]').fill('Podpis odzyskany');await page.locator('[data-gallery-credit]').fill('Autor zdjęcia');await saved(page);
+ assert.equal(await page.locator('[data-share-preview] strong').textContent(),'Szkic regresyjny');
+ assert.match(await page.locator('[data-share-preview] img').getAttribute('src'),/^blob:/);
  const other=await context.newPage();await other.goto(origin+'/');await other.bringToFront();await page.bringToFront();await page.evaluate(()=>{window.emitAuth();window.emitAuth();});
  await page.waitForTimeout(100);assert.equal(await page.locator('[name=content]').inputValue(),'Treść przed zmianą karty');assert.equal(await page.locator('[data-gallery-caption]').inputValue(),'Podpis odzyskany');
  await page.reload();await page.waitForFunction(()=>document.querySelector('[data-draft-status]').textContent.includes('Odzyskano'));
  assert.equal(await page.locator('[name=content]').inputValue(),'Treść przed zmianą karty');assert.match(await page.locator('[data-restored-main]').textContent(),/main.png/);assert.equal(await page.locator('[data-gallery-caption]').inputValue(),'Podpis odzyskany');
+ assert.equal(await page.locator('[data-share-preview] strong').textContent(),'Szkic regresyjny');
+ assert.match(await page.locator('[data-share-preview] img').getAttribute('src'),/^blob:/);
  const records=await page.evaluate(()=>new Promise((resolve,reject)=>{const r=indexedDB.open('ch82-editor-drafts',1);r.onsuccess=()=>{const q=r.result.transaction('drafts').objectStore('drafts').getAll();q.onsuccess=async()=>{resolve(await Promise.all(q.result.filter(x=>!x.completed).map(async x=>({fields:x.snapshot.fields,main:[...new Uint8Array(await x.snapshot.main.blob.arrayBuffer())],gallery:[...new Uint8Array(await x.snapshot.gallery[0].file.blob.arrayBuffer())]}))));r.result.close();};};r.onerror=()=>reject(r.error);}));
  assert.deepEqual(records[0].main,[...png]);assert.deepEqual(records[0].gallery,[...png]);assert.ok(!JSON.stringify(records).includes('DO-NOT-STORE'));
  await other.close();await context.close();page=await launch();await ready(page);await page.waitForFunction(()=>document.querySelector('[data-draft-status]').textContent.includes('Odzyskano'));assert.equal(await page.locator('[data-gallery-credit]').inputValue(),'Autor zdjęcia');
@@ -101,7 +105,7 @@ window.CH82_SUPABASE={url:'https://example.test',anonKey:'public-test'};window.s
  await page.locator('[data-refresh-drafts]').click();
  await page.waitForFunction(()=>document.querySelector('[data-draft-picker]').options.length===3);
  assert.equal(await page.locator('[data-draft-picker] option').count(),3);
- if(remote)assert.deepEqual([...verifiedAssets].sort(),['admin-article.html','admin-article.js','editor-drafts.js']);
+ if(remote)assert.deepEqual([...verifiedAssets].sort(),['admin-article.html','admin-article.js','editor-drafts.js','editor-share-preview.js','share-meta.js']);
  assert.deepEqual(errors,[]);
  console.log('OK: real Chromium tab/auth refocus, reload, browser reopen, exact main/gallery bytes, metadata, concurrent tabs, no token persistence.');
  }finally{await context?.close();fs.rmSync(profile,{recursive:true,force:true});}

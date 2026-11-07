@@ -21,6 +21,7 @@ function isAdminPath(pathname){
 }
 
 function isStaticAsset(pathname){
+  if(pathname.startsWith('/a/')||pathname.startsWith('/api/'))return false;
   return (
     pathname.startsWith('/assets/') ||
     /\.(?:css|js|mjs|png|jpe?g|webp|gif|svg|ico|woff2?|ttf|map)$/i.test(pathname)
@@ -104,6 +105,8 @@ export default async function middleware(request){
     pathname==='/manifest.webmanifest' ||
     pathname==='/api/access' ||
     pathname==='/robots.txt' ||
+    /^\/s\/[^/]+\/?$/.test(pathname) ||
+    pathname==='/api/share' ||
     isAdminPath(pathname) ||
     ADMIN_API_PATHS.has(pathname) ||
     isStaticAsset(pathname)

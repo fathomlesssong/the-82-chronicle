@@ -60,6 +60,12 @@
             <button type="button" data-protect-drafts>Chroń szkice przed automatycznym usuwaniem</button>
             <p class="admin-help" data-restored-main></p>
             <form class="admin-form" data-article-form>
+            <section data-share-preview aria-label="Podgląd udostępniania">
+              <h3>Podgląd udostępniania</h3>
+              <img src="/assets/og-image.png" alt="Kronika 82" style="width:100%;max-width:360px;max-height:200px;object-fit:cover">
+              <p><strong>Kronika 82</strong></p><p data-share-description></p>
+              <p class="admin-help">Tytuł, lead i zdjęcie główne utworzą podgląd w WhatsAppie, Messengerze i Facebooku po publikacji. Niezapisane zmiany są widoczne tylko tutaj. Szkice nie mają publicznego podglądu.</p>
+            </section>
               <input type="hidden" name="id">
               <label>Tytuł<input type="text" name="title" maxlength="180" required></label>
               <label>Dział
@@ -213,6 +219,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-config.js?v=1"></script>
   <script src="/editor-drafts.js?v=1"></script>
-  <script src="/admin-article.js?v=10"></script>
+  <script src="/share-meta.js?v=1"></script>
+  <script src="/editor-share-preview.js?v=1"></script>
+  <script src="/admin-article.js?v=11"></script>
 </body>
 </html>
